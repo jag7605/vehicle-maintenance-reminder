@@ -1,0 +1,10 @@
+# Dependencies — these are installed locally, never committed
+node_modules/
+# Environment variables — NEVER commit these
+.env
+.env.local
+# Build output
+dist/
+build/
+# OS files
+.DS_Store
