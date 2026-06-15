@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoute';
-import LoginPage from './pages/Loginpage';
+import LoginPage from './pages/LoginPage';
 import StaffHomepage from './pages/StaffHomepage';
 import CustomerHomepage from './pages/CustomerHomepage';
 
