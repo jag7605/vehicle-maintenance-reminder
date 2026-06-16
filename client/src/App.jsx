@@ -17,9 +17,9 @@ function App() {
         } />
 
         <Route path="/customer/home" element={
-          <ProtectedRoute requiredRole="customer">
+          //<ProtectedRoute requiredRole="customer">
             <CustomerHomepage />
-          </ProtectedRoute>
+          //</ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>
