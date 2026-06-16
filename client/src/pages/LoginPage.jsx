@@ -15,12 +15,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { role } = await loginUser(email, password);
+      const role = await loginUser(email, password);
 
       if (role === "admin") navigate("/admin/home");
       else if (role === "customer") navigate("/customer/home");
       else throw new Error("Unknown role.");
-    } catch (err) {
+    } catch {
       setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);

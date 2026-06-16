@@ -10,8 +10,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
 
-        <Route path="/staff/home" element={
-          <ProtectedRoute requiredRole="staff">
+        <Route path="/admin/home" element={
+          <ProtectedRoute requiredRole="admin">
             <StaffHomepage />
           </ProtectedRoute>
         } />
