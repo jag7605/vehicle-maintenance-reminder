@@ -11,9 +11,9 @@ function App() {
         <Route path="/" element={<LoginPage />} />
 
         <Route path="/staff/home" element={
-          <ProtectedRoute requiredRole="staff">
+          //<ProtectedRoute requiredRole="staff">
             <StaffHomepage />
-          </ProtectedRoute>
+          //</ProtectedRoute>
         } />
 
         <Route path="/customer/home" element={
