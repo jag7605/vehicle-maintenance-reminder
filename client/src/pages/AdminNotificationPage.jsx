@@ -1,14 +1,10 @@
-import TopBar from "../component/TopBar";
+import StaffLayout from "../component/StaffLayout";
 
 function AdminNotificationPage() {
   return (
-    <>
-      <TopBar title="Notifications" />
-
-      <main>
-        Notification Page
-      </main>
-    </>
+    <StaffLayout title="AdminNotificationPage">
+      This is AdminNotificationPage
+    </StaffLayout>
   );
 }
 

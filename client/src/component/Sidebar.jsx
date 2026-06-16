@@ -3,25 +3,25 @@ import "./Sidebar.css";
 const menuItems = [{
     title: 'Overview',
     items: [
-        { name: "Dashboard", path: "/staff/home"},
-        { name: "Notifications", path: "/staff/notifications"}
+        { name: "Dashboard", path: "/admin/home"},
+        { name: "Notifications", path: "/admin/notifications"}
     ]
 },
 {
     title: "Workshop",
     items: [
-        { name: "Jobs", path: "/staff/jobs"},
-        { name: "Bookings", path: "/staff/bookings"},
-        { name: "Tasks", path: "/staff/tasks"}
+        { name: "Jobs", path: "/admin/jobs"},
+        { name: "Bookings", path: "/admin/bookings"},
+        { name: "Tasks", path: "/admin/tasks"}
     ]
 },
 {
     title: "Records",
     items: [
-        { name: "Customers", path: "/staff/customers"},
-        { name: "Bar Chart", path: "/staff/barchart"},
-        { name: "Pie Chart", path: "/staff/piechart"},
-        { name: "Line Chart", path: "/staff/linechart"}
+        { name: "Customers", path: "/admin/customers"},
+        { name: "Bar Chart", path: "/admin/barchart"},
+        { name: "Pie Chart", path: "/admin/piechart"},
+        { name: "Line Chart", path: "/admin/linechart"}
     ]
 }
 ];

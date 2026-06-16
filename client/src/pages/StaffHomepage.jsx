@@ -1,20 +1,12 @@
-import Topbar from "../component/TopBar";
-import "../component/TopBar.css";
-import Sidebar from "../component/Sidebar";
+import StaffLayout from "../component/StaffLayout";
+
 
 function StaffHomepage() {
-    return (
-        <>
-        <Topbar title="Dashboard"/>
-        
-        <div className="dashboard-layout"></div>
-        <Sidebar />
+  return (
+    <StaffLayout title="Dashboard">
+      This is Dashboard
+    </StaffLayout>
+  );
+}
 
-        <main>
-            This is Dashboard
-        </main>
-        
-        </>
-    )
-    }
-    export default StaffHomepage;
+export default StaffHomepage;

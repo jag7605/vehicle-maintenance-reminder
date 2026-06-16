@@ -1,5 +1,6 @@
 .sidebar {
   width: 315px;
+  min-width: 315px;
   min-height: calc(100vh - 88px);
   background: #192957;
   color: white;
@@ -7,7 +8,7 @@
 
 .sidebar-section {
   padding: 20px;
-  border-bottom: 1px solid #4e659c;
+  border-top: 1px solid #4e659c;
 }
 
 .sidebar-section h3 {
