@@ -26,23 +26,61 @@ function App() {
             <StaffHomepage />
           </ProtectedRoute>
         } />
-        <Route path="/admin/notifications" element={<AdminNotificationsPage />} />
-        <Route path="/admin/jobs" element={<AdminJobsPage />} />
-        <Route path="/admin/bookings" element={<AdminBookingsPage />} />
-        <Route path="/admin/tasks" element={<AdminTaskTrackerPage />} />
-        <Route path="/admin/customers" element={<AdminCustomerPage />} />
+        
+        <Route path="/admin/notifications" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminNotificationsPage />
+          </ProtectedRoute>} />
+        <Route path="/admin/jobs" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminJobsPage />
+          </ProtectedRoute>} />
+        <Route path="/admin/bookings" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminBookingsPage />
+          </ProtectedRoute>} />
+        <Route path="/admin/tasks" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminTaskTrackerPage />
+          </ProtectedRoute>} />
+        <Route path="/admin/customers" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminCustomerPage /></ProtectedRoute>} />
 
-        <Route path="/customer" element={<CustomerLayout />}>
+        <Route path="/customer" element={
+          <ProtectedRoute requiredRole="customer">
+          <CustomerLayout />
+        </ProtectedRoute>}>
           <Route path="home" element={
             <ProtectedRoute requiredRole="customer">
               <CustomerHomepage />
             </ProtectedRoute>
           } />
-          <Route path="notifications" element={<CustomerNotifications />} />
-          <Route path="appointments" element={<CustomerAppointments />} />
-          <Route path="vehicles" element={<CustomerVehicles />} />
-          <Route path="history" element={<CustomerHistory />} />
-          <Route path="profile" element={<CustomerProfile />} />
+          <Route path="notifications" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerNotifications />
+            </ProtectedRoute>
+          } />
+          <Route path="appointments" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerAppointments />
+            </ProtectedRoute>
+          } />
+          <Route path="vehicles" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerVehicles />
+            </ProtectedRoute>
+          } />
+          <Route path="history" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerHistory />
+            </ProtectedRoute>
+          } />
+          <Route path="profile" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerProfile />
+            </ProtectedRoute>
+          } />
         </Route>
 
       </Routes>
