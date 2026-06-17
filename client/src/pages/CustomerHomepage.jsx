@@ -1,10 +1,10 @@
 import Sidebar from "../components/CustomerSidebar";
 
 function CustomerHomepage() {
-    return <div className="customer-homepage">
-        <div className="page-title">
-            <h1>Garage Customer</h1>
+    return (
+        <div>
+            <p> empty atm</p>
         </div>
-        </div>;
-    }
-    export default CustomerHomepage;
+    )};
+
+export default CustomerHomepage;
