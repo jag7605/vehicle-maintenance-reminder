@@ -8,7 +8,12 @@ import AdminNotificationsPage from "./pages/AdminNotificationPage";
 import AdminTaskTrackerPage from "./pages/AdminTaskTrackerPage";
 import AdminJobsPage from "./pages/AdminJobsPage";
 import AdminCustomerPage from './pages/AdminCustomersPage';
-
+import CustomerNotifications from './pages/CustomerNotificationPage';
+import CustomerAppointments from './pages/CustomerAppointmentsPage';
+import CustomerVehicles from './pages/CustomerVehiclesPage';
+import CustomerHistory from './pages/CustomerServiceHistoryPage';
+import CustomerProfile from './pages/CustomerProfilePage';
+import CustomerLayout from './components/CustomerLayout';
 
 function App() {
   return (
@@ -27,11 +32,19 @@ function App() {
         <Route path="/admin/tasks" element={<AdminTaskTrackerPage />} />
         <Route path="/admin/customers" element={<AdminCustomerPage />} />
 
-        <Route path="/customer/home" element={
-          <ProtectedRoute requiredRole="customer">
-            <CustomerHomepage />
-          </ProtectedRoute>
-        } />
+        <Route path="/customer" element={<CustomerLayout />}>
+          <Route path="home" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerHomepage />
+            </ProtectedRoute>
+          } />
+          <Route path="notifications" element={<CustomerNotifications />} />
+          <Route path="appointments" element={<CustomerAppointments />} />
+          <Route path="vehicles" element={<CustomerVehicles />} />
+          <Route path="history" element={<CustomerHistory />} />
+          <Route path="profile" element={<CustomerProfile />} />
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );
