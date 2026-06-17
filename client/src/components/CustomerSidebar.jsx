@@ -13,8 +13,8 @@ const menuItems = [
         title: "Services",
         items: [
             { label: "Appointments", path: "/customer/appointments" },
-            { label: "Vehicles", path: "/customer/vehicles" },
-            { label: "History", path: "/customer/history" }
+            { label: "My Vehicles", path: "/customer/vehicles" },
+            { label: "Service History", path: "/customer/history" }
         ]
     },
     {
