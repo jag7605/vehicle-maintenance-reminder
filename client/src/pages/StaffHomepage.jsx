@@ -1,4 +1,12 @@
+import StaffLayout from "../component/StaffLayout";
+
+
 function StaffHomepage() {
-    return <div><h1>Staff Homepage</h1></div>;
-    }
-    export default StaffHomepage;
+  return (
+    <StaffLayout title="Dashboard">
+      This is Dashboard
+    </StaffLayout>
+  );
+}
+
+export default StaffHomepage;

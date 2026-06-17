@@ -1,0 +1,30 @@
+.sidebar {
+  width: 315px;
+  min-width: 315px;
+  min-height: calc(100vh - 88px);
+  background: #192957;
+  color: white;
+}
+
+.sidebar-section {
+  padding: 20px;
+  border-top: 1px solid #4e659c;
+}
+
+.sidebar-section h3 {
+  margin-bottom: 15px;
+  font-weight: 400;
+}
+
+.sidebar-section a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px 0;
+}
+
+.sidebar-section a:hover {
+  color: #ff9800;
+}
