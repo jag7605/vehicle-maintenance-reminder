@@ -1,5 +1,6 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+
 
 export async function addVehicle(vehicleData) {
   // Step 1: Add a new document to the "vehicles" collection
@@ -8,4 +9,14 @@ export async function addVehicle(vehicleData) {
 
   // Step 2: Return the new document's auto-generated ID
   return docRef.id;
+}
+
+export async function getVehiclesByOwner(ownerId) {
+  // Query vehicles where ownerId matches the logged-in customer's UID
+  // Top-level collection keeps this query simple — no collection-group needed
+  const q = query(collection(db, "vehicles"), where("ownerId", "==", ownerId));
+  const snapshot = await getDocs(q);
+
+  // Map each doc to its data plus its Firestore-generated ID
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
