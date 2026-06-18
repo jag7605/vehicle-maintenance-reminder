@@ -8,6 +8,7 @@ import AdminNotificationsPage from "./pages/AdminNotificationPage";
 import AdminTaskTrackerPage from "./pages/AdminTaskTrackerPage";
 import AdminJobsPage from "./pages/AdminJobsPage";
 import AdminCustomerPage from './pages/AdminCustomersPage';
+import AdminCustomerProfilePage from './pages/AdminCustomerProfilePage';
 import CustomerNotifications from './pages/CustomerNotificationPage';
 import CustomerAppointments from './pages/CustomerAppointmentsPage';
 import CustomerVehicles from './pages/CustomerVehiclesPage';
@@ -47,6 +48,10 @@ function App() {
           <ProtectedRoute requiredRole="admin">
           <AdminCustomerPage /></ProtectedRoute>} />
 
+        <Route path="/admin/customers/:customerId" element={
+          <ProtectedRoute requiredRole="admin">
+          <AdminCustomerProfilePage /></ProtectedRoute>} />
+        
         <Route path="/customer" element={
           <ProtectedRoute requiredRole="customer">
           <CustomerLayout />
