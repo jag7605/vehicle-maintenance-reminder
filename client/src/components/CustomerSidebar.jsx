@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./CustomerSidebar.css";
+import logout from "../firebase/logout.js";
 
 const menuItems = [
     {
@@ -57,7 +58,7 @@ function CustomerSidebar() {
             </nav>
             <div className="sidebar-footer">
 
-                <button className="logout-button">
+                <button className="logout-button"onClick={() => {logout();}}>
                     Logout
                 </button>
 
