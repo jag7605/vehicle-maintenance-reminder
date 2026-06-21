@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseConfig';
 
@@ -15,7 +15,21 @@ function ProtectedRoute({ children, requiredRole }) {
       }
       // These lines must sit INSIDE the async callback, not after it
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const role = userDoc.data()?.role;
+      const userData = userDoc.data();
+      const role = userData?.role;
+
+      // Missing "active" field defaults to true, matching the same
+      // default used in auth.js and the admin customer pages
+      const isActive = userData?.active !== false;
+
+      if (!isActive) {
+        // Sign out immediately so a deactivated user's session can't
+        // keep granting access on subsequent page loads
+        await signOut(auth);
+        setStatus('unauthorized');
+        return;
+      }
+
       setStatus(role === requiredRole ? 'authorized' : 'unauthorized');
     }); // <-- async callback ends here
 

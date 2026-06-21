@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export async function getAllCustomers() {
@@ -18,4 +18,10 @@ export async function getCustomerById(customerId) {
   }
 
   return { id: docSnap.id, ...docSnap.data() };
+}
+
+export async function setCustomerActiveStatus(customerId, isActive) {
+  // Toggle a customer's active status — used for deactivate/activate, not a hard delete
+  const docRef = doc(db, "users", customerId);
+  await updateDoc(docRef, { active: isActive });
 }

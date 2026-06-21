@@ -12,3 +12,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Secondary app instance — used only for admin-created customer sign-up.
+// Keeps the new customer's Auth session isolated from the admin's own
+// session, since the Auth SDK only tracks one logged-in user per app instance.
+const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+export const secondaryAuth = getAuth(secondaryApp);

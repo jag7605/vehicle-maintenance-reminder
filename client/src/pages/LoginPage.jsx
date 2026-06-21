@@ -25,8 +25,12 @@ export default function LoginPage() {
       if (role === "admin") navigate("/admin/home");
       else if (role === "customer") navigate("/customer/home");
       else throw new Error("Unknown role.");
-    } catch {
-      setError("Invalid email or password. Please try again.");
+    } catch (err) {
+      if (err.message === "This account has been deactivated.") {
+        setError("Your account has been deactivated. Please contact support for assistance.");
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

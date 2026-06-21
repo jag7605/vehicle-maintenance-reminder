@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { addVehicle, getVehiclesByOwner, updateVehicle, deleteVehicle } from "../firebase/vehicles";
-import { getCustomerById } from "../firebase/users";
+import { getCustomerById, setCustomerActiveStatus } from "../firebase/users";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
 
 function AdminCustomerProfilePage() {
@@ -28,6 +28,16 @@ function AdminCustomerProfilePage() {
   const [editRego, setEditRego] = useState("");
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
+
+  // Delete popup state
+  const [deletingVehicle, setDeletingVehicle] = useState(null); // holds the vehicle object being deleted, or null if popup closed
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  // Activate/Deactivate popup state
+  const [showStatusConfirm, setShowStatusConfirm] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState("");
 
   async function refreshVehicles() {
     const updatedVehicles = await getVehiclesByOwner(customerId);
@@ -122,18 +132,55 @@ function AdminCustomerProfilePage() {
     }
   }
 
-  async function handleDelete(vehicle) {
-    const confirmed = window.confirm(
-      `Delete this vehicle?\n\nYear: ${vehicle.year}\nMake: ${vehicle.make}\nModel: ${vehicle.model}\nRego: ${vehicle.rego}\nMileage: ${vehicle.mileage}`
-    );
+  function openDeletePopup(vehicle) {
+    setDeletingVehicle(vehicle);
+    setDeleteError("");
+  }
 
-    if (!confirmed) return;
+  function closeDeletePopup() {
+    setDeletingVehicle(null);
+  }
+
+  async function handleDeleteConfirm() {
+    setDeleteError("");
+    setDeleteLoading(true);
 
     try {
-      await deleteVehicle(vehicle.id);
+      await deleteVehicle(deletingVehicle.id);
       await refreshVehicles();
+      setDeletingVehicle(null);
     } catch {
-      alert("Something went wrong while deleting the vehicle.");
+      setDeleteError("Something went wrong while deleting the vehicle.");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
+  function openStatusConfirm() {
+    setStatusError("");
+    setShowStatusConfirm(true);
+  }
+
+  function closeStatusConfirm() {
+    setShowStatusConfirm(false);
+  }
+
+  async function handleToggleActive() {
+    // Missing "active" field defaults to true (active)
+    const isCurrentlyActive = customer.active !== false;
+    const nextStatus = !isCurrentlyActive;
+
+    setStatusError("");
+    setStatusLoading(true);
+
+    try {
+      await setCustomerActiveStatus(customerId, nextStatus);
+      setCustomer({ ...customer, active: nextStatus });
+      setShowStatusConfirm(false);
+    } catch {
+      setStatusError("Something went wrong while updating status.");
+    } finally {
+      setStatusLoading(false);
     }
   }
 
@@ -142,9 +189,20 @@ function AdminCustomerProfilePage() {
   if (pageLoading) return <p>Loading customer...</p>;
   if (pageError) return <p style={{ color: "red" }}>{pageError}</p>;
 
+  const isActive = customer.active !== false;
+
   return (
     <div>
-      <h2>{customer.firstName} {customer.lastName}</h2>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <h2>{customer.firstName} {customer.lastName}</h2>
+        <span style={{ color: isActive ? "green" : "red" }}>
+          {isActive ? "Active" : "Inactive"}
+        </span>
+        <button onClick={openStatusConfirm} disabled={statusLoading}>
+          {statusLoading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
+        </button>
+      </div>
+
       <p>Email: {customer.email}</p>
       <p>Phone: {customer.phone}</p>
 
@@ -173,7 +231,7 @@ function AdminCustomerProfilePage() {
                 <td>{vehicle.mileage}</td>
                 <td>
                   <button onClick={() => openEditPopup(vehicle)}>Edit</button>{" "}
-                  <button onClick={() => handleDelete(vehicle)}>Delete</button>
+                  <button onClick={() => openDeletePopup(vehicle)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -212,6 +270,49 @@ function AdminCustomerProfilePage() {
               </button>{" "}
               <button type="button" onClick={closeEditPopup}>Cancel</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deletingVehicle && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{ backgroundColor: "white", padding: "20px", minWidth: "300px" }}>
+            <h3>Delete Vehicle: {deletingVehicle.make} {deletingVehicle.model}</h3>
+            <p>Year: {deletingVehicle.year}</p>
+            <p>Rego: {deletingVehicle.rego}</p>
+            <p>Mileage: {deletingVehicle.mileage}</p>
+            <p>Are you sure you want to delete this vehicle?</p>
+
+            {deleteError && <p style={{ color: "red" }}>{deleteError}</p>}
+
+            <button onClick={handleDeleteConfirm} disabled={deleteLoading}>
+              {deleteLoading ? "Deleting..." : "Delete"}
+            </button>{" "}
+            <button type="button" onClick={closeDeletePopup}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {showStatusConfirm && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{ backgroundColor: "white", padding: "20px", minWidth: "300px" }}>
+            <h3>{isActive ? "Deactivate" : "Activate"} {customer.firstName} {customer.lastName}</h3>
+            {isActive && <p>They will not be able to log in until reactivated.</p>}
+
+            {statusError && <p style={{ color: "red" }}>{statusError}</p>}
+
+            <button onClick={handleToggleActive} disabled={statusLoading}>
+              {statusLoading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
+            </button>{" "}
+            <button type="button" onClick={closeStatusConfirm}>Cancel</button>
           </div>
         </div>
       )}
@@ -255,7 +356,7 @@ function AdminCustomerProfilePage() {
 
         <div>
           <label>Rego</label><br />
-          <input value={rego} onChange={(e) => setRego(e.target.value)} required />
+          <input value={rego} onChange={(e) => setRego(e.target.value.toUpperCase())} required />
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
