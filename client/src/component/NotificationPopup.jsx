@@ -23,7 +23,7 @@ function NotificationPopup() {
       const data = userSnap.data();
       setRole(data.role);
 
-      if (data.notificationsEnabled === undefined) {
+      if (data.notificationPreferences?.browser === undefined) {
         setShowPopup(true);
       }
     });
@@ -37,7 +37,9 @@ function NotificationPopup() {
     await setDoc(
       doc(db, "users", currentUser.uid),
       {
-        notificationsEnabled: enabled,
+        notificationPreferences: {
+          browser: enabled,
+        },
       },
       { merge: true }
     );
