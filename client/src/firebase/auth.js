@@ -15,5 +15,5 @@ export async function loginUser(email, password) {
     throw new Error("User account not configured correctly.");
   }
   const role = userDoc.data().role;
-  return role; // returns "staff" or "customer"
+  return role; // returns "admin" or "customer"
 }

@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 
@@ -19,4 +19,21 @@ export async function getVehiclesByOwner(ownerId) {
 
   // Map each doc to its data plus its Firestore-generated ID
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+export async function getAllVehicles() {
+  // Fetch every vehicle document, used for admin-side grouping by owner
+  const snapshot = await getDocs(collection(db, "vehicles"));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+export async function updateVehicle(vehicleId, updates) {
+  // updates should only include: year, mileage, rego — make/model are not editable
+  const vehicleRef = doc(db, "vehicles", vehicleId);
+  await updateDoc(vehicleRef, updates);
+}
+
+export async function deleteVehicle(vehicleId) {
+  const vehicleRef = doc(db, "vehicles", vehicleId);
+  await deleteDoc(vehicleRef);
 }

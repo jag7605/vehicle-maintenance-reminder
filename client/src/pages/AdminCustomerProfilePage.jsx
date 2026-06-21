@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { addVehicle } from "../firebase/vehicles";
+import { addVehicle, getVehiclesByOwner, updateVehicle, deleteVehicle } from "../firebase/vehicles";
+import { getCustomerById } from "../firebase/users";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
 
 function AdminCustomerProfilePage() {
   const { customerId } = useParams();
+
+  const [customer, setCustomer] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [pageError, setPageError] = useState("");
 
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
@@ -15,9 +21,41 @@ function AdminCustomerProfilePage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Edit popup state
+  const [editingVehicle, setEditingVehicle] = useState(null); // holds the vehicle object being edited, or null if popup closed
+  const [editYear, setEditYear] = useState("");
+  const [editMileage, setEditMileage] = useState("");
+  const [editRego, setEditRego] = useState("");
+  const [editError, setEditError] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+
+  async function refreshVehicles() {
+    const updatedVehicles = await getVehiclesByOwner(customerId);
+    setVehicles(updatedVehicles);
+  }
+
+  useEffect(() => {
+    async function loadCustomerData() {
+      try {
+        const [customerData, vehicleData] = await Promise.all([
+          getCustomerById(customerId),
+          getVehiclesByOwner(customerId),
+        ]);
+        setCustomer(customerData);
+        setVehicles(vehicleData);
+      } catch {
+        setPageError("Failed to load customer details.");
+      } finally {
+        setPageLoading(false);
+      }
+    }
+
+    loadCustomerData();
+  }, [customerId]);
+
   function handleMakeChange(e) {
     setMake(e.target.value);
-    setModel(""); // reset model whenever make changes, so a stale model from a different make can't carry over
+    setModel("");
   }
 
   async function handleSubmit(e) {
@@ -42,6 +80,8 @@ function AdminCustomerProfilePage() {
       setYear("");
       setMileage("");
       setRego("");
+
+      await refreshVehicles();
     } catch {
       setError("Something went wrong while adding the vehicle.");
     } finally {
@@ -49,14 +89,134 @@ function AdminCustomerProfilePage() {
     }
   }
 
+  function openEditPopup(vehicle) {
+    setEditingVehicle(vehicle);
+    setEditYear(vehicle.year);
+    setEditMileage(vehicle.mileage);
+    setEditRego(vehicle.rego);
+    setEditError("");
+  }
+
+  function closeEditPopup() {
+    setEditingVehicle(null);
+  }
+
+  async function handleEditSave(e) {
+    e.preventDefault();
+    setEditError("");
+    setEditLoading(true);
+
+    try {
+      await updateVehicle(editingVehicle.id, {
+        year: Number(editYear),
+        mileage: Number(editMileage),
+        rego: editRego,
+      });
+
+      await refreshVehicles();
+      setEditingVehicle(null);
+    } catch {
+      setEditError("Something went wrong while saving changes.");
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  async function handleDelete(vehicle) {
+    const confirmed = window.confirm(
+      `Delete this vehicle?\n\nYear: ${vehicle.year}\nMake: ${vehicle.make}\nModel: ${vehicle.model}\nRego: ${vehicle.rego}\nMileage: ${vehicle.mileage}`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteVehicle(vehicle.id);
+      await refreshVehicles();
+    } catch {
+      alert("Something went wrong while deleting the vehicle.");
+    }
+  }
+
   const availableModels = make ? vehicleMakesModels[make] : [];
+
+  if (pageLoading) return <p>Loading customer...</p>;
+  if (pageError) return <p style={{ color: "red" }}>{pageError}</p>;
 
   return (
     <div>
-      <p>Customer Profile Page</p>
-      <p>Customer ID: {customerId}</p>
+      <h2>{customer.firstName} {customer.lastName}</h2>
+      <p>Email: {customer.email}</p>
+      <p>Phone: {customer.phone}</p>
 
-      <h2>Add Vehicle</h2>
+      <h3>Vehicles</h3>
+      {vehicles.length === 0 ? (
+        <p>No vehicles on file.</p>
+      ) : (
+        <table border="1" cellPadding="6">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Rego</th>
+              <th>Mileage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vehicles.map((vehicle) => (
+              <tr key={vehicle.id}>
+                <td>{vehicle.year}</td>
+                <td>{vehicle.make}</td>
+                <td>{vehicle.model}</td>
+                <td>{vehicle.rego}</td>
+                <td>{vehicle.mileage}</td>
+                <td>
+                  <button onClick={() => openEditPopup(vehicle)}>Edit</button>{" "}
+                  <button onClick={() => handleDelete(vehicle)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {editingVehicle && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{ backgroundColor: "white", padding: "20px", minWidth: "300px" }}>
+            <h3>Edit Vehicle: {editingVehicle.make} {editingVehicle.model}</h3>
+            <form onSubmit={handleEditSave}>
+              <div>
+                <label>Year</label><br />
+                <input type="number" value={editYear} onChange={(e) => setEditYear(e.target.value)} required />
+              </div>
+
+              <div>
+                <label>Mileage</label><br />
+                <input type="number" value={editMileage} onChange={(e) => setEditMileage(e.target.value)} required />
+              </div>
+
+              <div>
+                <label>Rego</label><br />
+                <input value={editRego} onChange={(e) => setEditRego(e.target.value)} required />
+              </div>
+
+              {editError && <p style={{ color: "red" }}>{editError}</p>}
+
+              <button type="submit" disabled={editLoading}>
+                {editLoading ? "Saving..." : "Save"}
+              </button>{" "}
+              <button type="button" onClick={closeEditPopup}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <h2>Add Vehicle for {customer.firstName} {customer.lastName}</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Make</label><br />
