@@ -45,9 +45,9 @@ export async function signUpCustomer({ firstName, lastName, email, phone }) {
     );
   } catch (err) {
     if (err.code === "auth/email-already-in-use") {
-      throw new Error("This email already exists");
+      throw new Error("This email already exists", { cause: err });
     }
-    throw new Error("Something went wrong while creating the account.");
+    throw new Error("Something went wrong while creating the account.", { cause: err });
   }
 
   const uid = userCredential.user.uid;
