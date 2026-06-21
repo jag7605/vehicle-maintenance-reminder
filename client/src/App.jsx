@@ -14,7 +14,6 @@ import CustomerVehicles from './pages/CustomerVehiclesPage';
 import CustomerHistory from './pages/CustomerServiceHistoryPage';
 import CustomerProfile from './pages/CustomerProfilePage';
 import CustomerLayout from './component/CustomerLayout';
-import CustomerNotificationPreferencePage from "./pages/CustomerNotificationPreferencePage";
 import AdminNotificationPreferencePage from "./pages/AdminNotificationPreferencePage";
 
 function App() {
@@ -46,7 +45,6 @@ function App() {
           <Route path="vehicles" element={<CustomerVehicles />} />
           <Route path="history" element={<CustomerHistory />} />
           <Route path="profile" element={<CustomerProfile />} />
-          <Route path="notification-preferences" element={<CustomerNotificationPreferencePage />} />
         </Route>
 
       </Routes>

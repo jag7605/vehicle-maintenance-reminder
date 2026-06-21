@@ -8,8 +8,7 @@ const customerMenu = [
     title: "Overview",
     items: [
       { label: "Dashboard", path: "/customer/home" },
-      { label: "Notifications", path: "/customer/notifications" },
-      { label: "Notification Preferences", path: "/customer/notification-preferences" },
+      { label: "Notifications", path: "/customer/notifications" }
     ],
   },
   {
