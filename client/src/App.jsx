@@ -27,26 +27,26 @@ function App() {
             <StaffHomepage />
           </ProtectedRoute>
         } />
-        
+
         <Route path="/admin/notifications" element={
           <ProtectedRoute requiredRole="admin">
-          <AdminNotificationsPage />
+            <AdminNotificationsPage />
           </ProtectedRoute>} />
         <Route path="/admin/jobs" element={
           <ProtectedRoute requiredRole="admin">
-          <AdminJobsPage />
+            <AdminJobsPage />
           </ProtectedRoute>} />
         <Route path="/admin/bookings" element={
           <ProtectedRoute requiredRole="admin">
-          <AdminBookingsPage />
+            <AdminBookingsPage />
           </ProtectedRoute>} />
         <Route path="/admin/tasks" element={
           <ProtectedRoute requiredRole="admin">
-          <AdminTaskTrackerPage />
+            <AdminTaskTrackerPage />
           </ProtectedRoute>} />
         <Route path="/admin/customers" element={
           <ProtectedRoute requiredRole="admin">
-          <AdminCustomerPage /></ProtectedRoute>} />
+            <AdminCustomerPage /></ProtectedRoute>} />
 
         <Route path="/admin/customers/:customerId" element={
           <ProtectedRoute requiredRole="admin">
@@ -54,8 +54,8 @@ function App() {
         
         <Route path="/customer" element={
           <ProtectedRoute requiredRole="customer">
-          <CustomerLayout />
-        </ProtectedRoute>}>
+            <CustomerLayout />
+          </ProtectedRoute>}>
           <Route path="home" element={
             <ProtectedRoute requiredRole="customer">
               <CustomerHomepage />
