@@ -1,10 +1,12 @@
-import Sidebar from "../components/CustomerSidebar";
+import NotificationPopup from "../component/NotificationPopup";
 
 function CustomerHomepage() {
-    return (
-        <div>
-            <p> empty atm</p>
-        </div>
-    )};
+  return (
+    <div>
+      <NotificationPopup />
+      <p>Customer dashboard content goes here.</p>
+    </div>
+  );
+}
 
 export default CustomerHomepage;
