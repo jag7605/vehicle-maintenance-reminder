@@ -1,9 +1,17 @@
 .sidebar {
   width: 315px;
   min-width: 315px;
-  min-height: calc(100vh - 88px);
+  height: calc(100vh - 88px);
   background: #192957;
   color: white;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* this wraps the menu sections and pushes footer down */
+.sidebar-menu {
+  flex: 1;
 }
 
 .sidebar-section {
@@ -29,20 +37,32 @@
   color: #ff9800;
 }
 
+.sidebar-link.active {
+  color: #ff9800;
+}
+
+/* footer at bottom */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid #4e659c;
+}
+
 .logout-button {
   font-size: 14px;
   border: none;
-  color: #555;
-
+  background: transparent;
+  color: white;
+  padding: 8px 0;
 }
 
 .logout-button:hover {
-  color: #000;
+  color: #ff9800;
   cursor: pointer;
 }
 
 .logout-button:active {
-  background-color: darkgray;
+  color: darkgray;
 }
 
 .user-row {
@@ -59,6 +79,7 @@
   overflow: hidden;
   border: 2px solid gray;
   margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -69,12 +90,12 @@
 }
 
 .user-info strong {
-  display: flex;
-  align-items: center;
-
+  display: block;
+  color: white;
 }
 
 .user-info p {
+  margin: 3px 0 0;
   font-size: 14px;
-  color: #777;
+  color: #b7c4e8;
 }
