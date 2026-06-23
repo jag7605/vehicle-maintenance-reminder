@@ -8,3 +8,5 @@ dist/
 build/
 # OS files
 .DS_Store
+# Server service account key — this file contains sensitive credentials and should never be committed
+server/serviceAccountKey.json
