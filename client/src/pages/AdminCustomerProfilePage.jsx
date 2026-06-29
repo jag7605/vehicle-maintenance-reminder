@@ -1,9 +1,129 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import { addVehicle, getVehiclesByOwner, updateVehicle, deleteVehicle } from "../firebase/vehicles";
 import { getCustomerById, setCustomerActiveStatus } from "../firebase/users";
+import { getNotificationsByVehicle } from "../firebase/notifications";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+// ---------------------------------------------------------------------------
+// Helper — render a deliveryStatus map as human-readable channel results.
+// Keys present = channel was attempted. Key absent = channel was disabled.
+// ---------------------------------------------------------------------------
+function DeliveryStatusBadges({ deliveryStatus }) {
+  if (!deliveryStatus || Object.keys(deliveryStatus).length === 0) {
+    return <span>No delivery data</span>;
+  }
+
+  const channelLabels = { email: "Email", browser: "Browser", sms: "SMS" };
+  const allChannels = ["email", "browser", "sms"];
+
+  return (
+    <span>
+      {allChannels.map((channel) => {
+        if (!(channel in deliveryStatus)) {
+          // Channel was disabled — show muted label
+          return (
+            <span key={channel} style={{ marginRight: "8px", color: "#999" }}>
+              {channelLabels[channel]}: disabled
+            </span>
+          );
+        }
+        const status = deliveryStatus[channel];
+        return (
+          <span
+            key={channel}
+            style={{
+              marginRight: "8px",
+              color: status === "sent" ? "green" : "red",
+            }}
+          >
+            {channelLabels[channel]}: {status}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Helper — format a Firestore Timestamp or JS Date for display
+// ---------------------------------------------------------------------------
+function formatDate(value) {
+  if (!value) return "—";
+  // Firestore Timestamps have a .toDate() method
+  const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  return date.toLocaleDateString("en-NZ", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Helper — convert a Firestore Timestamp to the yyyy-MM-dd string that
+// <input type="date"> expects, or return "" if unset
+// ---------------------------------------------------------------------------
+function timestampToDateInput(value) {
+  if (!value) return "";
+  const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  return date.toISOString().split("T")[0];
+}
+
+// ---------------------------------------------------------------------------
+// Sub-component — per-vehicle notification history panel
+// ---------------------------------------------------------------------------
+function VehicleNotificationHistory({ vehicleId }) {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getNotificationsByVehicle(vehicleId);
+        setNotifications(data);
+      } catch {
+        setError("Failed to load notification history.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [vehicleId]);
+
+  if (loading) return <p style={{ margin: "4px 0" }}>Loading history...</p>;
+  if (error) return <p style={{ color: "red", margin: "4px 0" }}>{error}</p>;
+  if (notifications.length === 0) return <p style={{ margin: "4px 0" }}>No reminders sent yet.</p>;
+
+  return (
+    <table border="1" cellPadding="4" style={{ marginTop: "6px", fontSize: "0.9em" }}>
+      <thead>
+        <tr>
+          <th>Sent</th>
+          <th>Message</th>
+          <th>Delivery</th>
+        </tr>
+      </thead>
+      <tbody>
+        {notifications.map((n) => (
+          <tr key={n.id}>
+            <td style={{ whiteSpace: "nowrap" }}>{formatDate(n.sentAt)}</td>
+            <td>{n.message}</td>
+            <td>
+              <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main page
+// ---------------------------------------------------------------------------
 function AdminCustomerProfilePage() {
   const { customerId } = useParams();
 
@@ -22,15 +142,17 @@ function AdminCustomerProfilePage() {
   const [loading, setLoading] = useState(false);
 
   // Edit popup state
-  const [editingVehicle, setEditingVehicle] = useState(null); // holds the vehicle object being edited, or null if popup closed
+  const [editingVehicle, setEditingVehicle] = useState(null);
   const [editYear, setEditYear] = useState("");
   const [editMileage, setEditMileage] = useState("");
   const [editRego, setEditRego] = useState("");
+  const [editNextServiceDate, setEditNextServiceDate] = useState("");    // yyyy-MM-dd string
+  const [editNextServiceMileage, setEditNextServiceMileage] = useState(""); // number string or ""
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
 
   // Delete popup state
-  const [deletingVehicle, setDeletingVehicle] = useState(null); // holds the vehicle object being deleted, or null if popup closed
+  const [deletingVehicle, setDeletingVehicle] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
@@ -38,6 +160,13 @@ function AdminCustomerProfilePage() {
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState("");
+
+  // Send Reminder state — keyed by vehicleId so buttons are independent
+  const [reminderLoading, setReminderLoading] = useState({}); // { [vehicleId]: bool }
+  const [reminderResult, setReminderResult] = useState({});   // { [vehicleId]: { success, deliveryStatus, error } }
+
+  // Notification history panel — which vehicleId is expanded
+  const [expandedHistory, setExpandedHistory] = useState({}); // { [vehicleId]: bool }
 
   async function refreshVehicles() {
     const updatedVehicles = await getVehiclesByOwner(customerId);
@@ -104,6 +233,8 @@ function AdminCustomerProfilePage() {
     setEditYear(vehicle.year);
     setEditMileage(vehicle.mileage);
     setEditRego(vehicle.rego);
+    setEditNextServiceDate(timestampToDateInput(vehicle.nextServiceDate));
+    setEditNextServiceMileage(vehicle.nextServiceMileage != null ? String(vehicle.nextServiceMileage) : "");
     setEditError("");
   }
 
@@ -117,10 +248,23 @@ function AdminCustomerProfilePage() {
     setEditLoading(true);
 
     try {
+      // Convert the yyyy-MM-dd string to a JS Date so updateVehicle()
+      // can turn it into a Firestore Timestamp. Pass null if cleared.
+      const nextServiceDate = editNextServiceDate
+        ? new Date(editNextServiceDate)
+        : null;
+
+      // Convert mileage string → number, or null if cleared
+      const nextServiceMileage = editNextServiceMileage !== ""
+        ? Number(editNextServiceMileage)
+        : null;
+
       await updateVehicle(editingVehicle.id, {
         year: Number(editYear),
         mileage: Number(editMileage),
         rego: editRego,
+        nextServiceDate,
+        nextServiceMileage,
       });
 
       await refreshVehicles();
@@ -166,7 +310,6 @@ function AdminCustomerProfilePage() {
   }
 
   async function handleToggleActive() {
-    // Missing "active" field defaults to true (active)
     const isCurrentlyActive = customer.active !== false;
     const nextStatus = !isCurrentlyActive;
 
@@ -182,6 +325,46 @@ function AdminCustomerProfilePage() {
     } finally {
       setStatusLoading(false);
     }
+  }
+
+  // -------------------------------------------------------------------------
+  // Send Reminder — calls POST /api/admin/send-reminder/:vehicleId
+  // -------------------------------------------------------------------------
+  async function handleSendReminder(vehicleId) {
+    setReminderLoading((prev) => ({ ...prev, [vehicleId]: true }));
+    setReminderResult((prev) => ({ ...prev, [vehicleId]: null }));
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/send-reminder/${vehicleId}`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setReminderResult((prev) => ({
+          ...prev,
+          [vehicleId]: { success: true, deliveryStatus: data.deliveryStatus },
+        }));
+      } else {
+        // 400 (no service date) or 404 (vehicle/customer not found)
+        setReminderResult((prev) => ({
+          ...prev,
+          [vehicleId]: { success: false, error: data.error || "Unknown error." },
+        }));
+      }
+    } catch {
+      setReminderResult((prev) => ({
+        ...prev,
+        [vehicleId]: { success: false, error: "Could not reach the server." },
+      }));
+    } finally {
+      setReminderLoading((prev) => ({ ...prev, [vehicleId]: false }));
+    }
+  }
+
+  function toggleHistory(vehicleId) {
+    setExpandedHistory((prev) => ({ ...prev, [vehicleId]: !prev[vehicleId] }));
   }
 
   const availableModels = make ? vehicleMakesModels[make] : [];
@@ -218,27 +401,79 @@ function AdminCustomerProfilePage() {
               <th>Model</th>
               <th>Rego</th>
               <th>Mileage</th>
+              <th>Next Service Date</th>
+              <th>Next Service Mileage</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td>{vehicle.year}</td>
-                <td>{vehicle.make}</td>
-                <td>{vehicle.model}</td>
-                <td>{vehicle.rego}</td>
-                <td>{vehicle.mileage}</td>
-                <td>
-                  <button onClick={() => openEditPopup(vehicle)}>Edit</button>{" "}
-                  <button onClick={() => openDeletePopup(vehicle)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+            {vehicles.map((vehicle) => {
+              const result = reminderResult[vehicle.id];
+              const isLoadingReminder = reminderLoading[vehicle.id];
+              const historyOpen = expandedHistory[vehicle.id];
+
+              return (
+                <Fragment key={vehicle.id}>
+                  <tr>
+                    <td>{vehicle.year}</td>
+                    <td>{vehicle.make}</td>
+                    <td>{vehicle.model}</td>
+                    <td>{vehicle.rego}</td>
+                    <td>{vehicle.mileage}</td>
+                    <td>{formatDate(vehicle.nextServiceDate)}</td>
+                    <td>{vehicle.nextServiceMileage != null ? `${vehicle.nextServiceMileage.toLocaleString()} km` : "—"}</td>
+                    <td>
+                      <button onClick={() => openEditPopup(vehicle)}>Edit</button>{" "}
+                      <button onClick={() => openDeletePopup(vehicle)}>Delete</button>{" "}
+                      <button
+                        onClick={() => handleSendReminder(vehicle.id)}
+                        disabled={isLoadingReminder}
+                      >
+                        {isLoadingReminder ? "Sending..." : "Send Reminder"}
+                      </button>{" "}
+                      <button onClick={() => toggleHistory(vehicle.id)}>
+                        {historyOpen ? "Hide History" : "Show History"}
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Reminder result row — shown immediately after clicking Send Reminder */}
+                  {result && (
+                    <tr>
+                      <td colSpan="8">
+                        {result.success ? (
+                          <span>
+                            <strong>Reminder sent.</strong>{" "}
+                            <DeliveryStatusBadges deliveryStatus={result.deliveryStatus} />
+                          </span>
+                        ) : (
+                          <span style={{ color: "red" }}>
+                            <strong>Failed:</strong> {result.error}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Notification history panel */}
+                  {historyOpen && (
+                    <tr>
+                      <td colSpan="8">
+                        <strong>Notification History</strong>
+                        <VehicleNotificationHistory vehicleId={vehicle.id} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
       )}
 
+      {/* ------------------------------------------------------------------ */}
+      {/* Edit Vehicle Popup                                                  */}
+      {/* ------------------------------------------------------------------ */}
       {editingVehicle && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -250,17 +485,55 @@ function AdminCustomerProfilePage() {
             <form onSubmit={handleEditSave}>
               <div>
                 <label>Year</label><br />
-                <input type="number" value={editYear} onChange={(e) => setEditYear(e.target.value)} required />
+                <input
+                  type="number"
+                  value={editYear}
+                  onChange={(e) => setEditYear(e.target.value)}
+                  required
+                />
               </div>
 
               <div>
                 <label>Mileage</label><br />
-                <input type="number" value={editMileage} onChange={(e) => setEditMileage(e.target.value)} required />
+                <input
+                  type="number"
+                  value={editMileage}
+                  onChange={(e) => setEditMileage(e.target.value)}
+                  required
+                />
               </div>
 
               <div>
                 <label>Rego</label><br />
-                <input value={editRego} onChange={(e) => setEditRego(e.target.value)} required />
+                <input
+                  value={editRego}
+                  onChange={(e) => setEditRego(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label>Next Service Date</label><br />
+                <input
+                  type="date"
+                  value={editNextServiceDate}
+                  onChange={(e) => setEditNextServiceDate(e.target.value)}
+                />
+                <br />
+                <small>Leave blank to clear the service date.</small>
+              </div>
+
+              <div>
+                <label>Next Service Mileage (km)</label><br />
+                <input
+                  type="number"
+                  min="0"
+                  value={editNextServiceMileage}
+                  onChange={(e) => setEditNextServiceMileage(e.target.value)}
+                  placeholder="e.g. 150000"
+                />
+                <br />
+                <small>Leave blank to clear the mileage target.</small>
               </div>
 
               {editError && <p style={{ color: "red" }}>{editError}</p>}
@@ -274,6 +547,9 @@ function AdminCustomerProfilePage() {
         </div>
       )}
 
+      {/* ------------------------------------------------------------------ */}
+      {/* Delete Vehicle Popup                                                */}
+      {/* ------------------------------------------------------------------ */}
       {deletingVehicle && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -297,6 +573,9 @@ function AdminCustomerProfilePage() {
         </div>
       )}
 
+      {/* ------------------------------------------------------------------ */}
+      {/* Activate / Deactivate Popup                                         */}
+      {/* ------------------------------------------------------------------ */}
       {showStatusConfirm && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -317,6 +596,9 @@ function AdminCustomerProfilePage() {
         </div>
       )}
 
+      {/* ------------------------------------------------------------------ */}
+      {/* Add Vehicle Form                                                     */}
+      {/* ------------------------------------------------------------------ */}
       <h2>Add Vehicle for {customer.firstName} {customer.lastName}</h2>
       <form onSubmit={handleSubmit}>
         <div>

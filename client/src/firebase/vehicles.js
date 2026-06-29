@@ -1,4 +1,14 @@
-import { addDoc, collection, getDocs, query, where, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+  deleteDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 
@@ -28,9 +38,32 @@ export async function getAllVehicles() {
 }
 
 export async function updateVehicle(vehicleId, updates) {
-  // updates should only include: year, mileage, rego — make/model are not editable
+  // updates can include: year, mileage, rego, nextServiceDate (JS Date or null),
+  // nextServiceMileage (number or null) — make/model are not editable after creation
   const vehicleRef = doc(db, "vehicles", vehicleId);
-  await updateDoc(vehicleRef, updates);
+
+  const firestoreUpdates = {
+    ...(updates.year !== undefined && { year: updates.year }),
+    ...(updates.mileage !== undefined && { mileage: updates.mileage }),
+    ...(updates.rego !== undefined && { rego: updates.rego }),
+  };
+
+  // Convert nextServiceDate JS Date → Firestore Timestamp if provided
+  if (updates.nextServiceDate instanceof Date) {
+    firestoreUpdates.nextServiceDate = Timestamp.fromDate(updates.nextServiceDate);
+  } else if (updates.nextServiceDate === null) {
+    firestoreUpdates.nextServiceDate = null;
+  }
+
+  // nextServiceMileage — store as number, or null to clear
+  if (typeof updates.nextServiceMileage === "number") {
+    firestoreUpdates.nextServiceMileage = updates.nextServiceMileage;
+  } else if (updates.nextServiceMileage === null) {
+    firestoreUpdates.nextServiceMileage = null;
+  }
+
+  // ✅ Pass firestoreUpdates (not the raw updates object)
+  await updateDoc(vehicleRef, firestoreUpdates);
 }
 
 export async function deleteVehicle(vehicleId) {
