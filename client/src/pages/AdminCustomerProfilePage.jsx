@@ -4,6 +4,8 @@ import { addVehicle, getVehiclesByOwner, updateVehicle, deleteVehicle } from "..
 import { getCustomerById, setCustomerActiveStatus } from "../firebase/users";
 import { getNotificationsByVehicle } from "../firebase/notifications";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
+import StaffLayout from "../component/StaffLayout";
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -375,6 +377,7 @@ function AdminCustomerProfilePage() {
   const isActive = customer.active !== false;
 
   return (
+    <StaffLayout title="Customers">
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <h2>{customer.firstName} {customer.lastName}</h2>
@@ -649,6 +652,7 @@ function AdminCustomerProfilePage() {
         </button>
       </form>
     </div>
+    </StaffLayout>
   );
 }
 

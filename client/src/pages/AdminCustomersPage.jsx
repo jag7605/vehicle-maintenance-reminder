@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { getAllCustomers } from "../firebase/users";
 import { getAllVehicles } from "../firebase/vehicles";
 import { signUpCustomer } from "../firebase/auth";
+import StaffLayout from "../component/StaffLayout";
+
 
 function AdminCustomerPage() {
   const [rows, setRows] = useState([]);
@@ -140,6 +142,7 @@ function AdminCustomerPage() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
+    <StaffLayout title="Customers">
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2>Customers</h2>
@@ -251,6 +254,7 @@ function AdminCustomerPage() {
         </div>
       )}
     </div>
+    </StaffLayout>
   );
 }
 
