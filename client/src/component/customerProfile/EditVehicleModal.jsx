@@ -1,15 +1,6 @@
-const overlayStyle = {
-  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex", alignItems: "center", justifyContent: "center",
-};
+import { overlayStyle, modalBoxStyle } from "../modalStyles";
+
  
-const boxStyle = { backgroundColor: "white", padding: "20px", minWidth: "300px" };
- 
-// ---------------------------------------------------------------------------
-// Edit Vehicle modal. Renders nothing if `popup.vehicle` is null.
-// `popup` shape matches useCustomerProfile().editPopup.
-// ---------------------------------------------------------------------------
 function EditVehicleModal({ popup }) {
   const {
     vehicle,
@@ -33,7 +24,7 @@ function EditVehicleModal({ popup }) {
  
   return (
     <div style={overlayStyle}>
-      <div style={boxStyle}>
+      <div style={modalBoxStyle}>
         <h3>Edit Vehicle: {vehicle.make} {vehicle.model}</h3>
         <form onSubmit={onSave}>
           <div>

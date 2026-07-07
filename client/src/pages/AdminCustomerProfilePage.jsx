@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import StaffLayout from "../component/StaffLayout";
 import { useCustomerProfile } from "../hooks/useCustomerProfile";
@@ -7,11 +6,16 @@ import AddVehicleForm from "../component/customerProfile/AddVehicleForm";
 import EditVehicleModal from "../component/customerProfile/EditVehicleModal";
 import DeleteVehicleModal from "../component/customerProfile/DeleteVehicleModal";
 import StatusConfirmModal from "../component/customerProfile/StatusConfirmModal";
- 
+
+// ---------------------------------------------------------------------------
+// Admin Customer Profile page.
+//
+// All state and Firebase/API logic lives in useCustomerProfile(). This
+// component's only job is to read values off the hook and hand them to the
+// right presentational component — no business logic here.
+// ---------------------------------------------------------------------------
 function AdminCustomerProfilePage() {
   const { customerId } = useParams();
-  const profile = useCustomerProfile(customerId);
- 
   const {
     customer,
     vehicles,
@@ -27,11 +31,11 @@ function AdminCustomerProfilePage() {
     expandedHistory,
     handleSendReminder,
     toggleHistory,
-  } = profile;
- 
+  } = useCustomerProfile(customerId);
+
   if (pageLoading) return <p>Loading customer...</p>;
   if (pageError) return <p style={{ color: "red" }}>{pageError}</p>;
- 
+
   return (
     <StaffLayout title="Customers">
       <div>
@@ -44,10 +48,10 @@ function AdminCustomerProfilePage() {
             {statusPopup.loading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
           </button>
         </div>
- 
+
         <p>Email: {customer.email}</p>
         <p>Phone: {customer.phone}</p>
- 
+
         <h3>Vehicles</h3>
         <VehicleTable
           vehicles={vehicles}
@@ -59,11 +63,11 @@ function AdminCustomerProfilePage() {
           onSendReminder={handleSendReminder}
           onToggleHistory={toggleHistory}
         />
- 
+
         <EditVehicleModal popup={editPopup} />
         <DeleteVehicleModal popup={deletePopup} />
         <StatusConfirmModal popup={statusPopup} customer={customer} isActive={isActive} />
- 
+
         <AddVehicleForm
           customerName={`${customer.firstName} ${customer.lastName}`}
           form={addVehicleForm}
@@ -72,5 +76,5 @@ function AdminCustomerProfilePage() {
     </StaffLayout>
   );
 }
- 
+
 export default AdminCustomerProfilePage;

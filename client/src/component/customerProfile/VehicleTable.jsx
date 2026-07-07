@@ -2,11 +2,10 @@ import { Fragment } from "react";
 import { formatDate } from "../../utils/formatters";
 import DeliveryStatusBadges from "../DeliveryStatusBadges";
 import VehicleNotificationHistory from "../VehicleNotificationHistory";
- 
+
 // ---------------------------------------------------------------------------
 // Renders the customer's vehicle list, plus each row's inline reminder
-// result and expandable notification history. Pure presentational —
-// all data and handlers are passed in as props.
+// result and expandable notification history. Pure presentational.
 // ---------------------------------------------------------------------------
 function VehicleTable({
   vehicles,
@@ -21,7 +20,7 @@ function VehicleTable({
   if (vehicles.length === 0) {
     return <p>No vehicles on file.</p>;
   }
- 
+
   return (
     <table border="1" cellPadding="6">
       <thead>
@@ -41,7 +40,7 @@ function VehicleTable({
           const result = reminderResult[vehicle.id];
           const isLoadingReminder = reminderLoading[vehicle.id];
           const historyOpen = expandedHistory[vehicle.id];
- 
+
           return (
             <Fragment key={vehicle.id}>
               <tr>
@@ -67,7 +66,7 @@ function VehicleTable({
                   </button>
                 </td>
               </tr>
- 
+
               {result && (
                 <tr>
                   <td colSpan="8">
@@ -84,7 +83,7 @@ function VehicleTable({
                   </td>
                 </tr>
               )}
- 
+
               {historyOpen && (
                 <tr>
                   <td colSpan="8">
@@ -100,5 +99,5 @@ function VehicleTable({
     </table>
   );
 }
- 
+
 export default VehicleTable;

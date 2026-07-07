@@ -1,15 +1,5 @@
-const overlayStyle = {
-  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex", alignItems: "center", justifyContent: "center",
-};
- 
-const boxStyle = { backgroundColor: "white", padding: "20px", minWidth: "300px" };
- 
-// ---------------------------------------------------------------------------
-// Activate/Deactivate confirmation modal. Renders nothing if `popup.show`
-// is false. `popup` shape matches useCustomerProfile().statusPopup.
-// ---------------------------------------------------------------------------
+import { overlayStyle, modalBoxStyle } from "../modalStyles";
+
 function StatusConfirmModal({ popup, customer, isActive }) {
   const { show, loading, error, close, onConfirm } = popup;
  
@@ -17,7 +7,7 @@ function StatusConfirmModal({ popup, customer, isActive }) {
  
   return (
     <div style={overlayStyle}>
-      <div style={boxStyle}>
+      <div style={modalBoxStyle}>
         <h3>
           {isActive ? "Deactivate" : "Activate"} {customer.firstName} {customer.lastName}
         </h3>
@@ -35,3 +25,4 @@ function StatusConfirmModal({ popup, customer, isActive }) {
 }
  
 export default StatusConfirmModal;
+ 

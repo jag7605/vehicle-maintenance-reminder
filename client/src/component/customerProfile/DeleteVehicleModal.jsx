@@ -1,15 +1,5 @@
-const overlayStyle = {
-  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex", alignItems: "center", justifyContent: "center",
-};
- 
-const boxStyle = { backgroundColor: "white", padding: "20px", minWidth: "300px" };
- 
-// ---------------------------------------------------------------------------
-// Delete Vehicle confirmation modal. Renders nothing if `popup.vehicle`
-// is null. `popup` shape matches useCustomerProfile().deletePopup.
-// ---------------------------------------------------------------------------
+import { overlayStyle, modalBoxStyle } from "../modalStyles";
+
 function DeleteVehicleModal({ popup }) {
   const { vehicle, loading, error, close, onConfirm } = popup;
  
@@ -17,7 +7,7 @@ function DeleteVehicleModal({ popup }) {
  
   return (
     <div style={overlayStyle}>
-      <div style={boxStyle}>
+      <div style={modalBoxStyle}>
         <h3>Delete Vehicle: {vehicle.make} {vehicle.model}</h3>
         <p>Year: {vehicle.year}</p>
         <p>Rego: {vehicle.rego}</p>

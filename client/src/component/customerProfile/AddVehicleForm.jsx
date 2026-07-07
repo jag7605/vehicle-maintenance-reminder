@@ -1,9 +1,5 @@
 import { vehicleMakesModels } from "../../data/vehicleMakesModels";
- 
-// ---------------------------------------------------------------------------
-// "Add Vehicle" form. Receives its bound state + handlers via the `form`
-// prop (shape matches useCustomerProfile().addVehicleForm).
-// ---------------------------------------------------------------------------
+
 function AddVehicleForm({ customerName, form }) {
   const {
     make,

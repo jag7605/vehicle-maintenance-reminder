@@ -14,7 +14,6 @@ export function formatDate(value) {
  
 /**
  * Format a Firestore Timestamp or JS Date with time, e.g. "7 Jul 2026, 14:32".
- * Used by pages that also need the sent time, not just the date.
  */
 export function formatDateTime(value) {
   if (!value) return "—";

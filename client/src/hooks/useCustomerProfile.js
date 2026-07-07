@@ -6,12 +6,19 @@ import { timestampToDateInput } from "../utils/formatters";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// ---------------------------------------------------------------------------
+// useCustomerProfile
+//
+// Owns every piece of state and every handler for the Admin Customer Profile
+// page: loading the customer + their vehicles, the add-vehicle form, the
+// edit/delete/status-toggle popups, and the send-reminder / history actions.
+// ---------------------------------------------------------------------------
 export function useCustomerProfile(customerId) {
   const [customer, setCustomer] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState("");
- 
+
   // Add Vehicle form
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
@@ -21,7 +28,7 @@ export function useCustomerProfile(customerId) {
   const [addError, setAddError] = useState("");
   const [addSuccess, setAddSuccess] = useState("");
   const [addLoading, setAddLoading] = useState(false);
- 
+
   // Edit popup
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [editYear, setEditYear] = useState("");
@@ -31,30 +38,30 @@ export function useCustomerProfile(customerId) {
   const [editNextServiceMileage, setEditNextServiceMileage] = useState(""); // number string or ""
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
- 
+
   // Delete popup
   const [deletingVehicle, setDeletingVehicle] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
- 
+
   // Activate/Deactivate popup
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState("");
- 
+
   // Send Reminder — keyed by vehicleId so buttons are independent
-  const [reminderLoading, setReminderLoading] = useState({}); // { [vehicleId]: bool }
-  const [reminderResult, setReminderResult] = useState({});   // { [vehicleId]: { success, deliveryStatus, error } }
- 
+  const [reminderLoading, setReminderLoading] = useState({});
+  const [reminderResult, setReminderResult] = useState({});
+
   // Notification history — which vehicleId is expanded
-  const [expandedHistory, setExpandedHistory] = useState({}); // { [vehicleId]: bool }
- 
+  const [expandedHistory, setExpandedHistory] = useState({});
+
   async function refreshVehicles() {
     const updatedVehicles = await getVehiclesByOwner(customerId);
     setVehicles(updatedVehicles);
   }
 
-    useEffect(() => {
+  useEffect(() => {
     async function loadCustomerData() {
       try {
         const [customerData, vehicleData] = await Promise.all([
@@ -69,18 +76,18 @@ export function useCustomerProfile(customerId) {
         setPageLoading(false);
       }
     }
- 
+
     loadCustomerData();
   }, [customerId]);
 
-    // --- Add Vehicle form ------------------------------------------------
- 
+  // --- Add Vehicle form ------------------------------------------------
+
   function handleMakeChange(e) {
     setMake(e.target.value);
     setModel("");
   }
 
-    async function handleAddVehicle(e) {
+  async function handleAddVehicle(e) {
     e.preventDefault();
     setAddError("");
     setAddSuccess("");
@@ -96,7 +103,7 @@ export function useCustomerProfile(customerId) {
         ownerId: customerId,
       });
 
-      setSuccess("Vehicle added successfully.");
+      setAddSuccess("Vehicle added successfully.");
       setMake("");
       setModel("");
       setYear("");
@@ -105,14 +112,14 @@ export function useCustomerProfile(customerId) {
 
       await refreshVehicles();
     } catch {
-      setError("Something went wrong while adding the vehicle.");
+      setAddError("Something went wrong while adding the vehicle.");
     } finally {
-      setLoading(false);
+      setAddLoading(false);
     }
   }
 
-    // --- Edit popup --------------------------------------------------------
- 
+  // --- Edit popup --------------------------------------------------------
+
   function openEditPopup(vehicle) {
     setEditingVehicle(vehicle);
     setEditYear(vehicle.year);
@@ -123,7 +130,7 @@ export function useCustomerProfile(customerId) {
     setEditError("");
   }
 
-    function closeEditPopup() {
+  function closeEditPopup() {
     setEditingVehicle(null);
   }
 
@@ -133,16 +140,8 @@ export function useCustomerProfile(customerId) {
     setEditLoading(true);
 
     try {
-      // Convert the yyyy-MM-dd string to a JS Date so updateVehicle()
-      // can turn it into a Firestore Timestamp. Pass null if cleared.
-      const nextServiceDate = editNextServiceDate
-        ? new Date(editNextServiceDate)
-        : null;
-
-      // Convert mileage string → number, or null if cleared
-      const nextServiceMileage = editNextServiceMileage !== ""
-        ? Number(editNextServiceMileage)
-        : null;
+      const nextServiceDate = editNextServiceDate ? new Date(editNextServiceDate) : null;
+      const nextServiceMileage = editNextServiceMileage !== "" ? Number(editNextServiceMileage) : null;
 
       await updateVehicle(editingVehicle.id, {
         year: Number(editYear),
@@ -160,7 +159,7 @@ export function useCustomerProfile(customerId) {
       setEditLoading(false);
     }
   }
-  
+
   // --- Delete popup --------------------------------------------------------
 
   function openDeletePopup(vehicle) {
@@ -207,7 +206,7 @@ export function useCustomerProfile(customerId) {
 
     try {
       await setCustomerActiveStatus(customerId, nextStatus);
-      setCustomer({ ...customer, active: nextStatus });
+      setCustomer((prev) => ({ ...prev, active: nextStatus }));
       setShowStatusConfirm(false);
     } catch {
       setStatusError("Something went wrong while updating status.");
@@ -215,7 +214,7 @@ export function useCustomerProfile(customerId) {
       setStatusLoading(false);
     }
   }
-  
+
   // --- Send Reminder — POST /api/admin/send-reminder/:vehicleId -----------
 
   async function handleSendReminder(vehicleId) {
@@ -226,7 +225,6 @@ export function useCustomerProfile(customerId) {
       const res = await fetch(`${API_URL}/api/admin/send-reminder/${vehicleId}`, {
         method: "POST",
       });
-
       const data = await res.json();
 
       if (res.ok && data.success) {
@@ -235,7 +233,6 @@ export function useCustomerProfile(customerId) {
           [vehicleId]: { success: true, deliveryStatus: data.deliveryStatus },
         }));
       } else {
-        // 400 (no service date) or 404 (vehicle/customer not found)
         setReminderResult((prev) => ({
           ...prev,
           [vehicleId]: { success: false, error: data.error || "Unknown error." },
@@ -259,14 +256,12 @@ export function useCustomerProfile(customerId) {
   const isActive = customer ? customer.active !== false : true;
 
   return {
-    // page state
     customer,
     vehicles,
     pageLoading,
     pageError,
     isActive,
- 
-    // add vehicle form
+
     addVehicleForm: {
       make,
       model,
@@ -284,8 +279,7 @@ export function useCustomerProfile(customerId) {
       setRego,
       onSubmit: handleAddVehicle,
     },
- 
-    // edit popup
+
     editPopup: {
       vehicle: editingVehicle,
       year: editYear,
@@ -304,8 +298,7 @@ export function useCustomerProfile(customerId) {
       close: closeEditPopup,
       onSave: handleEditSave,
     },
- 
-    // delete popup
+
     deletePopup: {
       vehicle: deletingVehicle,
       loading: deleteLoading,
@@ -314,8 +307,7 @@ export function useCustomerProfile(customerId) {
       close: closeDeletePopup,
       onConfirm: handleDeleteConfirm,
     },
- 
-    // status popup
+
     statusPopup: {
       show: showStatusConfirm,
       loading: statusLoading,
@@ -324,8 +316,7 @@ export function useCustomerProfile(customerId) {
       close: closeStatusConfirm,
       onConfirm: handleToggleActive,
     },
- 
-    // per-vehicle reminder / history
+
     reminderLoading,
     reminderResult,
     expandedHistory,
