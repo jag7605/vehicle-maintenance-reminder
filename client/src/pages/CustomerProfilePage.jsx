@@ -3,131 +3,129 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
 
-
 function CustomerProfilePage() {
     const [currentUser, setCurrentUser] = useState(null);
 
-    const [browser, setBrowser] = useState(false);
-    const [sms, setSms] = useState(false);
-    const [email, setEmail] = useState(false);
-    const [serviceReminders, setServiceReminders] = useState(false);
-    const [vehicleReady, setVehicleReady] = useState(false);
+    const [browser, setBrowser] = useState(true);
+    const [email, setEmail] = useState(true);
+    const [sms, setSms] = useState(true);
 
     const [message, setMessage] = useState("");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (!user) return;
+            if (!user) return;
 
-        setCurrentUser(user);
+            setCurrentUser(user);
 
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
 
-        if (userSnap.exists()) {
-            const prefs = userSnap.data().notificationPreferences;
+            if (userSnap.exists()) {
+                const prefs = userSnap.data().notificationPreferences;
 
-            if (prefs) {
-            setBrowser(prefs.browser || false);
-            setSms(prefs.sms || false);
-            setEmail(prefs.email || false);
-            setServiceReminders(prefs.serviceReminders || false);
-            setVehicleReady(prefs.vehicleReady || false);
+                if (prefs) {
+                    setBrowser(prefs.browser ?? true);
+                    setEmail(prefs.email ?? true);
+
+                    // SMS is locked on for this sprint.
+                    setSms(true);
+                }
             }
-        }
         });
 
         return () => unsubscribe();
     }, []);
 
+    const handleBrowserChange = (checked) => {
+        if (checked === false && email === false) {
+            setMessage("At least one working channel must stay enabled.");
+            return;
+        }
+
+        setBrowser(checked);
+        setMessage("");
+    };
+
+    const handleEmailChange = (checked) => {
+        if (checked === false && browser === false) {
+            setMessage("At least one working channel must stay enabled.");
+            return;
+        }
+
+        setEmail(checked);
+        setMessage("");
+    };
+
     const handleSave = async () => {
         if (!currentUser) return;
 
         await setDoc(
-        doc(db, "users", currentUser.uid),
-        {
-            notificationPreferences: {
-            browser,
-            sms,
-            email,
-            serviceReminders,
-            vehicleReady,
+            doc(db, "users", currentUser.uid),
+            {
+                notificationPreferences: {
+                    browser,
+                    email,
+                    sms: true,
+                },
             },
-        },
-        { merge: true }
+            { merge: true }
         );
 
+        setSms(true);
         setMessage("Preferences saved.");
     };
 
     return (
-        //<CustomerLayout title="Notification Preferences">
         <div>
-        <h2>Notification Preferences</h2>
+            <h2>Notification Preferences</h2>
 
-        <label>
-            <input
-            type="checkbox"
-            checked={browser}
-            onChange={(e) => setBrowser(e.target.checked)}
-            />
-            Browser Notifications
-        </label>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={browser}
+                    onChange={(e) => handleBrowserChange(e.target.checked)}
+                />
+                Browser Notifications
+            </label>
 
-        <br /><br />
+            <br />
+            <br />
 
-        <label>
-            <input
-            type="checkbox"
-            checked={sms}
-            onChange={(e) => setSms(e.target.checked)}
-            />
-            SMS Notifications
-        </label>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={email}
+                    onChange={(e) => handleEmailChange(e.target.checked)}
+                />
+                Email Notifications
+            </label>
 
-        <br /><br />
+            <br />
+            <br />
 
-        <label>
-            <input
-            type="checkbox"
-            checked={email}
-            onChange={(e) => setEmail(e.target.checked)}
-            />
-            Email Notifications
-        </label>
+            <label style={{ color: "gray" }}>
+                <input
+                    type="checkbox"
+                    checked={sms}
+                    disabled
+                    readOnly
+                />
+                SMS Notifications
+            </label>
 
-        <br /><br />
+            <br />
+            <br />
 
-        <label>
-            <input
-            type="checkbox"
-            checked={serviceReminders}
-            onChange={(e) => setServiceReminders(e.target.checked)}
-            />
-            Service Reminders
-        </label>
+            <button onClick={handleSave}>Save Preferences</button>
 
-        <br /><br />
-
-        <label>
-            <input
-            type="checkbox"
-            checked={vehicleReady}
-            onChange={(e) => setVehicleReady(e.target.checked)}
-            />
-            Vehicle Ready Notifications
-        </label>
-
-        <br /><br />
-
-        <button onClick={handleSave}>Save Preferences</button>
-
-        {message && <p style={{ color: "green" }}>{message}</p>}
+            {message && (
+                <p style={{ color: message.includes("saved") ? "green" : "red" }}>
+                    {message}
+                </p>
+            )}
         </div>
-        //</CustomerLayout>
     );
-    }
+}
 
 export default CustomerProfilePage;
-
-  
