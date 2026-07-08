@@ -1,18 +1,16 @@
 .sidebar {
   width: 315px;
   min-width: 315px;
-  height: calc(100vh - 88px);
+  height: auto;
   background: #192957;
   color: white;
 
   display: flex;
+  flex-basis: content;
   flex-direction: column;
+  gap: 5rem;
 }
 
-/* this wraps the menu sections and pushes footer down */
-.sidebar-menu {
-  flex: 1;
-}
 
 .sidebar-section {
   padding: 20px;
@@ -43,7 +41,7 @@
 
 /* footer at bottom */
 .sidebar-footer {
-  margin-top: auto;
+  margin-top: initial;
   padding: 20px;
   border-top: 1px solid #4e659c;
 }
@@ -99,3 +97,4 @@
   font-size: 14px;
   color: #b7c4e8;
 }
+
