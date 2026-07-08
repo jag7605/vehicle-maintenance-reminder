@@ -1,0 +1,33 @@
+
+.notification-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-card.read {
+  background-color: white;
+}
+
+.notification-card.unread {
+  background-color: #e8f1ff;
+}
+
+.notification-alert {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ff4d4d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+
