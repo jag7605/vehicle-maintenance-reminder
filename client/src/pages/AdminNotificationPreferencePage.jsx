@@ -5,10 +5,9 @@ import NotificationPreferenceForm from "../component/NotificationPreferenceForm"
 const FIELDS = [
   { key: "browser", label: "Browser Notifications" },
   { key: "email", label: "Email Notifications" },
-  { key: "sms", label: "SMS Notifications" },
 ];
 
-const DEFAULTS = { browser: false, email: false, sms: false };
+const DEFAULTS = { browser: false, email: false};
 
 function AdminNotificationPreferencePage() {
   const { prefs, setPref, save, message } = useNotificationPreferences(DEFAULTS);
