@@ -1,73 +1,126 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { collection, query, where, onSnapshot, doc, updateDoc,} from "firebase/firestore";
+import { auth, db } from "../firebase/firebaseConfig";
 import "./CustomerNotificationPage.css";
 
 function CustomerNotificationPage() {
-    const [notifications, setNotifications] = useState([
-        {
-            id: "1",
-            message: "VMR Garage: Your Toyota Corolla is due for service on 20 July.",
-            sentAt: new Date(),
-            read: false,
-        },
-        {
-            id: "2",
-            message: "VMR Garage: Your Honda Civic service reminder was sent.",
-            sentAt: new Date(),
-            read: false,
-        },
-        {
-            id: "3",
-            message: "VMR Garage: Your vehicle appointment reminder has been sent.",
-            sentAt: new Date(),
-            read: true,
-        },
-    ]);
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-    const markAsRead = (notificationId) => {
-        const updatedNotifications = notifications.map((notification) => {
-            if (notification.id === notificationId) {
-                return {
-                    ...notification,
-                    read: true,
-                };
+    useEffect(() => {
+        let unsubscribeNotifications = null;
+
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                setNotifications([]);
+                setLoading(false);
+                return;
             }
 
-            return notification;
+            console.log("Customer UID:", user.uid);
+
+            const notificationsQuery = query(
+                collection(db, "notifications"),
+                where("customerId", "==", user.uid)
+            );
+
+            unsubscribeNotifications = onSnapshot(
+                notificationsQuery,
+                (snapshot) => {
+                    const notificationList = snapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+
+                    notificationList.sort((a, b) => {
+                        const dateA = a.sentAt?.toDate ? a.sentAt.toDate() : new Date(0);
+                        const dateB = b.sentAt?.toDate ? b.sentAt.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    setNotifications(notificationList);
+                    setLoading(false);
+                },
+                (error) => {
+                    console.error("Error loading notifications:", error);
+                    setError("Failed to load notifications.");
+                    setLoading(false);
+                }
+            );
         });
 
-        setNotifications(updatedNotifications);
+        return () => {
+            unsubscribeAuth();
+
+            if (unsubscribeNotifications) {
+                unsubscribeNotifications();
+            }
+        };
+    }, []);
+
+    const markAsRead = async (notificationId, alreadyRead) => {
+        if (alreadyRead) return;
+
+        try {
+            const notificationRef = doc(db, "notifications", notificationId);
+
+            await updateDoc(notificationRef, {
+                read: true,
+            });
+        } catch (error) {
+            console.error("Error marking notification as read:", error);
+        }
     };
 
-    const unreadCount = notifications.filter(
-        (notification) => notification.read === false
-    ).length;
+    const formatDate = (sentAt) => {
+        if (!sentAt) {
+            return "No date";
+        }
+
+        if (sentAt.toDate) {
+            return sentAt.toDate().toLocaleString();
+        }
+
+        return new Date(sentAt).toLocaleString();
+    };
+
+    if (loading) {
+        return <p>Loading notifications...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
 
     return (
         <div>
             <h1>Notifications</h1>
 
-            <p>
-                Unread notifications: <strong>{unreadCount}</strong>
-            </p>
-
-            {notifications.map((notification) => (
-                <div
-                    key={notification.id}
-                    onClick={() => markAsRead(notification.id)}
-                    className={`notification-card ${notification.read ? "read" : "unread"}`}
-                >
-                    <div>
-                        <p>{notification.message}</p>
-                        <small>{notification.sentAt.toLocaleString()}</small>
-                    </div>
-
-                    {!notification.read && (
-                        <div className="notification-alert">
-                            !
+            {notifications.length === 0 ? (
+                <p>No notifications yet.</p>
+            ) : (
+                notifications.map((notification) => (
+                    <div
+                        key={notification.id}
+                        onClick={() =>
+                            markAsRead(notification.id, notification.read)
+                        }
+                        className={`notification-card ${notification.read ? "read" : "unread"
+                            }`}
+                    >
+                        <div>
+                            <p>{notification.message}</p>
+                            <small>{formatDate(notification.sentAt)}</small>
                         </div>
-                    )}
-                </div>
-            ))}
+
+                        {!notification.read && (
+                            <div className="notification-alert">!</div>
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     );
 }
