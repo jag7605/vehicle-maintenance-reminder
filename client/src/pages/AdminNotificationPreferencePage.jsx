@@ -1,19 +1,18 @@
 import StaffLayout from "../component/StaffLayout";
 import { useNotificationPreferences } from "../hooks/useNotificationPreferences";
 import NotificationPreferenceForm from "../component/NotificationPreferenceForm";
- 
+
 const FIELDS = [
   { key: "browser", label: "Browser Notifications" },
   { key: "email", label: "Email Notifications" },
-  { key: "newJobs", label: "New Job Alerts" },
-  { key: "newBookings", label: "New Booking Alerts" },
+  { key: "sms", label: "SMS Notifications" },
 ];
- 
-const DEFAULTS = { browser: false, email: false, newJobs: false, newBookings: false };
- 
+
+const DEFAULTS = { browser: false, email: false, sms: false };
+
 function AdminNotificationPreferencePage() {
   const { prefs, setPref, save, message } = useNotificationPreferences(DEFAULTS);
- 
+
   return (
     <StaffLayout title="Notification Preferences">
       <h2>Notification Preferences</h2>
@@ -27,5 +26,5 @@ function AdminNotificationPreferencePage() {
     </StaffLayout>
   );
 }
- 
+
 export default AdminNotificationPreferencePage;

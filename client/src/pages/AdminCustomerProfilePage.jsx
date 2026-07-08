@@ -6,6 +6,7 @@ import AddVehicleForm from "../component/customerProfile/AddVehicleForm";
 import EditVehicleModal from "../component/customerProfile/EditVehicleModal";
 import DeleteVehicleModal from "../component/customerProfile/DeleteVehicleModal";
 import StatusConfirmModal from "../component/customerProfile/StatusConfirmModal";
+import SendNotificationModal from "../component/customerProfile/SendNotificationModal";
 
 // ---------------------------------------------------------------------------
 // Admin Customer Profile page.
@@ -26,10 +27,10 @@ function AdminCustomerProfilePage() {
     editPopup,
     deletePopup,
     statusPopup,
+    notifyPopup,
     reminderLoading,
     reminderResult,
     expandedHistory,
-    handleSendReminder,
     toggleHistory,
   } = useCustomerProfile(customerId);
 
@@ -60,13 +61,14 @@ function AdminCustomerProfilePage() {
           expandedHistory={expandedHistory}
           onEdit={editPopup.open}
           onDelete={deletePopup.open}
-          onSendReminder={handleSendReminder}
+          onOpenNotify={notifyPopup.open}
           onToggleHistory={toggleHistory}
         />
 
         <EditVehicleModal popup={editPopup} />
         <DeleteVehicleModal popup={deletePopup} />
         <StatusConfirmModal popup={statusPopup} customer={customer} isActive={isActive} />
+        <SendNotificationModal popup={notifyPopup} />
 
         <AddVehicleForm
           customerName={`${customer.firstName} ${customer.lastName}`}

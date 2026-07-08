@@ -4,9 +4,12 @@ const { db } = require("../firebase/adminConfig");
 const { sendReminder } = require("../services/notificationService");
 
 // POST /api/admin/send-reminder/:vehicleId
-// Manually triggers a reminder for a specific vehicle immediately
+// Manually triggers a reminder for a specific vehicle immediately.
+// Body: { type: "serviceDue" | "carReady" } — defaults to "serviceDue" if
+// omitted, so any existing callers that don't send a body keep working.
 router.post("/send-reminder/:vehicleId", async (req, res) => {
   const { vehicleId } = req.params;
+  const { type } = req.body || {};
 
   try {
     // Step 1: Fetch the vehicle document by ID
@@ -23,8 +26,8 @@ router.post("/send-reminder/:vehicleId", async (req, res) => {
     }
     const customer = { id: customerDoc.id, ...customerDoc.data() };
 
-    // Step 3: Send the reminder and return the delivery status
-    const deliveryStatus = await sendReminder(vehicle, customer);
+    // Step 3: Send the reminder (branches on type) and return the delivery status
+    const deliveryStatus = await sendReminder(vehicle, customer, type);
     return res.json({ success: true, deliveryStatus });
   } catch (err) {
     // Returns the actual error message (e.g. "No service date set for this vehicle...")

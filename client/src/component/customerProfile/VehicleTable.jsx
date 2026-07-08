@@ -6,6 +6,9 @@ import VehicleNotificationHistory from "../VehicleNotificationHistory";
 // ---------------------------------------------------------------------------
 // Renders the customer's vehicle list, plus each row's inline reminder
 // result and expandable notification history. Pure presentational.
+//
+// "Send Reminder" now opens the notify popup (onOpenNotify) rather than
+// firing the API call directly — the popup is what actually sends it.
 // ---------------------------------------------------------------------------
 function VehicleTable({
   vehicles,
@@ -14,7 +17,7 @@ function VehicleTable({
   expandedHistory,
   onEdit,
   onDelete,
-  onSendReminder,
+  onOpenNotify,
   onToggleHistory,
 }) {
   if (vehicles.length === 0) {
@@ -58,8 +61,8 @@ function VehicleTable({
                 <td>
                   <button onClick={() => onEdit(vehicle)}>Edit</button>{" "}
                   <button onClick={() => onDelete(vehicle)}>Delete</button>{" "}
-                  <button onClick={() => onSendReminder(vehicle.id)} disabled={isLoadingReminder}>
-                    {isLoadingReminder ? "Sending..." : "Send Reminder"}
+                  <button onClick={() => onOpenNotify(vehicle)} disabled={isLoadingReminder}>
+                    {isLoadingReminder ? "Sending..." : "Send Notification"}
                   </button>{" "}
                   <button onClick={() => onToggleHistory(vehicle.id)}>
                     {historyOpen ? "Hide History" : "Show History"}
@@ -72,7 +75,7 @@ function VehicleTable({
                   <td colSpan="8">
                     {result.success ? (
                       <span>
-                        <strong>Reminder sent.</strong>{" "}
+                        <strong>Notification sent.</strong>{" "}
                         <DeliveryStatusBadges deliveryStatus={result.deliveryStatus} />
                       </span>
                     ) : (

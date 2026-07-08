@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 //
 // Owns every piece of state and every handler for the Admin Customer Profile
 // page: loading the customer + their vehicles, the add-vehicle form, the
-// edit/delete/status-toggle popups, and the send-reminder / history actions.
+// edit/delete/status-toggle popups, and the send-notification popup + action.
 // ---------------------------------------------------------------------------
 export function useCustomerProfile(customerId) {
   const [customer, setCustomer] = useState(null);
@@ -49,7 +49,10 @@ export function useCustomerProfile(customerId) {
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState("");
 
-  // Send Reminder — keyed by vehicleId so buttons are independent
+  // Send Notification popup — which vehicle it's open for, plus per-vehicle
+  // loading/result state so multiple rows stay independent
+  const [notifyingVehicle, setNotifyingVehicle] = useState(null);
+  const [notifyError, setNotifyError] = useState("");
   const [reminderLoading, setReminderLoading] = useState({});
   const [reminderResult, setReminderResult] = useState({});
 
@@ -215,15 +218,36 @@ export function useCustomerProfile(customerId) {
     }
   }
 
-  // --- Send Reminder — POST /api/admin/send-reminder/:vehicleId -----------
+  // --- Send Notification popup ---------------------------------------------
+  // Opens a popup asking which message type to send for a given vehicle.
 
-  async function handleSendReminder(vehicleId) {
+  function openNotifyPopup(vehicle) {
+    setNotifyingVehicle(vehicle);
+    setNotifyError("");
+  }
+
+  function closeNotifyPopup() {
+    setNotifyingVehicle(null);
+    setNotifyError("");
+  }
+
+  // type: "serviceDue" | "carReady"
+  // NOTE: the backend route currently accepts no body. It needs to be
+  // updated to read `type` from the POST body and pick the matching
+  // message template — this call already sends it, ready for that change.
+  async function handleSendNotification(type) {
+    if (!notifyingVehicle) return;
+    const vehicleId = notifyingVehicle.id;
+
+    setNotifyError("");
     setReminderLoading((prev) => ({ ...prev, [vehicleId]: true }));
     setReminderResult((prev) => ({ ...prev, [vehicleId]: null }));
 
     try {
       const res = await fetch(`${API_URL}/api/admin/send-reminder/${vehicleId}`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type }),
       });
       const data = await res.json();
 
@@ -232,17 +256,12 @@ export function useCustomerProfile(customerId) {
           ...prev,
           [vehicleId]: { success: true, deliveryStatus: data.deliveryStatus },
         }));
+        setNotifyingVehicle(null);
       } else {
-        setReminderResult((prev) => ({
-          ...prev,
-          [vehicleId]: { success: false, error: data.error || "Unknown error." },
-        }));
+        setNotifyError(data.error || "Unknown error.");
       }
     } catch {
-      setReminderResult((prev) => ({
-        ...prev,
-        [vehicleId]: { success: false, error: "Could not reach the server." },
-      }));
+      setNotifyError("Could not reach the server.");
     } finally {
       setReminderLoading((prev) => ({ ...prev, [vehicleId]: false }));
     }
@@ -317,10 +336,18 @@ export function useCustomerProfile(customerId) {
       onConfirm: handleToggleActive,
     },
 
+    notifyPopup: {
+      vehicle: notifyingVehicle,
+      error: notifyError,
+      loading: notifyingVehicle ? !!reminderLoading[notifyingVehicle.id] : false,
+      open: openNotifyPopup,
+      close: closeNotifyPopup,
+      onSelect: handleSendNotification,
+    },
+
     reminderLoading,
     reminderResult,
     expandedHistory,
-    handleSendReminder,
     toggleHistory,
   };
 }

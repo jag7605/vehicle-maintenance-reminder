@@ -1,15 +1,17 @@
 function NotificationPreferenceForm({ fields, prefs, setPref, onSave, message }) {
   return (
     <div>
-      {fields.map(({ key, label }) => (
+      {fields.map(({ key, label, locked }) => (
         <div key={key}>
           <label>
             <input
               type="checkbox"
-              checked={prefs[key]}
+              checked={locked ? true : prefs[key]}
+              disabled={locked}
               onChange={(e) => setPref(key, e.target.checked)}
             />
             {" "}{label}
+            {locked && <span style={{ color: "#888" }}> (always on)</span>}
           </label>
           <br /><br />
         </div>
