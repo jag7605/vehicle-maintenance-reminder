@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, query, where, onSnapshot, doc, updateDoc,} from "firebase/firestore";
+import { collection,  query,  where, onSnapshot, doc, updateDoc,} from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
 import "./CustomerNotificationPage.css";
 
@@ -35,8 +35,14 @@ function CustomerNotificationPage() {
                     }));
 
                     notificationList.sort((a, b) => {
-                        const dateA = a.sentAt?.toDate ? a.sentAt.toDate() : new Date(0);
-                        const dateB = b.sentAt?.toDate ? b.sentAt.toDate() : new Date(0);
+                        const dateA = a.sentAt?.toDate
+                            ? a.sentAt.toDate()
+                            : new Date(0);
+
+                        const dateB = b.sentAt?.toDate
+                            ? b.sentAt.toDate()
+                            : new Date(0);
+
                         return dateB - dateA;
                     });
 
@@ -79,12 +85,20 @@ function CustomerNotificationPage() {
             return "No date";
         }
 
-        if (sentAt.toDate) {
-            return sentAt.toDate().toLocaleString();
-        }
+        const date = sentAt.toDate ? sentAt.toDate() : new Date(sentAt);
 
-        return new Date(sentAt).toLocaleString();
+        return date.toLocaleString("en-NZ", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+        });
     };
+
+    const unreadCount = notifications.filter(
+        (notification) => notification.read === false
+    ).length;
 
     if (loading) {
         return <p>Loading notifications...</p>;
@@ -98,6 +112,10 @@ function CustomerNotificationPage() {
         <div>
             <h1>Notifications</h1>
 
+            <p className="notification-count">
+                Unread notifications: <strong>{unreadCount}</strong>
+            </p>
+
             {notifications.length === 0 ? (
                 <p>No notifications yet.</p>
             ) : (
@@ -107,8 +125,9 @@ function CustomerNotificationPage() {
                         onClick={() =>
                             markAsRead(notification.id, notification.read)
                         }
-                        className={`notification-card ${notification.read ? "read" : "unread"
-                            }`}
+                        className={`notification-card ${
+                            notification.read ? "read" : "unread"
+                        }`}
                     >
                         <div>
                             <p>{notification.message}</p>
