@@ -24,18 +24,7 @@ export function useReminderLog() {
     load();
   }, []);
  
-  async function markRead(notifId) {
-    try {
-      await updateDoc(doc(db, "notifications", notifId), { read: true });
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === notifId ? { ...n, read: true } : n))
-      );
-    } catch {
-      // Silent fail — non-critical action
-    }
-  }
- 
   const unreadCount = notifications.filter((n) => !n.read).length;
  
-  return { notifications, loading, error, unreadCount, markRead };
+  return { notifications, loading, error, unreadCount };
 }

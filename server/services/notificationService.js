@@ -13,8 +13,6 @@ const SMS_ENABLED = process.env.SMS_ENABLED === "true";
 // Add new types here as they come up (e.g. "invoiceReady").
 // ---------------------------------------------------------------------------
 function buildServiceDueContent(vehicle, customer) {
-  // Guard: do not send if no service date has been set on the vehicle.
-  // Only relevant for this type — "carReady" doesn't need a service date.
   if (!vehicle.nextServiceDate) {
     throw new Error(
       "No service date set for this vehicle. Please set a service date before sending a reminder."
@@ -55,8 +53,6 @@ const CONTENT_BUILDERS = {
   carReady: buildCarReadyContent,
 };
 
-// type: "serviceDue" | "carReady" — defaults to "serviceDue" so any existing
-// callers that don't pass a type keep behaving exactly as before.
 async function sendReminder(vehicle, customer, type = "serviceDue") {
   const buildContent = CONTENT_BUILDERS[type];
   if (!buildContent) {
@@ -65,7 +61,6 @@ async function sendReminder(vehicle, customer, type = "serviceDue") {
 
   const { subject, message } = buildContent(vehicle, customer);
 
-  // Default to empty object if notificationPreferences is missing
   const prefs = customer.notificationPreferences || {};
   const deliveryStatus = {};
 
@@ -74,35 +69,49 @@ async function sendReminder(vehicle, customer, type = "serviceDue") {
     try {
       await sendEmail(customer.email, subject, message);
       deliveryStatus.email = "sent";
-    } catch {
+    } catch (err) {
+      console.error(`[notificationService] Email failed for customer ${customer.id}:`, err);
       deliveryStatus.email = "failed";
     }
   }
 
   // SMS — skipped entirely if SMS_ENABLED is false, no Vonage credit consumed.
-  // To enable: set SMS_ENABLED=true in .env and restart the server.
   if (prefs.sms && SMS_ENABLED) {
     try {
       await sendSMS(customer.phone, message);
       deliveryStatus.sms = "sent";
-    } catch {
+    } catch (err) {
+      console.error(`[notificationService] SMS failed for customer ${customer.id}:`, err);
       deliveryStatus.sms = "failed";
     }
   }
 
   // Browser push — only attempted if customer has browser notifications enabled
-  // pushSubscription will be absent until the frontend pair stores it in Week 2,
-  // so this will record "failed" during Week 1 testing — that is expected
   if (prefs.browser) {
-    try {
-      await sendPush(customer.pushSubscription, message);
-      deliveryStatus.browser = "sent";
-    } catch {
+    if (!customer.pushSubscription) {
+      // No point calling sendPush at all without a subscription — log a
+      // clearer reason than a generic webpush error would give.
+      console.error(
+        `[notificationService] Browser push skipped for customer ${customer.id}: no pushSubscription saved.`
+      );
       deliveryStatus.browser = "failed";
+    } else {
+      try {
+        await sendPush(customer.pushSubscription, message);
+        deliveryStatus.browser = "sent";
+      } catch (err) {
+        // This is the log to watch — statusCode 404/410 means the
+        // subscription is stale/expired; 401/403 usually means a VAPID
+        // key mismatch between frontend and backend.
+        console.error(
+          `[notificationService] Push failed for customer ${customer.id}:`,
+          err.statusCode ? `status ${err.statusCode} — ${err.body || err.message}` : err
+        );
+        deliveryStatus.browser = "failed";
+      }
     }
   }
 
-  // Write the notification record to Firestore
   await db.collection("notifications").add({
     customerId: customer.id,
     vehicleId: vehicle.id,

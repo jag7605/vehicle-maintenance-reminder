@@ -11,7 +11,7 @@ import StaffNotificationLog from "../component/adminNotifications/StaffNotificat
 // ---------------------------------------------------------------------------
 function AdminNotificationPage() {
   const [activeTab, setActiveTab] = useState("reminders"); // "reminders" | "staff"
-  const { notifications, loading, error, unreadCount, markRead } = useReminderLog();
+  const { notifications, loading, error, unreadCount } = useReminderLog();
  
   return (
     <StaffLayout title="Notifications">
@@ -35,15 +35,14 @@ function AdminNotificationPage() {
           <h3>Customer Reminder Log</h3>
           <p style={{ color: "#555", marginBottom: "12px" }}>
             All reminders sent to customers — manually triggered or automated by
-            the daily schedule. Click "Mark as Read" to track which ones you've
-            already followed up on.
+            the daily schedule. Status shows whether the customer has read
+            each one on their end.
           </p>
           <ReminderLog
             notifications={notifications}
             loading={loading}
             error={error}
             unreadCount={unreadCount}
-            onMarkRead={markRead}
           />
         </>
       )}
