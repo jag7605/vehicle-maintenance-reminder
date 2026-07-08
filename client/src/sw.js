@@ -1,14 +1,10 @@
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-});
- 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
-});
- 
+import { precacheAndRoute } from "workbox-precaching";
+
+precacheAndRoute(self.__WB_MANIFEST);
+
 self.addEventListener("push", (event) => {
   let data = {};
- 
+
   try {
     data = event.data ? event.data.json() : {};
   } catch {
@@ -17,18 +13,18 @@ self.addEventListener("push", (event) => {
     // notification still shows rather than silently dropping.
     data = { message: event.data ? event.data.text() : "You have a new notification." };
   }
- 
+
   const title = data.title || "Garage Notification";
   const options = {
     body: data.message || "You have a new notification.",
-    icon: "/notification-icon.png", // optional — safe to remove if you don't have one
-    badge: "/notification-icon.png",
+    icon: "/icon-192.png",
+    badge: "/icon-192.png",
   };
- 
+
   event.waitUntil(self.registration.showNotification(title, options));
 });
- 
-// Optional: focus/open the app when the notification itself is clicked
+
+// Focus/open the app when the notification itself is clicked
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(

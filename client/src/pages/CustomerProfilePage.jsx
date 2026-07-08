@@ -9,9 +9,14 @@ const FIELDS = [
  
 const DEFAULTS = { browser: false, email: false, sms: true };
 const LOCKED_FIELDS = ["sms"];
+const PUSH_MANAGED_FIELDS = ["browser"];
 
 function CustomerProfilePage() {
-  const { prefs, setPref, save, message } = useNotificationPreferences(DEFAULTS, LOCKED_FIELDS);
+  const { prefs, setPref, save, message } = useNotificationPreferences(
+    DEFAULTS,
+    LOCKED_FIELDS,
+    PUSH_MANAGED_FIELDS
+  );
  
   return (
     <div>
