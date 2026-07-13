@@ -62,7 +62,7 @@ export async function updateVehicle(vehicleId, updates) {
     firestoreUpdates.nextServiceMileage = null;
   }
 
-  // ✅ Pass firestoreUpdates (not the raw updates object)
+  // Pass firestoreUpdates (not the raw updates object)
   await updateDoc(vehicleRef, firestoreUpdates);
 }
 
