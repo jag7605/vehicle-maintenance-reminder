@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const remindersRouter = require("./routes/reminders");
+const appointmentsRouter = require("./routes/appointments");
 const { startScheduledReminders } = require("./jobs/scheduledReminders");
 
 const app = express();
@@ -17,6 +18,10 @@ app.get("/api/health", (req, res) => {
 
 // Admin reminder routes — manual trigger endpoint lives here
 app.use("/api/admin", remindersRouter);
+
+// Admin appointment routes — status update (Sprint 4 Step 3) and
+// availability lookup (Sprint 4 Step 4)
+app.use("/api/admin", appointmentsRouter);
 
 // Start the daily scheduled reminders cron job
 startScheduledReminders();
