@@ -4,11 +4,16 @@
 
 .calendar-wrapper {
   height: 500px;
+  min-height: 500px;
   margin-bottom: 24px;
   background-color: white;
 }
 
-/* Makes future days from next/previous month not look disabled */
+/* Forces react-big-calendar to use the full wrapper height */
+.calendar-wrapper .rbc-calendar {
+  height: 100%;
+}
+
 .rbc-off-range-bg {
   background-color: white;
 }
@@ -17,20 +22,22 @@
   color: black;
 }
 
-/* Past dates and Sundays */
 .blocked-day {
   background-color: #e5e7eb !important;
   color: #9ca3af !important;
   cursor: not-allowed;
 }
 
-/* Selected date */
 .selected-day {
   background-color: #dbeafe !important;
 }
 
 .error-message {
   color: red;
+}
+
+.success-message {
+  color: green;
 }
 
 .slots-section {
@@ -53,6 +60,51 @@
 }
 
 .slot-button.booked {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.selected-slot {
+  background-color: #f59e0b;
+}
+
+.booking-form {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.booking-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: bold;
+}
+
+.booking-form select,
+.booking-form textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.booking-form textarea {
+  min-height: 80px;
+}
+
+.book-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #16a34a;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.book-button:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
 }

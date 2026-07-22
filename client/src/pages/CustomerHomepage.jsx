@@ -43,7 +43,7 @@ function CustomerHomepage() {
             appointment.status === "confirmed";
 
           if (isUpcoming && isActive) {
-            let vehicleText = appointment.vehicleId;
+            let vehicleText = "Vehicle";
 
             try {
               const vehicleRef = doc(db, "vehicles", appointment.vehicleId);
@@ -54,9 +54,12 @@ function CustomerHomepage() {
 
                 const make = vehicle.make || "";
                 const model = vehicle.model || "";
-                const plate = vehicle.plate || appointment.vehicleId;
+                const plate =
+                  vehicle.plate || vehicle.registration || vehicle.rego;
 
-                vehicleText = `${make} ${model} - ${plate}`;
+                vehicleText = plate
+                  ? `${make} ${model} - ${plate}`
+                  : `${make} ${model}`;
               }
             } catch (error) {
               console.error("Could not load vehicle:", error);
@@ -98,6 +101,7 @@ function CustomerHomepage() {
   }
 
   function formatStatus(status) {
+    if (!status) return "";
     return status.charAt(0).toUpperCase() + status.slice(1);
   }
 

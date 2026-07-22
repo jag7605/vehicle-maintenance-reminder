@@ -1,6 +1,6 @@
-import { collection, getDocs, query, where, orderBy, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy,doc, updateDoc, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
- 
+
 const API_URL = import.meta.env.VITE_API_URL;
   
 export async function getAllAppointments() {
@@ -66,7 +66,28 @@ export async function updateAppointmentStatus(appointmentId, status) {
  
   return data; // { success, deliveryStatus }
 }
- 
+
+ export async function createAppointment(customerId, vehicleId, date, notes = "") {
+  const appointmentData = {
+    customerId: customerId,
+    vehicleId: vehicleId,
+    date: Timestamp.fromDate(date),
+    status: "pending",
+    createdAt: Timestamp.now(),
+  };
+
+  if (notes.trim() !== "") {
+    appointmentData.notes = notes.trim();
+  }
+
+  const docRef = await addDoc(collection(db, "appointments"), appointmentData);
+
+  return {
+    id: docRef.id,
+    ...appointmentData,
+  };
+}
+
 export async function cancelAppointment(appointmentId) {
   const apptRef = doc(db, "appointments", appointmentId);
   await updateDoc(apptRef, { status: "cancelled" });
