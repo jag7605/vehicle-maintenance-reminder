@@ -8,7 +8,12 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enNZ from "date-fns/locale/en-NZ";
 import { db } from "../firebase/firebaseConfig";
-import { getAvailability, createAppointment } from "../firebase/appointments";
+import {
+  getAvailability,
+  createAppointment,
+  getAppointmentsByCustomer,
+  cancelAppointment,
+} from "../firebase/appointments";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./CustomerAppointmentsPage.css";
 
@@ -34,6 +39,8 @@ const SERVICE_TYPES = [
 ];
 
 function CustomerAppointmentsPage() {
+  const [activeTab, setActiveTab] = useState("book");
+
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [calendarView, setCalendarView] = useState("month");
 
@@ -46,13 +53,15 @@ function CustomerAppointmentsPage() {
   const [serviceType, setServiceType] = useState("");
   const [notes, setNotes] = useState("");
 
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [error, setError] = useState("");
   const [bookingMessage, setBookingMessage] = useState("");
 
   useEffect(() => {
-    async function loadVehicles() {
+    async function loadPageData() {
       try {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -67,21 +76,23 @@ function CustomerAppointmentsPage() {
           where("ownerId", "==", user.uid)
         );
 
-        const snapshot = await getDocs(vehiclesQuery);
+        const vehicleSnapshot = await getDocs(vehiclesQuery);
 
-        const vehicleList = snapshot.docs.map((doc) => ({
+        const vehicleList = vehicleSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
         setVehicles(vehicleList);
+
+        await loadUpcomingAppointments(user.uid, vehicleList);
       } catch (error) {
-        console.error("Could not load vehicles:", error);
-        setError("Could not load your vehicles.");
+        console.error("Could not load page data:", error);
+        setError("Could not load your appointment details.");
       }
     }
 
-    loadVehicles();
+    loadPageData();
   }, []);
 
   function getToday() {
@@ -130,13 +141,27 @@ function CustomerAppointmentsPage() {
     });
   }
 
+  function formatAppointmentDate(date) {
+    return date.toLocaleString("en-NZ", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
   function dayPropGetter(date) {
     if (isPastDate(date) || isSunday(date)) {
-      return { className: "blocked-day" };
+      return {
+        className: "blocked-day",
+      };
     }
 
     if (isSameDay(date, selectedDate)) {
-      return { className: "selected-day" };
+      return {
+        className: "selected-day",
+      };
     }
 
     return {};
@@ -156,6 +181,56 @@ function CustomerAppointmentsPage() {
       setError("Could not load available appointment slots.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadUpcomingAppointments(customerId, vehicleList = vehicles) {
+    try {
+      const appointments = await getAppointmentsByCustomer(customerId);
+      const now = new Date();
+
+      const upcoming = appointments
+        .filter((appointment) => {
+          const appointmentDate = appointment.date?.toDate
+            ? appointment.date.toDate()
+            : new Date(appointment.date);
+
+          const isUpcoming = appointmentDate >= now;
+          const isActive =
+            appointment.status === "pending" ||
+            appointment.status === "confirmed";
+
+          return isUpcoming && isActive;
+        })
+        .map((appointment) => {
+          const appointmentDate = appointment.date?.toDate
+            ? appointment.date.toDate()
+            : new Date(appointment.date);
+
+          const vehicle = vehicleList.find(
+            (vehicle) => vehicle.id === appointment.vehicleId
+          );
+
+          let vehicleName = "Vehicle";
+
+          if (vehicle) {
+            const plate = vehicle.plate || vehicle.registration || vehicle.rego;
+
+            vehicleName = plate
+              ? `${vehicle.make} ${vehicle.model} - ${plate}`
+              : `${vehicle.make} ${vehicle.model}`;
+          }
+
+          return {
+            ...appointment,
+            appointmentDate,
+            vehicleName,
+          };
+        });
+
+      setUpcomingAppointments(upcoming);
+    } catch (error) {
+      console.error("Could not load upcoming appointments:", error);
     }
   }
 
@@ -186,6 +261,7 @@ function CustomerAppointmentsPage() {
 
     setSelectedDate(clickedDate);
     setSelectedSlot("");
+
     await loadAvailability(clickedDate);
   }
 
@@ -266,133 +342,237 @@ function CustomerAppointmentsPage() {
       setNotes("");
 
       await loadAvailability(selectedDate);
+      await loadUpcomingAppointments(user.uid);
+
+      setActiveTab("upcoming");
     } catch (error) {
       console.error("Could not book appointment:", error);
-      setError("Could not book appointment. Please try again.");
+      setError(error.message || "Could not book appointment. Please try again.");
     } finally {
       setBookingLoading(false);
     }
   }
 
+  function isWithinCancelWindow(date) {
+    const now = new Date();
+    const differenceHours = (date.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    return differenceHours < 24;
+  }
+
+  async function handleCancelAppointment(appointment) {
+    try {
+      setError("");
+      setBookingMessage("");
+
+      if (isWithinCancelWindow(appointment.appointmentDate)) {
+        setError(
+          "This appointment can no longer be cancelled online because it starts in less than 24 hours."
+        );
+        return;
+      }
+
+      const confirmCancel = window.confirm(
+        "Are you sure you want to cancel this appointment?"
+      );
+
+      if (!confirmCancel) return;
+
+      await cancelAppointment(appointment.id);
+
+      setBookingMessage("Appointment cancelled successfully.");
+
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        await loadUpcomingAppointments(user.uid);
+      }
+
+      if (selectedDate) {
+        await loadAvailability(selectedDate);
+      }
+    } catch (error) {
+      console.error("Could not cancel appointment:", error);
+      setError("Could not cancel appointment. Please try again.");
+    }
+  }
+
   return (
     <div className="customer-appointments-page">
-      <h1>Book Appointment</h1>
+      <h1>Appointments</h1>
 
-      <p>Select a date on the calendar to view available appointment slots.</p>
+      <div className="appointment-tabs">
+        <button
+          type="button"
+          className={activeTab === "book" ? "tab-button active-tab" : "tab-button"}
+          onClick={() => setActiveTab("book")}
+        >
+          Book Appointment
+        </button>
 
-      <div className="calendar-wrapper">
-        <Calendar
-          localizer={localizer}
-          events={[]}
-          startAccessor="start"
-          endAccessor="end"
-          date={calendarDate}
-          view={calendarView}
-          views={["month", "week", "day"]}
-          selectable
-          onNavigate={(newDate) => setCalendarDate(newDate)}
-          onView={(newView) => setCalendarView(newView)}
-          onSelectSlot={handleSelectDate}
-          dayPropGetter={dayPropGetter}
-        />
+        <button
+          type="button"
+          className={
+            activeTab === "upcoming" ? "tab-button active-tab" : "tab-button"
+          }
+          onClick={() => setActiveTab("upcoming")}
+        >
+          My Upcoming Appointments
+        </button>
       </div>
-
-      {loading && <p>Loading available slots...</p>}
 
       {error && <p className="error-message">{error}</p>}
 
       {bookingMessage && <p className="success-message">{bookingMessage}</p>}
 
-      {selectedDate && availability && (
-        <div className="slots-section">
-          <h2>Available slots for {formatDisplayDate(selectedDate)}</h2>
+      {activeTab === "book" && (
+        <>
+          <p>Select a date on the calendar to view available appointment slots.</p>
 
-          {availability.closed && <p>The garage is closed on this day.</p>}
+          <div className="calendar-wrapper">
+            <Calendar
+              localizer={localizer}
+              events={[]}
+              startAccessor="start"
+              endAccessor="end"
+              date={calendarDate}
+              view={calendarView}
+              views={["month", "week", "day"]}
+              selectable
+              onNavigate={(newDate) => setCalendarDate(newDate)}
+              onView={(newView) => setCalendarView(newView)}
+              onSelectSlot={handleSelectDate}
+              dayPropGetter={dayPropGetter}
+            />
+          </div>
 
-          {!availability.closed && availability.slots.length === 0 && (
-            <p>No slots available for this date.</p>
+          {loading && <p>Loading available slots...</p>}
+
+          {selectedDate && availability && (
+            <div className="slots-section">
+              <h2>Available slots for {formatDisplayDate(selectedDate)}</h2>
+
+              {availability.closed && <p>The garage is closed on this day.</p>}
+
+              {!availability.closed && availability.slots.length === 0 && (
+                <p>No slots available for this date.</p>
+              )}
+
+              {!availability.closed && availability.slots.length > 0 && (
+                <>
+                  <div className="slot-buttons">
+                    {availability.slots.map((slot) => (
+                      <button
+                        key={slot.time}
+                        type="button"
+                        className={
+                          selectedSlot === slot.time
+                            ? "slot-button selected-slot"
+                            : slot.available
+                            ? "slot-button"
+                            : "slot-button booked"
+                        }
+                        disabled={!slot.available}
+                        onClick={() => setSelectedSlot(slot.time)}
+                      >
+                        {slot.time} {slot.available ? "" : "(Booked)"}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="booking-form">
+                    <label>
+                      Select vehicle:
+                      <select
+                        value={selectedVehicleId}
+                        onChange={(event) =>
+                          setSelectedVehicleId(event.target.value)
+                        }
+                      >
+                        <option value="">Choose a vehicle</option>
+
+                        {vehicles.map((vehicle) => (
+                          <option key={vehicle.id} value={vehicle.id}>
+                            {vehicle.make} {vehicle.model} -{" "}
+                            {vehicle.plate ||
+                              vehicle.registration ||
+                              vehicle.rego ||
+                              vehicle.id}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      Service type:
+                      <select
+                        value={serviceType}
+                        onChange={(event) => setServiceType(event.target.value)}
+                      >
+                        <option value="">Choose a service type</option>
+
+                        {SERVICE_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      Notes:
+                      <textarea
+                        value={notes}
+                        onChange={(event) => setNotes(event.target.value)}
+                        placeholder="Optional notes"
+                      />
+                    </label>
+
+                    <button
+                      type="button"
+                      className="book-button"
+                      onClick={handleBookAppointment}
+                      disabled={bookingLoading}
+                    >
+                      {bookingLoading ? "Booking..." : "Book Appointment"}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           )}
+        </>
+      )}
 
-          {!availability.closed && availability.slots.length > 0 && (
-            <>
-              <div className="slot-buttons">
-                {availability.slots.map((slot) => (
-                  <button
-                    key={slot.time}
-                    type="button"
-                    className={
-                      selectedSlot === slot.time
-                        ? "slot-button selected-slot"
-                        : slot.available
-                        ? "slot-button"
-                        : "slot-button booked"
-                    }
-                    disabled={!slot.available}
-                    onClick={() => setSelectedSlot(slot.time)}
-                  >
-                    {slot.time} {slot.available ? "" : "(Booked)"}
-                  </button>
-                ))}
-              </div>
+      {activeTab === "upcoming" && (
+        <div className="upcoming-list">
+          <h2>My Upcoming Appointments</h2>
 
-              <div className="booking-form">
-                <label>
-                  Select vehicle:
-                  <select
-                    value={selectedVehicleId}
-                    onChange={(event) =>
-                      setSelectedVehicleId(event.target.value)
-                    }
-                  >
-                    <option value="">Choose a vehicle</option>
+          {upcomingAppointments.length === 0 ? (
+            <p>You have no upcoming appointments.</p>
+          ) : (
+            upcomingAppointments.map((appointment) => (
+              <div key={appointment.id} className="upcoming-appointment-item">
+                <div>
+                  <strong>{appointment.vehicleName}</strong>
 
-                    {vehicles.map((vehicle) => (
-                      <option key={vehicle.id} value={vehicle.id}>
-                        {vehicle.make} {vehicle.model} -{" "}
-                        {vehicle.plate ||
-                          vehicle.registration ||
-                          vehicle.rego ||
-                          vehicle.id}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                  <p>{formatAppointmentDate(appointment.appointmentDate)}</p>
 
-                <label>
-                  Service type:
-                  <select
-                    value={serviceType}
-                    onChange={(event) => setServiceType(event.target.value)}
-                  >
-                    <option value="">Choose a service type</option>
+                  <p>Status: {appointment.status}</p>
 
-                    {SERVICE_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label>
-                  Notes:
-                  <textarea
-                    value={notes}
-                    onChange={(event) => setNotes(event.target.value)}
-                    placeholder="Optional notes"
-                  />
-                </label>
+                  <p>{appointment.notes || "Service appointment"}</p>
+                </div>
 
                 <button
                   type="button"
-                  className="book-button"
-                  onClick={handleBookAppointment}
-                  disabled={bookingLoading}
+                  className="cancel-button"
+                  onClick={() => handleCancelAppointment(appointment)}
                 >
-                  {bookingLoading ? "Booking..." : "Book Appointment"}
+                  Cancel
                 </button>
               </div>
-            </>
+            ))
           )}
         </div>
       )}

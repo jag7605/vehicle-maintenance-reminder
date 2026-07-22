@@ -2,6 +2,26 @@
   padding: 20px;
 }
 
+.appointment-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.active-tab {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
 .calendar-wrapper {
   height: 500px;
   min-height: 500px;
@@ -9,7 +29,6 @@
   background-color: white;
 }
 
-/* Forces react-big-calendar to use the full wrapper height */
 .calendar-wrapper .rbc-calendar {
   height: 100%;
 }
@@ -107,4 +126,31 @@
 .book-button:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
+}
+
+.upcoming-list {
+  margin-top: 20px;
+}
+
+.upcoming-appointment-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancel-button {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #b91c1c;
 }
