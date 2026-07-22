@@ -1,0 +1,58 @@
+.customer-appointments-page {
+  padding: 20px;
+}
+
+.calendar-wrapper {
+  height: 500px;
+  margin-bottom: 24px;
+  background-color: white;
+}
+
+/* Makes future days from next/previous month not look disabled */
+.rbc-off-range-bg {
+  background-color: white;
+}
+
+.rbc-off-range {
+  color: black;
+}
+
+/* Past dates and Sundays */
+.blocked-day {
+  background-color: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed;
+}
+
+/* Selected date */
+.selected-day {
+  background-color: #dbeafe !important;
+}
+
+.error-message {
+  color: red;
+}
+
+.slots-section {
+  margin-top: 20px;
+}
+
+.slot-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.slot-button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.slot-button.booked {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
