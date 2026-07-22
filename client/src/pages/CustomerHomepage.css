@@ -1,0 +1,98 @@
+.customer-dashboard {
+  color: white;
+}
+
+.upcoming-appointment-card {
+  background-color: #1b2f5c;
+  border: 1px solid #3b5c9c;
+  border-radius: 14px;
+  max-width: 760px;
+  overflow: hidden;
+}
+
+.appointment-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 18px 24px;
+  border-bottom: 1px solid #5d77ad;
+}
+
+.appointment-card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+}
+
+.view-all-button {
+  position: absolute;
+  right: 20px;
+  background-color: #ff9700;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-all-button:hover {
+  background-color: #e68600;
+}
+
+.appointment-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 120px;
+  align-items: center;
+  gap: 20px;
+  padding: 42px 26px;
+  border-bottom: 1px solid #5d77ad;
+  font-size: 22px;
+}
+
+.appointment-row:last-child {
+  border-bottom: none;
+}
+
+.appointment-date,
+.appointment-details {
+  color: white;
+}
+
+.status-badge {
+  justify-self: end;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.status-badge.confirmed {
+  background-color: #00e62e;
+}
+
+.status-badge.pending {
+  background-color: #ff9700;
+}
+
+.status-badge.cancelled {
+  background-color: #9ca3af;
+}
+
+.status-badge.rejected {
+  background-color: #9ca3af;
+}
+
+.appointment-message,
+.appointment-error {
+  padding: 30px;
+  font-size: 18px;
+}
+
+.appointment-error {
+  color: #ffb4b4;
+}

@@ -13,11 +13,21 @@ export async function getAllAppointments() {
 export async function getAppointmentsByCustomer(customerId) {
   const q = query(
     collection(db, "appointments"),
-    where("customerId", "==", customerId),
-    orderBy("date", "asc")
+    where("customerId", "==", customerId)
   );
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  const appointments = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  return appointments.sort((a, b) => {
+    const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+    const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+    return dateA - dateB;
+  });
 }
  
 // ---------------------------------------------------------------------------
