@@ -2,6 +2,7 @@ import { useState } from "react";
 import StaffLayout from "../component/StaffLayout";
 import BookingCalendar from "../component/booking/BookingCalendar";
 import BookingDetailModal from "../component/booking/BookingDetailModal";
+import AdminCreateBookingModal from "../component/booking/AdminCreateBookingModal";
 import { useAdminBookings } from "../hooks/useAdminBookings";
 
 function AdminBookingPage() {
@@ -12,9 +13,11 @@ function AdminBookingPage() {
     actionLoading,
     actionError,
     changeStatus,
+    refresh,
   } = useAdminBookings();
 
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Look the selected appointment up fresh each render so the modal reflects
   // status changes immediately (e.g. after Confirm, it flips to showing
@@ -31,9 +34,17 @@ function AdminBookingPage() {
     setSelectedAppointmentId(null);
   }
 
+  async function handleBookingCreated() {
+    setShowCreateModal(false);
+    await refresh();
+  }
+
   return (
     <StaffLayout title="Bookings">
-      <h2>Bookings</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Bookings</h2>
+        <button onClick={() => setShowCreateModal(true)}>+ New Booking</button>
+      </div>
 
       {loading && <p>Loading bookings...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -54,6 +65,13 @@ function AdminBookingPage() {
           onComplete={() => changeStatus(selectedAppointment.id, "completed")}
           loading={actionLoading[selectedAppointment.id]}
           error={actionError[selectedAppointment.id]}
+        />
+      )}
+
+      {showCreateModal && (
+        <AdminCreateBookingModal
+          onClose={() => setShowCreateModal(false)}
+          onCreated={handleBookingCreated}
         />
       )}
     </StaffLayout>

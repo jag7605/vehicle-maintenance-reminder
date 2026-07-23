@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
@@ -38,7 +39,7 @@ function appointmentToEvent(appointment) {
 
   return {
     id: appointment.id,
-    title: `${appointment.vehicleLabel} — ${appointment.customerName}`,
+    title: `${appointment.serviceType || "Service"} — ${appointment.customerName}`,
     start,
     end,
     status: appointment.status,
@@ -57,7 +58,20 @@ function eventPropGetter(event) {
 }
 
 function BookingCalendar({ appointments, onSelectEvent }) {
-  const events = appointments.map(appointmentToEvent);
+  // Calendar must be controlled (date + view + onNavigate + onView) or the
+  // toolbar's Next/Back/Month/Week/Day buttons have no state to update and
+  // silently do nothing — same reason CustomerAppointmentsPage.jsx's
+  // calendar already works, since it controls these explicitly.
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [calendarView, setCalendarView] = useState("week");
+
+  // Rejected bookings never occupied a real slot from the customer's
+  // perspective going forward, so drop them from the grid entirely instead
+  // of showing a greyed-out event. They're still in Firestore for records —
+  // just not rendered here.
+  const events = appointments
+    .filter((appointment) => appointment.status !== "rejected")
+    .map(appointmentToEvent);
 
   return (
     <div style={{ height: "700px" }}>
@@ -66,8 +80,11 @@ function BookingCalendar({ appointments, onSelectEvent }) {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        defaultView="week"
+        date={calendarDate}
+        view={calendarView}
         views={["month", "week", "day"]}
+        onNavigate={(newDate) => setCalendarDate(newDate)}
+        onView={(newView) => setCalendarView(newView)}
         min={CALENDAR_MIN_TIME}
         max={CALENDAR_MAX_TIME}
         eventPropGetter={eventPropGetter}
@@ -75,9 +92,12 @@ function BookingCalendar({ appointments, onSelectEvent }) {
         popup
       />
 
-      {/* Legend — status colour key */}
+      {/* Legend — status colour key. "rejected" isn't listed since those
+          events are filtered off the calendar entirely. */}
       <div style={{ display: "flex", gap: "16px", marginTop: "12px", fontSize: "14px" }}>
-        {Object.entries(STATUS_COLORS).map(([status, color]) => (
+        {Object.entries(STATUS_COLORS)
+          .filter(([status]) => status !== "rejected")
+          .map(([status, color]) => (
           <span key={status} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span
               style={{

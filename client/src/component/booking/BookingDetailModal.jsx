@@ -43,6 +43,7 @@ function BookingDetailModal({
         <p><strong>Customer:</strong> {appointment.customerName}</p>
         {appointment.customerPhone && <p><strong>Phone:</strong> {appointment.customerPhone}</p>}
         <p><strong>Date:</strong> {formatDate(appointment.date)}</p>
+        <p><strong>Service type:</strong> {appointment.serviceType || "—"}</p>
         <p><strong>Status:</strong> {status}</p>
         {appointment.notes && <p><strong>Notes:</strong> {appointment.notes}</p>}
 

@@ -325,15 +325,12 @@ function CustomerAppointmentsPage() {
         minute
       );
 
-      const bookingNotes = notes.trim()
-        ? `${serviceType} - ${notes.trim()}`
-        : serviceType;
-
       await createAppointment(
         user.uid,
         selectedVehicleId,
         appointmentDate,
-        bookingNotes
+        serviceType,
+        notes
       );
 
       setBookingMessage("Appointment booking request submitted.");
@@ -561,7 +558,9 @@ function CustomerAppointmentsPage() {
 
                   <p>Status: {appointment.status}</p>
 
-                  <p>{appointment.notes || "Service appointment"}</p>
+                  <p>{appointment.serviceType || "Service appointment"}</p>
+
+                  {appointment.notes && <p>{appointment.notes}</p>}
                 </div>
 
                 <button

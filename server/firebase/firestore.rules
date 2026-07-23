@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && isAdmin();
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+        !("active" in request.resource.data.diff(resource.data).affectedKeys());
+    }
+    match /vehicles/{vehicleId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.ownerId == request.auth.uid);
+      allow write: if isAdmin();
+    }
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.customerId == request.auth.uid);
+      allow update: if isSignedIn() && request.auth.uid == resource.data.customerId &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["read"]);
+    }
+    match /appointments/{appointmentId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.customerId == request.auth.uid);
+
+      // Two ways to create a pending appointment:
+      //  1. A customer booking for themselves — customerId must match the
+      //     signed-in user, and the vehicle must be one they own.
+      //  2. An admin booking on a customer's behalf — the vehicle must
+      //     belong to the customerId named on the appointment, not to the
+      //     admin. Status must still be "pending" either way; the client
+      //     immediately follows up with a PATCH through the backend (Admin
+      //     SDK, bypasses rules) to flip it to "confirmed" for admin-made
+      //     bookings.
+      allow create: if isSignedIn() && (
+        (
+          request.resource.data.customerId == request.auth.uid &&
+          request.resource.data.status == "pending" &&
+          get(/databases/$(database)/documents/vehicles/$(request.resource.data.vehicleId)).data.ownerId == request.auth.uid
+        ) ||
+        (
+          isAdmin() &&
+          request.resource.data.status == "pending" &&
+          get(/databases/$(database)/documents/vehicles/$(request.resource.data.vehicleId)).data.ownerId == request.resource.data.customerId
+        )
+      );
+
+      // Customers may only cancel their own appointment — no other field may change.
+      // Admin may update anything (status changes go through the backend
+      // PATCH endpoint, but this rule also covers it going direct if needed).
+      allow update: if isSignedIn() && (
+        isAdmin() ||
+        (
+          resource.data.customerId == request.auth.uid &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]) &&
+          request.resource.data.status == "cancelled"
+        )
+      );
+      allow delete: if false;
+    }
+  }
+}
