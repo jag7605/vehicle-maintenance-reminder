@@ -80,10 +80,47 @@ function buildRejectedContent(appointment, vehicle, customer) {
   return { subject: "Appointment Rejected", message };
 }
 
-function buildCompletedContent(appointment, vehicle, customer) {
-  const message =
+// ---------------------------------------------------------------------------
+// buildCompletedContent — extended in Sprint 5 (Person C, Stories 4 & 5).
+//
+// nextDueDate is a Firestore Timestamp (matching vehicles.nextServiceDate's
+// convention) for WoF/Oil Change completions, or null/undefined for
+// General Service, Brake Check, Tyre Check — those carry no lead time, so
+// they keep the plain completion message with no next-due wording.
+//
+// This function does NOT calculate nextDueDate itself — the caller decides
+// whether one applies (based on appointment.serviceType) and passes the
+// already-calculated result in, or null if it doesn't apply. This function
+// only knows how to format one into the message if given one.
+// ---------------------------------------------------------------------------
+function buildCompletedContent(appointment, vehicle, customer, nextDueDate) {
+  const baseMessage =
     `Hi ${customer.firstName}, the service for your ${vehicle.year} ${vehicle.make} ` +
     `${vehicle.model} (Rego: ${vehicle.rego}) has been completed. Thank you for choosing us.`;
+
+  if (!nextDueDate) {
+    return { subject: "Service Completed", message: baseMessage };
+  }
+
+  const nextDueDateObj = nextDueDate.toDate ? nextDueDate.toDate() : nextDueDate;
+  const formattedNextDue = nextDueDateObj.toLocaleDateString("en-NZ", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  // Specific wording for Oil Change, since that's this workstream's scope
+  // (WoF wording is Person B's responsibility, not touched here). Falls
+  // back to generic wording for any other serviceType that ends up with a
+  // nextDueDate, so nothing crashes or looks garbled unexpectedly.
+  let dueWording;
+  if (appointment.serviceType === "Oil Change") {
+    dueWording = `Your next Oil Change is due by ${formattedNextDue}.`;
+  } else {
+    dueWording = `Your next service is due around ${formattedNextDue}.`;
+  }
+
+  const message = `${baseMessage} ${dueWording}`;
 
   return { subject: "Service Completed", message };
 }
@@ -181,17 +218,21 @@ async function sendReminder(vehicle, customer, type = "serviceDue") {
 }
 
 // ---------------------------------------------------------------------------
-// sendBookingNotification — Sprint 4, Step 1.
+// sendBookingNotification — Sprint 4, Step 1. Extended in Sprint 5 (Person C)
+// with a nextDueDate parameter (defaults to null) so existing "confirmed"/
+// "rejected" call sites, which will never pass one, keep working unchanged.
 // status must be one of: "confirmed" | "rejected" | "completed"
 // Same channel/preference/deliveryStatus pattern as sendReminder.
 // ---------------------------------------------------------------------------
-async function sendBookingNotification(appointment, vehicle, customer, status) {
+async function sendBookingNotification(appointment, vehicle, customer, status, nextDueDate = null) {
   const buildContent = BOOKING_CONTENT_BUILDERS[status];
   if (!buildContent) {
     throw new Error(`Unknown booking status: "${status}".`);
   }
 
-  const { subject, message } = buildContent(appointment, vehicle, customer);
+  // nextDueDate is only meaningful for "completed" — buildConfirmedContent
+  // and buildRejectedContent simply ignore the extra argument.
+  const { subject, message } = buildContent(appointment, vehicle, customer, nextDueDate);
 
   const prefs = customer.notificationPreferences || {};
   const deliveryStatus = {};
