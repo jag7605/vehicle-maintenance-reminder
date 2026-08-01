@@ -152,7 +152,20 @@ function CustomerHomepage() {
                 <div className="appointment-details">
                   <strong>{appointment.vehicleText}</strong>
                   <br />
-                  <span>{appointment.notes || "Service appointment"}</span>
+                  <span>
+                    {[
+                      appointment.serviceType,
+                      ...(appointment.additionalServiceTypes || []),
+                    ]
+                      .filter(Boolean)
+                      .join(", ") || "Service appointment"}
+                  </span>
+                  {appointment.notes && (
+                    <>
+                      <br />
+                      <span className="appointment-notes">{appointment.notes}</span>
+                    </>
+                  )}
                 </div>
 
                 <span className={`status-badge ${appointment.status}`}>

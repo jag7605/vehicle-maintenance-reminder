@@ -54,6 +54,7 @@ export function useCustomerAppointments() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
   const [serviceType, setServiceType] = useState("");
+  const [additionalServiceTypes, setAdditionalServiceTypes] = useState([]);
   const [notes, setNotes] = useState("");
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
@@ -257,12 +258,14 @@ export function useCustomerAppointments() {
         selectedVehicleId,
         appointmentDate,
         serviceType,
-        notes
+        notes,
+        additionalServiceTypes
       );
 
       setBookingMessage("Appointment booking request submitted.");
       setSelectedSlot("");
       setServiceType("");
+      setAdditionalServiceTypes([]);
       setNotes("");
 
       await loadAvailability(selectedDate);
@@ -331,6 +334,8 @@ export function useCustomerAppointments() {
     setSelectedVehicleId,
     serviceType,
     setServiceType,
+    additionalServiceTypes,
+    setAdditionalServiceTypes,
     notes,
     setNotes,
     bookingLoading,

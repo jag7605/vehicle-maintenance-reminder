@@ -22,6 +22,8 @@ function CustomerAppointmentsPage() {
     setSelectedVehicleId,
     serviceType,
     setServiceType,
+    additionalServiceTypes,
+    setAdditionalServiceTypes,
     notes,
     setNotes,
     bookingLoading,
@@ -84,6 +86,8 @@ function CustomerAppointmentsPage() {
             setSelectedVehicleId={setSelectedVehicleId}
             serviceType={serviceType}
             setServiceType={setServiceType}
+            additionalServiceTypes={additionalServiceTypes}
+            setAdditionalServiceTypes={setAdditionalServiceTypes}
             notes={notes}
             setNotes={setNotes}
             bookingLoading={bookingLoading}

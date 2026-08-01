@@ -7,6 +7,8 @@ const SERVICE_TYPES = [
   "Other",
 ];
 
+const MAX_ADDITIONAL_SERVICES = 2; // 3 total including primary
+
 function formatDisplayDate(date) {
   return date.toLocaleDateString("en-NZ", {
     weekday: "long",
@@ -27,6 +29,8 @@ function SlotBookingForm({
   setSelectedVehicleId,
   serviceType,
   setServiceType,
+  additionalServiceTypes,
+  setAdditionalServiceTypes,
   notes,
   setNotes,
   bookingLoading,
@@ -34,6 +38,34 @@ function SlotBookingForm({
 }) {
   if (loading) return <p>Loading available slots...</p>;
   if (!selectedDate || !availability) return null;
+
+  const selectedServiceTypes = [serviceType, ...additionalServiceTypes];
+
+  function handleAddAdditionalService() {
+    setAdditionalServiceTypes([...additionalServiceTypes, ""]);
+  }
+
+  function handleAdditionalServiceChange(index, value) {
+    const updated = [...additionalServiceTypes];
+    updated[index] = value;
+    setAdditionalServiceTypes(updated);
+  }
+
+  function handleRemoveAdditionalService(index) {
+    const updated = additionalServiceTypes.filter((_, i) => i !== index);
+    setAdditionalServiceTypes(updated);
+  }
+
+  function availableOptionsFor(currentValue) {
+    // A dropdown keeps showing its own current selection, but excludes
+    // anything already chosen in another dropdown.
+    return SERVICE_TYPES.filter(
+      (type) => type === currentValue || !selectedServiceTypes.includes(type)
+    );
+  }
+
+  const canAddMore =
+    serviceType !== "" && additionalServiceTypes.length < MAX_ADDITIONAL_SERVICES;
 
   return (
     <div className="slots-section">
@@ -88,16 +120,60 @@ function SlotBookingForm({
               Service type:
               <select
                 value={serviceType}
-                onChange={(event) => setServiceType(event.target.value)}
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  setServiceType(newValue);
+                  // Clearing the primary selection also clears any
+                  // additional services, since "add additional" requires
+                  // a primary service to be selected first.
+                  if (newValue === "") {
+                    setAdditionalServiceTypes([]);
+                  }
+                }}
               >
                 <option value="">Choose a service type</option>
-                {SERVICE_TYPES.map((type) => (
+                {availableOptionsFor(serviceType).map((type) => (
                   <option key={type} value={type}>
                     {type}
                   </option>
                 ))}
               </select>
             </label>
+
+            {additionalServiceTypes.map((additionalType, index) => (
+              <label key={index}>
+                Additional service type:
+                <select
+                  value={additionalType}
+                  onChange={(event) =>
+                    handleAdditionalServiceChange(index, event.target.value)
+                  }
+                >
+                  <option value="">Choose a service type</option>
+                  {availableOptionsFor(additionalType).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="remove-service-button"
+                  onClick={() => handleRemoveAdditionalService(index)}
+                >
+                  Remove service
+                </button>
+              </label>
+            ))}
+
+            <button
+              type="button"
+              className="add-service-button"
+              onClick={handleAddAdditionalService}
+              disabled={!canAddMore}
+            >
+              Add additional service +
+            </button>
 
             <label>
               Notes:

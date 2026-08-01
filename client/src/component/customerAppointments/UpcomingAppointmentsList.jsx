@@ -16,29 +16,40 @@ function UpcomingAppointmentsList({ appointments, onCancel }) {
       {appointments.length === 0 ? (
         <p>You have no upcoming appointments.</p>
       ) : (
-        appointments.map((appointment) => (
-          <div key={appointment.id} className="upcoming-appointment-item">
-            <div>
-              <strong>{appointment.vehicleName}</strong>
+        appointments.map((appointment) => {
+          const allServiceTypes = [
+            appointment.serviceType,
+            ...(appointment.additionalServiceTypes || []),
+          ].filter(Boolean);
 
-              <p>{formatAppointmentDate(appointment.appointmentDate)}</p>
+          return (
+            <div key={appointment.id} className="upcoming-appointment-item">
+              <div>
+                <strong>{appointment.vehicleName}</strong>
 
-              <p>Status: {appointment.status}</p>
+                <p>{formatAppointmentDate(appointment.appointmentDate)}</p>
 
-              <p>{appointment.serviceType || "Service appointment"}</p>
+                <p>Status: {appointment.status}</p>
 
-              {appointment.notes && <p>{appointment.notes}</p>}
+                <p>
+                  {allServiceTypes.length > 0
+                    ? allServiceTypes.join(", ")
+                    : "Service appointment"}
+                </p>
+
+                {appointment.notes && <p>{appointment.notes}</p>}
+              </div>
+
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => onCancel(appointment)}
+              >
+                Cancel
+              </button>
             </div>
-
-            <button
-              type="button"
-              className="cancel-button"
-              onClick={() => onCancel(appointment)}
-            >
-              Cancel
-            </button>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );

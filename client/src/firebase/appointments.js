@@ -78,7 +78,8 @@ export async function createAppointment(
   vehicleId,
   date,
   serviceType,
-  notes = ""
+  notes = "",
+  additionalServiceTypes = []
 ) {
   const appointmentData = {
     customerId,
@@ -91,6 +92,11 @@ export async function createAppointment(
 
   if (notes.trim() !== "") {
     appointmentData.notes = notes.trim();
+  }
+
+  const cleanedAdditional = additionalServiceTypes.filter((type) => type !== "");
+  if (cleanedAdditional.length > 0) {
+    appointmentData.additionalServiceTypes = cleanedAdditional;
   }
 
   const docRef = await addDoc(collection(db, "appointments"), appointmentData);
@@ -106,14 +112,16 @@ export async function createAppointmentAsAdmin(
   vehicleId,
   date,
   serviceType,
-  notes = ""
+  notes = "",
+  additionalServiceTypes = []
 ) {
   const created = await createAppointment(
     customerId,
     vehicleId,
     date,
     serviceType,
-    notes
+    notes,
+    additionalServiceTypes
   );
 
   await updateAppointmentStatus(created.id, "confirmed");

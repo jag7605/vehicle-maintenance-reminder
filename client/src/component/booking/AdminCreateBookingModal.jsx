@@ -12,6 +12,8 @@ const SERVICE_TYPES = [
   "Other",
 ];
 
+const MAX_ADDITIONAL_SERVICES = 2; // 3 total including primary
+
 function formatDateForApi(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -34,6 +36,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
   const [selectedSlot, setSelectedSlot] = useState("");
 
   const [serviceType, setServiceType] = useState("");
+  const [additionalServiceTypes, setAdditionalServiceTypes] = useState([]);
   const [notes, setNotes] = useState("");
 
   const [error, setError] = useState("");
@@ -90,6 +93,32 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
     }
   }
 
+  const selectedServiceTypes = [serviceType, ...additionalServiceTypes];
+
+  function handleAddAdditionalService() {
+    setAdditionalServiceTypes([...additionalServiceTypes, ""]);
+  }
+
+  function handleAdditionalServiceChange(index, value) {
+    const updated = [...additionalServiceTypes];
+    updated[index] = value;
+    setAdditionalServiceTypes(updated);
+  }
+
+  function handleRemoveAdditionalService(index) {
+    const updated = additionalServiceTypes.filter((_, i) => i !== index);
+    setAdditionalServiceTypes(updated);
+  }
+
+  function availableOptionsFor(currentValue) {
+    return SERVICE_TYPES.filter(
+      (type) => type === currentValue || !selectedServiceTypes.includes(type)
+    );
+  }
+
+  const canAddMore =
+    serviceType !== "" && additionalServiceTypes.length < MAX_ADDITIONAL_SERVICES;
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -110,7 +139,8 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
         selectedVehicleId,
         appointmentDate,
         serviceType,
-        notes
+        notes,
+        additionalServiceTypes
       );
       onCreated();
     } catch (err) {
@@ -233,14 +263,52 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             <label>Service type</label><br />
             <select
               value={serviceType}
-              onChange={(e) => setServiceType(e.target.value)}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setServiceType(newValue);
+                if (newValue === "") {
+                  setAdditionalServiceTypes([]);
+                }
+              }}
               required
             >
               <option value="" disabled>Select a service type</option>
-              {SERVICE_TYPES.map((type) => (
+              {availableOptionsFor(serviceType).map((type) => (
                 <option key={type} value={type}>{type}</option>
               ))}
             </select>
+          </div>
+
+          {additionalServiceTypes.map((additionalType, index) => (
+            <div style={{ marginBottom: "12px" }} key={index}>
+              <label>Additional service type</label><br />
+              <select
+                value={additionalType}
+                onChange={(e) => handleAdditionalServiceChange(index, e.target.value)}
+              >
+                <option value="">Choose a service type</option>
+                {availableOptionsFor(additionalType).map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => handleRemoveAdditionalService(index)}
+                style={{ marginLeft: "8px" }}
+              >
+                Remove service
+              </button>
+            </div>
+          ))}
+
+          <div style={{ marginBottom: "12px" }}>
+            <button
+              type="button"
+              onClick={handleAddAdditionalService}
+              disabled={!canAddMore}
+            >
+              Add additional service +
+            </button>
           </div>
 
           <div style={{ marginBottom: "12px" }}>
