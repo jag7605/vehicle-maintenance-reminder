@@ -79,6 +79,12 @@ router.get("/appointments/availability", async (req, res) => {
 // Admin-only. Updates an appointment's status and sends the matching
 // booking notification (confirmed/rejected/completed) to the customer.
 // Body: { status: "confirmed" | "rejected" | "completed" }
+//
+// NOTE: This generic endpoint is kept for "confirmed" and "rejected"
+// transitions. Completion has its own dedicated endpoint below
+// (PATCH /appointments/:appointmentId/complete) because completion carries
+// extra requirements this generic one doesn't handle: server-side time-gating
+// and accepting postServiceNotes (Sprint 5, Person A / Stories 1-3).
 router.patch("/appointments/:appointmentId/status", async (req, res) => {
   const { appointmentId } = req.params;
   const { status } = req.body || {};
@@ -125,6 +131,95 @@ router.patch("/appointments/:appointmentId/status", async (req, res) => {
     return res.json({ success: true, deliveryStatus });
   } catch (err) {
     // Returns the actual error message (e.g. "Unknown booking status...")
+    return res.status(400).json({ error: err.message });
+  }
+});
+
+// PATCH /api/admin/appointments/:appointmentId/complete
+// Admin-only. Sprint 5, Person A — Stories 1, 2, 3.
+//
+// Dedicated completion endpoint, deliberately separate from the generic
+// /status endpoint above. Completion has two extra requirements the generic
+// endpoint doesn't handle:
+//   1. Server-side time-gating — the appointment's booked date/time must
+//      have actually passed. The frontend also disables the button, but
+//      that's a UX nicety, not a safeguard: this endpoint could be called
+//      directly, so the check has to happen here too.
+//   2. Accepting postServiceNotes (free-text, admin-entered detail about
+//      the work performed, e.g. "used synthetic oil") — a new field on the
+//      appointment document, distinct from the customer's original booking
+//      "notes" field (Sprint 5 decision #3).
+//
+// Scope boundary (confirm with Person D before merging): this endpoint's
+// job stops at updating the appointment to status "completed" with the
+// provided postServiceNotes. It does NOT calculate WoF/Oil Change next-due
+// dates and does NOT send the customer completion notification — Person D
+// owns wiring those in as part of the integration/orchestration step.
+//
+// Body: { postServiceNotes?: string }
+router.patch("/appointments/:appointmentId/complete", async (req, res) => {
+  const { appointmentId } = req.params;
+  const { postServiceNotes } = req.body || {};
+
+  // postServiceNotes is optional but must be a string if provided, since it
+  // gets written straight to Firestore.
+  if (postServiceNotes !== undefined && typeof postServiceNotes !== "string") {
+    return res.status(400).json({ error: "postServiceNotes must be a string." });
+  }
+
+  try {
+    // Step 1: Fetch the appointment document
+    const appointmentRef = db.collection("appointments").doc(appointmentId);
+    const appointmentDoc = await appointmentRef.get();
+
+    if (!appointmentDoc.exists) {
+      return res.status(404).json({ error: "Appointment not found." });
+    }
+
+    const appointment = { id: appointmentDoc.id, ...appointmentDoc.data() };
+
+    // Step 2: Only a "confirmed" appointment can be completed. This blocks
+    // completing a job that's still "pending" (never confirmed), already
+    // "completed", "rejected", or "cancelled".
+    if (appointment.status !== "confirmed") {
+      return res.status(400).json({
+        error: `Cannot complete an appointment with status "${appointment.status}". Only "confirmed" appointments can be marked complete.`,
+      });
+    }
+
+    // Step 3: Server-side time-gate. Do not trust the frontend button being
+    // disabled as the only safeguard — validate here too, since this
+    // endpoint could be called directly. Gate is against the booked start
+    // time (Sprint 5 decision #5 — "start of the slot, not end").
+    const appointmentDate = appointment.date?.toDate
+      ? appointment.date.toDate()
+      : new Date(appointment.date);
+
+    if (isNaN(appointmentDate.getTime())) {
+      return res.status(400).json({ error: "Appointment has an invalid date." });
+    }
+
+    const now = new Date();
+    if (appointmentDate > now) {
+      return res.status(400).json({
+        error: "This appointment's scheduled time has not passed yet and cannot be marked complete.",
+      });
+    }
+
+    // Step 4: Update the appointment — status -> "completed",
+    // postServiceNotes -> the provided string (or "" if omitted).
+    const updates = {
+      status: "completed",
+      postServiceNotes: postServiceNotes ?? "",
+    };
+
+    await appointmentRef.update(updates);
+
+    return res.json({
+      success: true,
+      appointment: { ...appointment, ...updates },
+    });
+  } catch (err) {
     return res.status(400).json({ error: err.message });
   }
 });
