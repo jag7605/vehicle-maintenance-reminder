@@ -73,6 +73,28 @@ export async function updateAppointmentStatus(appointmentId, status) {
   return data; // { success, deliveryStatus }
 }
 
+// Dedicated completion endpoint — separate from updateAppointmentStatus
+// because completion accepts postServiceNotes and is server-side
+// time-gated (the appointment's booked time must have passed).
+export async function completeAppointment(appointmentId, postServiceNotes = "") {
+  const res = await fetch(
+    `${API_URL}/api/admin/appointments/${appointmentId}/complete`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postServiceNotes }),
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(data.error || "Failed to complete appointment.");
+  }
+
+  return data; // { success, appointment }
+}
+
 export async function createAppointment(
   customerId,
   vehicleId,
