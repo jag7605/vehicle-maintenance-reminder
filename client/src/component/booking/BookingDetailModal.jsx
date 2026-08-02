@@ -11,6 +11,11 @@ function formatDate(value) {
   });
 }
 
+function formatStatus(status) {
+  if (!status) return "";
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 function BookingDetailModal({
   appointment,
   onClose,
@@ -44,7 +49,7 @@ function BookingDetailModal({
         {appointment.customerPhone && <p><strong>Phone:</strong> {appointment.customerPhone}</p>}
         <p><strong>Date:</strong> {formatDate(appointment.date)}</p>
         <p><strong>Service type:</strong> {[appointment.serviceType, ...(appointment.additionalServiceTypes || [])].filter(Boolean).join(", ") || "—"}</p>
-        <p><strong>Status:</strong> {status}</p>
+        <p><strong>Status:</strong> {formatStatus(status)}</p>
         {appointment.notes && <p><strong>Notes:</strong> {appointment.notes}</p>}
 
         {error && <p style={{ color: "red" }}>{error}</p>}

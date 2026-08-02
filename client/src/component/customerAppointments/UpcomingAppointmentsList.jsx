@@ -8,6 +8,11 @@ function formatAppointmentDate(date) {
   });
 }
 
+function formatStatus(status) {
+  if (!status) return "";
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 function UpcomingAppointmentsList({ appointments, onCancel }) {
   return (
     <div className="upcoming-list">
@@ -29,7 +34,7 @@ function UpcomingAppointmentsList({ appointments, onCancel }) {
 
                 <p>{formatAppointmentDate(appointment.appointmentDate)}</p>
 
-                <p>Status: {appointment.status}</p>
+                <p>Status: {formatStatus(appointment.status)}</p>
 
                 <p>
                   {allServiceTypes.length > 0

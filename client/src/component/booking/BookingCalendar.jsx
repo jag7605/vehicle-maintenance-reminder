@@ -28,6 +28,11 @@ const STATUS_COLORS = {
   cancelled: "#9ca3af", // grey — customer cancelled
 };
 
+function formatStatus(status) {
+  if (!status) return "";
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 function appointmentToEvent(appointment) {
   const start =
     typeof appointment.date?.toDate === "function"
@@ -115,7 +120,7 @@ function BookingCalendar({ appointments, onSelectEvent }) {
                 backgroundColor: color,
               }}
             />
-            {status}
+            {formatStatus(status)}
           </span>
         ))}
       </div>
