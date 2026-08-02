@@ -43,7 +43,7 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error }) {
 
         <p><strong>Customer:</strong> {job.customerName}</p>
         <p><strong>Vehicle:</strong> {job.vehicleLabel}</p>
-        <p><strong>Service type:</strong> {job.serviceType || "—"}</p>
+        <p><strong>Service type:</strong> {[job.serviceType, ...(job.additionalServiceTypes || [])].filter(Boolean).join(", ") || "—"}</p>
         <p><strong>Booked time:</strong> {formatDate(job.date)}</p>
         {job.notes && <p><strong>Customer notes:</strong> {job.notes}</p>}
 

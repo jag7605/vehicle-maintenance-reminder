@@ -228,6 +228,14 @@ export function useCustomerAppointments() {
         return;
       }
 
+      const allSelectedTypes = [serviceType, ...additionalServiceTypes];
+      if (allSelectedTypes.includes("Other") && notes.trim() === "") {
+        setError(
+          "You've selected \"Other\" as a service type. Please describe what you'd like done in the notes field before booking."
+        );
+        return;
+      }
+
       setBookingLoading(true);
 
       const latestAvailability = await getAvailability(formatDateForApi(selectedDate));
@@ -347,6 +355,8 @@ export function useCustomerAppointments() {
 
     // shared messaging
     error,
+    setError,
     bookingMessage,
+    setBookingMessage,
   };
 }

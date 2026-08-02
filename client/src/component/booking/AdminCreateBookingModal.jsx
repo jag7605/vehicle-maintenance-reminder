@@ -128,6 +128,14 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
       return;
     }
 
+    const allSelectedTypes = [serviceType, ...additionalServiceTypes];
+    if (allSelectedTypes.includes("Other") && notes.trim() === "") {
+      setError(
+        "You've selected \"Other\" as a service type. Please describe what you'd like done in the notes field before booking."
+      );
+      return;
+    }
+
     const [year, month, day] = dateString.split("-").map(Number);
     const [hour, minute] = selectedSlot.split(":").map(Number);
     const appointmentDate = new Date(year, month - 1, day, hour, minute);
@@ -316,7 +324,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Optional notes"
+              placeholder="Add any additional information here..."
             />
           </div>
 

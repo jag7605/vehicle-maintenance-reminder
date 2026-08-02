@@ -5,7 +5,6 @@ import StaffHomepage from './pages/StaffHomepage';
 import CustomerHomepage from './pages/CustomerHomepage';
 import AdminBookingsPage from "./pages/AdminBookingPage";
 import AdminNotificationsPage from "./pages/AdminNotificationPage";
-import AdminTaskTrackerPage from "./pages/AdminTaskTrackerPage";
 import AdminJobsPage from "./pages/AdminJobsPage";
 import AdminCustomerPage from './pages/AdminCustomersPage';
 import AdminCustomerProfilePage from './pages/AdminCustomerProfilePage';
@@ -40,10 +39,6 @@ function App() {
         <Route path="/admin/bookings" element={
           <ProtectedRoute requiredRole="admin">
             <AdminBookingsPage />
-          </ProtectedRoute>} />
-        <Route path="/admin/tasks" element={
-          <ProtectedRoute requiredRole="admin">
-            <AdminTaskTrackerPage />
           </ProtectedRoute>} />
         <Route path="/admin/customers" element={
           <ProtectedRoute requiredRole="admin">

@@ -16,16 +16,12 @@ const adminMenu = [
     items: [
       { label: "Jobs", path: "/admin/jobs" },
       { label: "Bookings", path: "/admin/bookings" },
-      { label: "Tasks", path: "/admin/tasks" },
     ],
   },
   {
     title: "Records",
     items: [
       { label: "Customers", path: "/admin/customers" },
-      { label: "Bar Chart", path: "/admin/barchart" },
-      { label: "Pie Chart", path: "/admin/piechart" },
-      { label: "Line Chart", path: "/admin/linechart" },
     ],
   },
 ];

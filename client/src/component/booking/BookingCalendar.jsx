@@ -37,9 +37,16 @@ function appointmentToEvent(appointment) {
   // Fixed 1-hour slots per workingHours.js (SLOT_DURATION_MINUTES = 60)
   const end = new Date(start.getTime() + 60 * 60 * 1000);
 
+  const additional = appointment.additionalServiceTypes || [];
+  const primaryLabel = appointment.serviceType || "Service";
+  const serviceLabel =
+    additional.length > 0
+      ? `${primaryLabel} +${additional.length} more`
+      : primaryLabel;
+
   return {
     id: appointment.id,
-    title: `${appointment.serviceType || "Service"} — ${appointment.customerName}`,
+    title: `${serviceLabel} — ${appointment.customerName}`,
     start,
     end,
     status: appointment.status,

@@ -77,7 +77,11 @@ function AdminJobsPage() {
                   <td style={{ whiteSpace: "nowrap" }}>{formatTime(job.date)}</td>
                   <td>{job.customerName}</td>
                   <td>{job.vehicleLabel}</td>
-                  <td>{job.serviceType || "—"}</td>
+                  <td>
+                    {[job.serviceType, ...(job.additionalServiceTypes || [])]
+                      .filter(Boolean)
+                      .join(", ") || "—"}
+                  </td>
                   <td style={{ maxWidth: "240px", wordBreak: "break-word" }}>
                     {job.notes || "—"}
                   </td>

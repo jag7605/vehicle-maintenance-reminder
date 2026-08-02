@@ -3,6 +3,7 @@ import { useCustomerAppointments } from "../hooks/useCustomerAppointments";
 import BookingCalendarPicker from "../component/customerAppointments/BookingCalendarPicker";
 import SlotBookingForm from "../component/customerAppointments/SlotBookingForm";
 import UpcomingAppointmentsList from "../component/customerAppointments/UpcomingAppointmentsList";
+import MessagePopup from "../component/MessagePopup";
 import "./CustomerAppointmentsPage.css";
 
 function CustomerAppointmentsPage() {
@@ -33,7 +34,9 @@ function CustomerAppointmentsPage() {
     handleCancelAppointment,
 
     error,
+    setError,
     bookingMessage,
+    setBookingMessage,
   } = useCustomerAppointments();
 
   async function handleBook() {
@@ -63,8 +66,8 @@ function CustomerAppointmentsPage() {
         </button>
       </div>
 
-      {error && <p className="error-message">{error}</p>}
-      {bookingMessage && <p className="success-message">{bookingMessage}</p>}
+      <MessagePopup message={error} isError onClose={() => setError("")} />
+      <MessagePopup message={bookingMessage} onClose={() => setBookingMessage("")} />
 
       {activeTab === "book" && (
         <>

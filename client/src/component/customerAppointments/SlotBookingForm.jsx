@@ -180,7 +180,7 @@ function SlotBookingForm({
               <textarea
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
-                placeholder="Optional notes"
+                placeholder="Add any additional information here..."
               />
             </label>
 
