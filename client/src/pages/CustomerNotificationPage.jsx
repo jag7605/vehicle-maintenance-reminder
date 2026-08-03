@@ -112,8 +112,10 @@ function CustomerNotificationPage() {
         <div>
             <h1>Notifications</h1>
 
+            <h3>Please click on a notification to mark it as read.</h3>
+
             <p className="notification-count">
-                Unread notifications: <strong>{unreadCount}</strong>
+                Unread notifications: <strong>{unreadCount}</strong> 
             </p>
 
             {notifications.length === 0 ? (

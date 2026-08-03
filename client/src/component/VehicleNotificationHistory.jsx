@@ -18,7 +18,8 @@ function VehicleNotificationHistory({ vehicleId }) {
       try {
         const data = await getNotificationsByVehicle(vehicleId);
         setNotifications(data);
-      } catch {
+      } catch (err) {
+        console.error("Failed to load notification history:", err);
         setError("Failed to load notification history.");
       } finally {
         setLoading(false);
