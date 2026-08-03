@@ -20,6 +20,8 @@ const BLOCKING_STATUSES = ["pending", "confirmed"];
 
 const DATE_PARAM_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
+const { runJobCompletion } = require("../services/jobCompletionService");
+
 // GET /api/admin/appointments/availability?date=YYYY-MM-DD
 // Computed on the fly from workingHours.js + existing appointments —
 // no "slots" Firestore collection (Sprint 4 decision #1).
@@ -215,9 +217,36 @@ router.patch("/appointments/:appointmentId/complete", async (req, res) => {
 
     await appointmentRef.update(updates);
 
+    const completedAppointment = { ...appointment, ...updates };
+
+    // Step 5: Sprint 5 integration (Person D) — calculate next-due dates
+    // for any WoF/Oil Change service types on this appointment, update the
+    // vehicle document, and send the customer completion notification.
+    // completedServiceDate is the real moment this endpoint runs (now),
+    // not appointment.date — per Person C's flagged requirement.
+    const vehicleDoc = await db.collection("vehicles").doc(appointment.vehicleId).get();
+    if (!vehicleDoc.exists) {
+      return res.status(404).json({ error: "Vehicle not found." });
+    }
+    const vehicle = { id: vehicleDoc.id, ...vehicleDoc.data() };
+
+    const customerDoc = await db.collection("users").doc(appointment.customerId).get();
+    if (!customerDoc.exists) {
+      return res.status(404).json({ error: "Customer not found." });
+    }
+    const customer = { id: customerDoc.id, ...customerDoc.data() };
+
+    const { deliveryStatus } = await runJobCompletion(
+      completedAppointment,
+      vehicle,
+      customer,
+      now
+    );
+
     return res.json({
       success: true,
-      appointment: { ...appointment, ...updates },
+      appointment: completedAppointment,
+      deliveryStatus,
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });

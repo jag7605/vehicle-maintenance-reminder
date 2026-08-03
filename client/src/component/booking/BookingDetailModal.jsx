@@ -21,7 +21,6 @@ function BookingDetailModal({
   onClose,
   onConfirm,
   onReject,
-  onComplete,
   loading,
   error,
 }) {
@@ -52,6 +51,12 @@ function BookingDetailModal({
         <p><strong>Status:</strong> {formatStatus(status)}</p>
         {appointment.notes && <p><strong>Notes:</strong> {appointment.notes}</p>}
 
+        {status === "confirmed" && (
+          <p style={{ color: "#555", fontSize: "0.9em" }}>
+            To mark this job as complete, use the Jobs page.
+          </p>
+        )}
+
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         <div style={{ display: "flex", gap: "8px", marginTop: "16px", flexWrap: "wrap" }}>
@@ -64,12 +69,6 @@ function BookingDetailModal({
                 {loading ? "Working..." : "Reject"}
               </button>
             </>
-          )}
-
-          {status === "confirmed" && (
-            <button onClick={onComplete} disabled={loading}>
-              {loading ? "Working..." : "Mark Completed"}
-            </button>
           )}
 
           <button type="button" onClick={onClose}>

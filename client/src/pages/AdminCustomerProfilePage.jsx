@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import StaffLayout from "../component/StaffLayout";
 import { useCustomerProfile } from "../hooks/useCustomerProfile";
 import VehicleTable from "../component/customerProfile/VehicleTable";
@@ -8,15 +8,9 @@ import DeleteVehicleModal from "../component/customerProfile/DeleteVehicleModal"
 import StatusConfirmModal from "../component/customerProfile/StatusConfirmModal";
 import SendNotificationModal from "../component/customerProfile/SendNotificationModal";
 
-// ---------------------------------------------------------------------------
-// Admin Customer Profile page.
-//
-// All state and Firebase/API logic lives in useCustomerProfile(). This
-// component's only job is to read values off the hook and hand them to the
-// right presentational component — no business logic here.
-// ---------------------------------------------------------------------------
 function AdminCustomerProfilePage() {
   const { customerId } = useParams();
+  const navigate = useNavigate();
   const {
     customer,
     vehicles,
@@ -40,6 +34,10 @@ function AdminCustomerProfilePage() {
   return (
     <StaffLayout title="Customers">
       <div>
+        <button type="button" onClick={() => navigate("/admin/customers")} style={{ marginBottom: "12px" }}>
+          ← Back to Customers
+        </button>
+
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <h2>{customer.firstName} {customer.lastName}</h2>
           <span style={{ color: isActive ? "green" : "red" }}>

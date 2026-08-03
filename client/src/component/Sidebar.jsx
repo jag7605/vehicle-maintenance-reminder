@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import logout from "../firebase/logout.js";
 
-function Sidebar({ menuItems }) {
+function Sidebar({ menuItems, userName, userRole }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-menu">
@@ -27,7 +27,7 @@ function Sidebar({ menuItems }) {
 
       <div className="sidebar-footer">
         <button className="logout-button" onClick={logout}>
-          Logout
+          Logout ➜]
         </button>
 
         <div className="user-row">
@@ -36,8 +36,8 @@ function Sidebar({ menuItems }) {
           </div>
 
           <div className="user-info">
-            <strong>Name</strong>
-            <p>Role</p>
+            {userName && <strong>{userName}</strong>}
+            <p>{userRole}</p>
           </div>
         </div>
       </div>

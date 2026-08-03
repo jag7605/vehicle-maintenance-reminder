@@ -12,7 +12,7 @@ require("dotenv").config();
 // Firestore rules block client-side delete, but the Admin SDK bypasses
 // rules, same as the rest of this script).
 
-const { db } = require("./firebase/adminConfig");
+const { db } = require("../firebase/adminConfig");
 
 const BASE_URL = `http://localhost:${process.env.PORT || 5001}`;
 

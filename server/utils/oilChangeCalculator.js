@@ -7,9 +7,8 @@ const { Timestamp } = require("firebase-admin/firestore");
 // actually marks the job complete (NOT the appointment's scheduled date —
 // confirmed with the team this should be the real completion timestamp).
 //
-// Output: a Firestore Timestamp, matching the existing convention used by
-// vehicles.nextServiceDate, since that's the field this result is intended
-// to feed into (confirmed against vehicles.nextServiceDate's stored format).
+// Output: a Firestore Timestamp, since that's the field this result is intended
+// to feed into vehicle.nextOilChangeDate. Always returns a date 6 months after completionDate,
 function calculateNextOilChangeDate(completionDate) {
   if (!(completionDate instanceof Date) || isNaN(completionDate.getTime())) {
     throw new Error("calculateNextOilChangeDate requires a valid JS Date as input.");

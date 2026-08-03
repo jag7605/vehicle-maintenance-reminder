@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { auth } from "../firebase/firebaseConfig";
 import { getVehiclesByOwner } from "../firebase/vehicles";
+import { formatDate } from "../utils/formatters";
 
 function CustomerVehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -32,7 +33,7 @@ function CustomerVehiclesPage() {
   return (
     <div>
       <h2>My Vehicles</h2>
-      <table>
+      <table border="1" cellPadding="6">
         <thead>
           <tr>
             <th>Year</th>
@@ -40,6 +41,9 @@ function CustomerVehiclesPage() {
             <th>Model</th>
             <th>Rego</th>
             <th>Mileage</th>
+            <th>Next WoF Date</th>
+            <th>Next Oil Change Date</th>
+            <th>Next Service Mileage</th>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +54,13 @@ function CustomerVehiclesPage() {
               <td>{vehicle.model}</td>
               <td>{vehicle.rego}</td>
               <td>{vehicle.mileage}</td>
+              <td>{formatDate(vehicle.nextWofDate)}</td>
+              <td>{formatDate(vehicle.nextOilChangeDate)}</td>
+              <td>
+                {vehicle.nextServiceMileage != null
+                  ? `${vehicle.nextServiceMileage.toLocaleString()} km`
+                  : "—"}
+              </td>
             </tr>
           ))}
         </tbody>

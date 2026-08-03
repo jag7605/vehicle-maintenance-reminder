@@ -5,9 +5,9 @@ require("dotenv").config();
 // directly (no HTTP endpoint calls yours yet — that's Person D's job).
 // Run with: node testOilChangeCompletion.js
 
-const { db } = require("./firebase/adminConfig");
-const { sendBookingNotification } = require("./services/notificationService");
-const { calculateNextOilChangeDate } = require("./utils/oilChangeCalculator");
+const { db } = require("../firebase/adminConfig");
+const { sendBookingNotification } = require("../services/notificationService");
+const { calculateNextOilChangeDate } = require("../utils/oilChangeCalculator");
 
 // Reused from testReminder.js / testAppointments.js — same real customer.
 const CUSTOMER_ID = "5cnbF1Wvv7ZPexVCxUGyIchGPQA2";

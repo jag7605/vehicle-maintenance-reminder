@@ -62,7 +62,6 @@ function AdminBookingPage() {
           onClose={closeModal}
           onConfirm={() => changeStatus(selectedAppointment.id, "confirmed")}
           onReject={() => changeStatus(selectedAppointment.id, "rejected")}
-          onComplete={() => changeStatus(selectedAppointment.id, "completed")}
           loading={actionLoading[selectedAppointment.id]}
           error={actionError[selectedAppointment.id]}
         />

@@ -3,6 +3,7 @@ import { addVehicle, getVehiclesByOwner, updateVehicle, deleteVehicle } from "..
 import { getCustomerById, setCustomerActiveStatus } from "../firebase/users";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
 import { timestampToDateInput, isPastDate } from "../utils/formatters";
+import { calculateNextWoFDate, calculateNextOilChangeDate } from "../utils/serviceDateCalculators";
  
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -21,13 +22,17 @@ export function useCustomerProfile(customerId) {
   const [addError, setAddError] = useState("");
   const [addSuccess, setAddSuccess] = useState("");
   const [addLoading, setAddLoading] = useState(false);
+  const [lastOilChangeDate, setLastOilChangeDate] = useState("");
+  const [lastWofDate, setLastWofDate] = useState("");
+  const [addedVehicleDetails, setAddedVehicleDetails] = useState(null);
  
   // Edit popup
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [editYear, setEditYear] = useState("");
   const [editMileage, setEditMileage] = useState("");
   const [editRego, setEditRego] = useState("");
-  const [editNextServiceDate, setEditNextServiceDate] = useState(""); // yyyy-MM-dd string
+  const [editNextWofDate, setEditNextWofDate] = useState(""); // yyyy-MM-dd string
+  const [editNextOilChangeDate, setEditNextOilChangeDate] = useState(""); // yyyy-MM-dd string
   const [editNextServiceMileage, setEditNextServiceMileage] = useState(""); // number string or ""
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
@@ -90,21 +95,49 @@ export function useCustomerProfile(customerId) {
     setAddLoading(true);
  
     try {
+      const vehicleYear = Number(year);
+      const now = new Date();
+
+      // WoF: use the provided Last WoF Date as the reference point if given,
+      // otherwise fall back to today. Age-band calculation uses whichever
+      // date is passed in.
+      const wofReferenceDate = lastWofDate ? new Date(lastWofDate) : now;
+      const nextWofDate = calculateNextWoFDate({ year: vehicleYear }, wofReferenceDate);
+
+      // Oil Change prefill is optional — only calculated if the admin
+      // provided a last Oil Change date. If left blank, nextOilChangeDate
+      // stays unset until the vehicle's first real Oil Change completion.
+      const nextOilChangeDate = lastOilChangeDate
+        ? calculateNextOilChangeDate(new Date(lastOilChangeDate))
+        : null;
+
       await addVehicle({
         make,
         model,
-        year: Number(year),
+        year: vehicleYear,
         mileage: Number(mileage),
         rego,
         ownerId: customerId,
+        nextWofDate,
+        nextOilChangeDate,
       });
  
       setAddSuccess("Vehicle added successfully.");
+      setAddedVehicleDetails({
+        make,
+        model,
+        year: vehicleYear,
+        rego,
+        nextWofDate,
+        nextOilChangeDate,
+      });
       setMake("");
       setModel("");
       setYear("");
       setMileage("");
       setRego("");
+      setLastWofDate("");
+      setLastOilChangeDate("");
  
       await refreshVehicles();
     } catch {
@@ -113,7 +146,11 @@ export function useCustomerProfile(customerId) {
       setAddLoading(false);
     }
   }
- 
+
+  function closeAddedVehicleDetails() {
+    setAddedVehicleDetails(null);
+  }
+
   // --- Edit popup --------------------------------------------------------
  
   function openEditPopup(vehicle) {
@@ -121,7 +158,8 @@ export function useCustomerProfile(customerId) {
     setEditYear(vehicle.year);
     setEditMileage(vehicle.mileage);
     setEditRego(vehicle.rego);
-    setEditNextServiceDate(timestampToDateInput(vehicle.nextServiceDate));
+    setEditNextWofDate(timestampToDateInput(vehicle.nextWofDate));
+    setEditNextOilChangeDate(timestampToDateInput(vehicle.nextOilChangeDate));
     setEditNextServiceMileage(vehicle.nextServiceMileage != null ? String(vehicle.nextServiceMileage) : "");
     setEditError("");
   }
@@ -136,14 +174,16 @@ export function useCustomerProfile(customerId) {
     setEditLoading(true);
  
     try {
-      const nextServiceDate = editNextServiceDate ? new Date(editNextServiceDate) : null;
+      const nextWofDate = editNextWofDate ? new Date(editNextWofDate) : null;
+      const nextOilChangeDate = editNextOilChangeDate ? new Date(editNextOilChangeDate) : null;
       const nextServiceMileage = editNextServiceMileage !== "" ? Number(editNextServiceMileage) : null;
- 
+
       await updateVehicle(editingVehicle.id, {
         year: Number(editYear),
         mileage: Number(editMileage),
         rego: editRego,
-        nextServiceDate,
+        nextWofDate,
+        nextOilChangeDate,
         nextServiceMileage,
       });
  
@@ -229,25 +269,13 @@ export function useCustomerProfile(customerId) {
   // on it to pick the message template.
   async function handleSendNotification(type) {
     if (!notifyingVehicle) return;
- 
-    // Guard: don't let admins send a "Service Due" reminder once the
-    // service date has already passed — the message reads oddly ("due on
-    // [date in the past]") and the customer should get a different message
-    // by then anyway. Checked here too, not just via the disabled button,
-    // so this can't be bypassed.
-    if (type === "serviceDue" && isPastDate(notifyingVehicle.nextServiceDate)) {
-      setNotifyError(
-        "This vehicle's service date has already passed. Update the service date, or send \"Your Car Is Ready\" instead."
-      );
-      return;
-    }
- 
+
     const vehicleId = notifyingVehicle.id;
- 
+
     setNotifyError("");
     setReminderLoading((prev) => ({ ...prev, [vehicleId]: true }));
     setReminderResult((prev) => ({ ...prev, [vehicleId]: null }));
- 
+
     try {
       const res = await fetch(`${API_URL}/api/admin/send-reminder/${vehicleId}`, {
         method: "POST",
@@ -255,7 +283,7 @@ export function useCustomerProfile(customerId) {
         body: JSON.stringify({ type }),
       });
       const data = await res.json();
- 
+
       if (res.ok && data.success) {
         setReminderResult((prev) => ({
           ...prev,
@@ -292,16 +320,22 @@ export function useCustomerProfile(customerId) {
       year,
       mileage,
       rego,
+      lastWofDate,
+      lastOilChangeDate,
       error: addError,
       success: addSuccess,
       loading: addLoading,
       availableModels,
+      addedVehicleDetails,
       setMake: handleMakeChange,
       setModel,
       setYear,
       setMileage,
       setRego,
+      setLastWofDate,
+      setLastOilChangeDate,
       onSubmit: handleAddVehicle,
+      closeAddedVehicleDetails,
     },
  
     editPopup: {
@@ -309,14 +343,16 @@ export function useCustomerProfile(customerId) {
       year: editYear,
       mileage: editMileage,
       rego: editRego,
-      nextServiceDate: editNextServiceDate,
+      nextWofDate: editNextWofDate,
+      nextOilChangeDate: editNextOilChangeDate,
       nextServiceMileage: editNextServiceMileage,
       error: editError,
       loading: editLoading,
       setYear: setEditYear,
       setMileage: setEditMileage,
       setRego: setEditRego,
-      setNextServiceDate: setEditNextServiceDate,
+      setNextWofDate: setEditNextWofDate,
+      setNextOilChangeDate: setEditNextOilChangeDate,
       setNextServiceMileage: setEditNextServiceMileage,
       open: openEditPopup,
       close: closeEditPopup,
@@ -343,10 +379,8 @@ export function useCustomerProfile(customerId) {
  
     notifyPopup: {
       vehicle: notifyingVehicle,
-      // Computed here, once, rather than in the modal — keeps the "what
-      // counts as past due" rule in one place alongside the same check
-      // handleSendNotification uses.
-      serviceDuePastDue: notifyingVehicle ? isPastDate(notifyingVehicle.nextServiceDate) : false,
+      wofDuePastDue: notifyingVehicle ? isPastDate(notifyingVehicle.nextWofDate) : false,
+      oilChangeDuePastDue: notifyingVehicle ? isPastDate(notifyingVehicle.nextOilChangeDate) : false,
       error: notifyError,
       loading: notifyingVehicle ? !!reminderLoading[notifyingVehicle.id] : false,
       open: openNotifyPopup,

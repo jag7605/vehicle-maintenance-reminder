@@ -36,7 +36,7 @@ function AdminNotificationPage() {
           <p style={{ color: "#555", marginBottom: "12px" }}>
             All reminders sent to customers — manually triggered or automated by
             the daily schedule. Status shows whether the customer has read
-            each one on their end.
+            each one on their end in the customer portal.
           </p>
           <ReminderLog
             notifications={notifications}

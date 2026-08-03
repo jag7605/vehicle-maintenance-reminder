@@ -23,21 +23,24 @@ function AdminJobsPage() {
   } = useAdminJobs();
 
   const [selectedJob, setSelectedJob] = useState(null);
+  const [completionResult, setCompletionResult] = useState(null);
 
   function openCompleteModal(job) {
     setSelectedJob(job);
+    setCompletionResult(null);
   }
 
   function closeCompleteModal() {
     setSelectedJob(null);
+    setCompletionResult(null);
   }
 
   async function handleConfirmComplete(postServiceNotes) {
     if (!selectedJob) return;
 
-    const success = await markJobComplete(selectedJob.id, postServiceNotes);
-    if (success) {
-      setSelectedJob(null);
+    const result = await markJobComplete(selectedJob.id, postServiceNotes);
+    if (result) {
+      setCompletionResult(result);
     }
     // On failure, the modal stays open and shows actionError for this job
     // so the admin can see what went wrong and retry.
@@ -112,6 +115,7 @@ function AdminJobsPage() {
           onConfirm={handleConfirmComplete}
           loading={actionLoading[selectedJob.id]}
           error={actionError[selectedJob.id]}
+          completionResult={completionResult}
         />
       )}
     </StaffLayout>

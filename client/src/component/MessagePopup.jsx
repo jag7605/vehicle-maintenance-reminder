@@ -21,7 +21,7 @@ function MessagePopup({ message, onClose, isError = false }) {
             {isError ? "Error" : "Success"}
           </h3>
   
-          <p>{message}</p>
+          <p style={{ whiteSpace: "pre-line" }}>{message}</p>
   
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
             <button type="button" onClick={onClose}>

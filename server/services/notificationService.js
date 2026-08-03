@@ -8,35 +8,62 @@ const { sendPush } = require("./pushService");
 // Flip to "true" before showcasing to demonstrate the Vonage integration in logs.
 const SMS_ENABLED = process.env.SMS_ENABLED === "true";
 
-// ---------------------------------------------------------------------------
-// Builds the { subject, message } for each supported REMINDER type.
-// Add new reminder types here as they come up (e.g. "invoiceReady").
-// ---------------------------------------------------------------------------
-function buildServiceDueContent(vehicle, customer) {
-  if (!vehicle.nextServiceDate) {
+
+// Small server-side equivalent of the client's isPastDate() — compares by
+// calendar day, not time-of-day, consistent with the client version.
+function isPastDate(dateObj) {
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return startOfDay(dateObj) < startOfDay(new Date());
+}
+
+function buildWofDueContent(vehicle, customer) {
+  if (!vehicle.nextWofDate) {
     throw new Error(
-      "No service date set for this vehicle. Please set a service date before sending a reminder."
+      "No WoF due date set for this vehicle. Please set a WoF date before sending a reminder."
     );
   }
 
-  const serviceDateObj = vehicle.nextServiceDate.toDate();
-  const serviceDate = serviceDateObj.toLocaleDateString("en-NZ", {
+  const dateObj = vehicle.nextWofDate.toDate();
+  const date = dateObj.toLocaleDateString("en-NZ", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const serviceTime = serviceDateObj.toLocaleTimeString("en-NZ", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
+
+  const message = isPastDate(dateObj)
+    ? `Hi ${customer.firstName}, your ${vehicle.year} ${vehicle.make} ` +
+      `${vehicle.model} (Rego: ${vehicle.rego}) was due for a WoF on ` +
+      `${date} and is now overdue. Please contact us or log in to the customer portal to book an appointment as soon as possible.`
+    : `Hi ${customer.firstName}, your ${vehicle.year} ${vehicle.make} ` +
+      `${vehicle.model} (Rego: ${vehicle.rego}) is due for a WoF on ` +
+      `${date}. Contact us or log in to the customer portal to book an appointment.`;
+
+  return { subject: isPastDate(dateObj) ? "WoF Overdue" : "WoF Reminder", message };
+}
+
+function buildOilChangeDueContent(vehicle, customer) {
+  if (!vehicle.nextOilChangeDate) {
+    throw new Error(
+      "No Oil Change due date set for this vehicle. Please set an Oil Change date before sending a reminder."
+    );
+  }
+
+  const dateObj = vehicle.nextOilChangeDate.toDate();
+  const date = dateObj.toLocaleDateString("en-NZ", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 
-  const message =
-    `Hi ${customer.firstName}, your ${vehicle.year} ${vehicle.make} ` +
-    `${vehicle.model} (Rego: ${vehicle.rego}) is due for a service on ` +
-    `${serviceDate} at ${serviceTime}. Contact us or log in to the customer portal to book an appointment.`;
+  const message = isPastDate(dateObj)
+    ? `Hi ${customer.firstName}, your ${vehicle.year} ${vehicle.make} ` +
+      `${vehicle.model} (Rego: ${vehicle.rego}) was due for an Oil Change on ` +
+      `${date} and is now overdue. Please contact us or log in to the customer portal to book an appointment as soon as possible.`
+    : `Hi ${customer.firstName}, your ${vehicle.year} ${vehicle.make} ` +
+      `${vehicle.model} (Rego: ${vehicle.rego}) is due for an Oil Change on ` +
+      `${date}. Contact us or log in to the customer portal to book an appointment.`;
 
-  return { subject: "Vehicle Service Reminder", message };
+  return { subject: isPastDate(dateObj) ? "Oil Change Overdue" : "Oil Change Reminder", message };
 }
 
 function buildCarReadyContent(vehicle, customer) {
@@ -49,14 +76,14 @@ function buildCarReadyContent(vehicle, customer) {
 }
 
 const CONTENT_BUILDERS = {
-  serviceDue: buildServiceDueContent,
+  wofDue: buildWofDueContent,
+  oilChangeDue: buildOilChangeDueContent,
   carReady: buildCarReadyContent,
 };
 
 // ---------------------------------------------------------------------------
 // Builds the { subject, message } for each supported BOOKING status.
-// Takes (appointment, vehicle, customer) — appointment.date is a Firestore
-// Timestamp, same pattern as vehicle.nextServiceDate above.
+// Takes (appointment, vehicle, customer) — appointment.date is a Firestore Timestamp
 // ---------------------------------------------------------------------------
 function buildConfirmedContent(appointment, vehicle, customer) {
   const { date, time } = formatAppointmentDate(appointment);
@@ -81,46 +108,46 @@ function buildRejectedContent(appointment, vehicle, customer) {
 }
 
 // ---------------------------------------------------------------------------
-// buildCompletedContent — extended in Sprint 5 (Person C, Stories 4 & 5).
+// buildCompletedContent — extended in Sprint 5 (Person C initially, revised
+// during Person D's integration to support multiple service types per
+// appointment).
 //
-// nextDueDate is a Firestore Timestamp (matching vehicles.nextServiceDate's
-// convention) for WoF/Oil Change completions, or null/undefined for
-// General Service, Brake Check, Tyre Check — those carry no lead time, so
-// they keep the plain completion message with no next-due wording.
+// nextDueDates is an array of { serviceType, date } entries — one per
+// service type on the appointment that has a calculated next-due date
+// (WoF and/or Oil Change). Pass an empty array if none apply (General
+// Service, Brake Check, Tyre Check carry no lead time).
 //
-// This function does NOT calculate nextDueDate itself — the caller decides
-// whether one applies (based on appointment.serviceType) and passes the
-// already-calculated result in, or null if it doesn't apply. This function
-// only knows how to format one into the message if given one.
+// This function does NOT calculate any dates itself — the caller
+// (job completion orchestration) decides which service types apply and
+// passes the already-calculated results in.
 // ---------------------------------------------------------------------------
-function buildCompletedContent(appointment, vehicle, customer, nextDueDate) {
+function buildCompletedContent(appointment, vehicle, customer, nextDueDates = []) {
   const baseMessage =
     `Hi ${customer.firstName}, the service for your ${vehicle.year} ${vehicle.make} ` +
     `${vehicle.model} (Rego: ${vehicle.rego}) has been completed. Thank you for choosing us.`;
 
-  if (!nextDueDate) {
+  if (!nextDueDates || nextDueDates.length === 0) {
     return { subject: "Service Completed", message: baseMessage };
   }
 
-  const nextDueDateObj = nextDueDate.toDate ? nextDueDate.toDate() : nextDueDate;
-  const formattedNextDue = nextDueDateObj.toLocaleDateString("en-NZ", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  const dueWordingLines = nextDueDates.map(({ serviceType, date }) => {
+    const dateObj = date.toDate ? date.toDate() : date;
+    const formattedDate = dateObj.toLocaleDateString("en-NZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    if (serviceType === "WOF") {
+      return `Your next WoF is due by ${formattedDate}.`;
+    }
+    if (serviceType === "Oil Change") {
+      return `Your next Oil Change is due by ${formattedDate}.`;
+    }
+    return `Your next ${serviceType} is due around ${formattedDate}.`;
   });
 
-  // Specific wording for Oil Change, since that's this workstream's scope
-  // (WoF wording is Person B's responsibility, not touched here). Falls
-  // back to generic wording for any other serviceType that ends up with a
-  // nextDueDate, so nothing crashes or looks garbled unexpectedly.
-  let dueWording;
-  if (appointment.serviceType === "Oil Change") {
-    dueWording = `Your next Oil Change is due by ${formattedNextDue}.`;
-  } else {
-    dueWording = `Your next service is due around ${formattedNextDue}.`;
-  }
-
-  const message = `${baseMessage} ${dueWording}`;
+  const message = `${baseMessage} ${dueWordingLines.join(" ")}`;
 
   return { subject: "Service Completed", message };
 }
@@ -131,8 +158,7 @@ const BOOKING_CONTENT_BUILDERS = {
   completed: buildCompletedContent,
 };
 
-// Shared helper — formats appointment.date (Firestore Timestamp) the same
-// way vehicle.nextServiceDate is formatted above.
+// Shared helper — formats appointment.date (Firestore Timestamp)
 function formatAppointmentDate(appointment) {
   if (!appointment.date) {
     throw new Error("Appointment has no date set.");
@@ -224,15 +250,15 @@ async function sendReminder(vehicle, customer, type = "serviceDue") {
 // status must be one of: "confirmed" | "rejected" | "completed"
 // Same channel/preference/deliveryStatus pattern as sendReminder.
 // ---------------------------------------------------------------------------
-async function sendBookingNotification(appointment, vehicle, customer, status, nextDueDate = null) {
+async function sendBookingNotification(appointment, vehicle, customer, status, nextDueDates = null) {
   const buildContent = BOOKING_CONTENT_BUILDERS[status];
   if (!buildContent) {
     throw new Error(`Unknown booking status: "${status}".`);
   }
 
-  // nextDueDate is only meaningful for "completed" — buildConfirmedContent
+  // nextDueDates is only meaningful for "completed" — buildConfirmedContent
   // and buildRejectedContent simply ignore the extra argument.
-  const { subject, message } = buildContent(appointment, vehicle, customer, nextDueDate);
+  const { subject, message } = buildContent(appointment, vehicle, customer, nextDueDates);
 
   const prefs = customer.notificationPreferences || {};
   const deliveryStatus = {};

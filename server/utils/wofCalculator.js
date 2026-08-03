@@ -10,7 +10,12 @@ function calculateNextWoFDate(vehicle, completedServiceDate) {
     }
 
     if (vehicleAge <= 3) {
-        return null;
+        // Vehicle isn't yet old enough to need a WoF. Rather than leaving
+        // no due date at all, calculate its first-due date assuming
+        // registration on Jan 1 of vehicle.year (an approximation, since
+        // only the year is stored, not an exact registration date) — the
+        // vehicle becomes eligible on Jan 1 of vehicle.year + 4.
+        return new Date(vehicleYear + 4, 0, 1);
     } else if (vehicleAge <= 13) {
         nextWoFDate.setFullYear(nextWoFDate.getFullYear() + 2);
     } else {

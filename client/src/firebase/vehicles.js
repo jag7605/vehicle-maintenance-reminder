@@ -13,11 +13,23 @@ import { db } from "./firebaseConfig";
 
 
 export async function addVehicle(vehicleData) {
-  // Step 1: Add a new document to the "vehicles" collection
-  // vehicleData should include: make, model, year, mileage, rego, ownerId
-  const docRef = await addDoc(collection(db, "vehicles"), vehicleData);
+  // Step 1: Convert any Date fields to Firestore Timestamps before writing,
+  // same convention used by updateVehicle(). nextWofDate/nextOilChangeDate
+  // may be a JS Date (calculated at creation time) or null (not yet known).
+  const firestoreData = { ...vehicleData };
 
-  // Step 2: Return the new document's auto-generated ID
+  if (firestoreData.nextWofDate instanceof Date) {
+    firestoreData.nextWofDate = Timestamp.fromDate(firestoreData.nextWofDate);
+  }
+
+  if (firestoreData.nextOilChangeDate instanceof Date) {
+    firestoreData.nextOilChangeDate = Timestamp.fromDate(firestoreData.nextOilChangeDate);
+  }
+
+  // Step 2: Add a new document to the "vehicles" collection
+  const docRef = await addDoc(collection(db, "vehicles"), firestoreData);
+
+  // Step 3: Return the new document's auto-generated ID
   return docRef.id;
 }
 
@@ -38,8 +50,9 @@ export async function getAllVehicles() {
 }
 
 export async function updateVehicle(vehicleId, updates) {
-  // updates can include: year, mileage, rego, nextServiceDate (JS Date or null),
-  // nextServiceMileage (number or null) — make/model are not editable after creation
+  // updates can include: year, mileage, rego, nextWofDate (JS Date or null),
+  // nextOilChangeDate (JS Date or null), nextServiceMileage (number or null)
+  // — make/model are not editable after creation
   const vehicleRef = doc(db, "vehicles", vehicleId);
 
   const firestoreUpdates = {
@@ -48,11 +61,18 @@ export async function updateVehicle(vehicleId, updates) {
     ...(updates.rego !== undefined && { rego: updates.rego }),
   };
 
-  // Convert nextServiceDate JS Date → Firestore Timestamp if provided
-  if (updates.nextServiceDate instanceof Date) {
-    firestoreUpdates.nextServiceDate = Timestamp.fromDate(updates.nextServiceDate);
-  } else if (updates.nextServiceDate === null) {
-    firestoreUpdates.nextServiceDate = null;
+  // Convert nextWofDate JS Date → Firestore Timestamp if provided
+  if (updates.nextWofDate instanceof Date) {
+    firestoreUpdates.nextWofDate = Timestamp.fromDate(updates.nextWofDate);
+  } else if (updates.nextWofDate === null) {
+    firestoreUpdates.nextWofDate = null;
+  }
+
+  // Convert nextOilChangeDate JS Date → Firestore Timestamp if provided
+  if (updates.nextOilChangeDate instanceof Date) {
+    firestoreUpdates.nextOilChangeDate = Timestamp.fromDate(updates.nextOilChangeDate);
+  } else if (updates.nextOilChangeDate === null) {
+    firestoreUpdates.nextOilChangeDate = null;
   }
 
   // nextServiceMileage — store as number, or null to clear

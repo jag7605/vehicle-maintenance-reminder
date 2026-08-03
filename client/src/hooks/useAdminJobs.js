@@ -97,14 +97,14 @@ export function useAdminJobs() {
     setActionError((prev) => ({ ...prev, [appointmentId]: "" }));
 
     try {
-      await completeAppointment(appointmentId, postServiceNotes);
+      const result = await completeAppointment(appointmentId, postServiceNotes);
 
       // Completed jobs drop off the "today's confirmed jobs" list entirely,
       // matching the same "filter it off" pattern used for rejected bookings
       // on the calendar.
       setJobs((prev) => prev.filter((job) => job.id !== appointmentId));
 
-      return true;
+      return result; // { success, appointment, deliveryStatus }
     } catch (err) {
       setActionError((prev) => ({ ...prev, [appointmentId]: err.message }));
       return false;

@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { formatDate } from "../../utils/formatters";
+import { formatDate, isPastDate } from "../../utils/formatters";
 import DeliveryStatusBadges from "../DeliveryStatusBadges";
 import VehicleNotificationHistory from "../VehicleNotificationHistory";
 
@@ -33,7 +33,8 @@ function VehicleTable({
           <th>Model</th>
           <th>Rego</th>
           <th>Mileage</th>
-          <th>Next Service Date</th>
+          <th>Next WoF Date</th>
+          <th>Next Oil Change Date</th>
           <th>Next Service Mileage</th>
           <th>Actions</th>
         </tr>
@@ -52,7 +53,14 @@ function VehicleTable({
                 <td>{vehicle.model}</td>
                 <td>{vehicle.rego}</td>
                 <td>{vehicle.mileage}</td>
-                <td>{formatDate(vehicle.nextServiceDate)}</td>
+                <td style={isPastDate(vehicle.nextWofDate) ? { color: "red" } : undefined}>
+                  {formatDate(vehicle.nextWofDate)}
+                  {isPastDate(vehicle.nextWofDate) && " (Overdue)"}
+                </td>
+                <td style={isPastDate(vehicle.nextOilChangeDate) ? { color: "red" } : undefined}>
+                  {formatDate(vehicle.nextOilChangeDate)}
+                  {isPastDate(vehicle.nextOilChangeDate) && " (Overdue)"}
+                </td>
                 <td>
                   {vehicle.nextServiceMileage != null
                     ? `${vehicle.nextServiceMileage.toLocaleString()} km`
@@ -72,7 +80,7 @@ function VehicleTable({
 
               {result && (
                 <tr>
-                  <td colSpan="8">
+                  <td colSpan="9">
                     {result.success ? (
                       <span>
                         <strong>Notification sent.</strong>{" "}
@@ -89,7 +97,7 @@ function VehicleTable({
 
               {historyOpen && (
                 <tr>
-                  <td colSpan="8">
+                  <td colSpan="9">
                     <strong>Notification History</strong>
                     <VehicleNotificationHistory vehicleId={vehicle.id} />
                   </td>

@@ -32,7 +32,7 @@ function StaffLayout({ title, children }) {
       <Topbar title={title} logoText="Garage Staff" buttonText="+ New Job" />
 
       <div className="dashboard-layout">
-        <Sidebar menuItems={adminMenu} />
+        <Sidebar menuItems={adminMenu} userRole="Admin" />
 
         <main className="dashboard-content">
           {children}

@@ -2,8 +2,8 @@ require("dotenv").config();
 // TEMPORARY TEST SCRIPT — delete after confirming email and SMS work
 // Run from inside the server/ folder with: node testReminder.js
 
-const { db } = require("./firebase/adminConfig");
-const { sendReminder } = require("./services/notificationService");
+const { db } = require("../firebase/adminConfig");
+const { sendReminder } = require("../services/notificationService");
 
 const CUSTOMER_ID = "5cnbF1Wvv7ZPexVCxUGyIchGPQA2";
 

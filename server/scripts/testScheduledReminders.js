@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { runScheduledReminders } = require("./jobs/scheduledReminders");
+const { runScheduledReminders } = require("../jobs/scheduledReminders");
 
 async function test() {
   console.log("Running scheduled reminders test...");
