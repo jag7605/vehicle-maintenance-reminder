@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Topbar from "./TopBar";
 import Sidebar from "./Sidebar";
 import "./StaffLayout.css";
 import { Outlet } from "react-router-dom";
@@ -49,8 +48,6 @@ function CustomerLayout() {
 
   return (
     <>
-      <Topbar title="Customer Dashboard" logoText="Customer Portal" />
-
       <div className="dashboard-layout">
         <Sidebar menuItems={customerMenu} userName={customerName} userRole="Customer" />
 

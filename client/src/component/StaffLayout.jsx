@@ -1,4 +1,3 @@
-import Topbar from "./TopBar";
 import Sidebar from "./Sidebar";
 import "./StaffLayout.css";
 
@@ -8,7 +7,6 @@ const adminMenu = [
     items: [
       { label: "Dashboard", path: "/admin/home" },
       { label: "Notifications", path: "/admin/notifications" },
-      { label: "Notification Preferences", path: "/admin/notification-preferences" },
     ],
   },
   {
@@ -26,10 +24,9 @@ const adminMenu = [
   },
 ];
 
-function StaffLayout({ title, children }) {
+function StaffLayout({ children }) {
   return (
     <>
-      <Topbar title={title} logoText="Garage Staff" buttonText="+ New Job" />
 
       <div className="dashboard-layout">
         <Sidebar menuItems={adminMenu} userRole="Admin" />

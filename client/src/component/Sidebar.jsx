@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import logout from "../firebase/logout.js";
+import { MdLogout } from "react-icons/md";
 
 function Sidebar({ menuItems, userName, userRole }) {
   return (
@@ -27,7 +28,8 @@ function Sidebar({ menuItems, userName, userRole }) {
 
       <div className="sidebar-footer">
         <button className="logout-button" onClick={logout}>
-          Logout ➜]
+          <span>Logout</span>
+          <MdLogout size={22} />
         </button>
 
         <div className="user-row">

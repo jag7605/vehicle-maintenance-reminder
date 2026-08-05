@@ -14,7 +14,6 @@ import CustomerVehicles from './pages/CustomerVehiclesPage';
 import CustomerHistory from './pages/CustomerServiceHistoryPage';
 import CustomerProfile from './pages/CustomerProfilePage';
 import CustomerLayout from './component/CustomerLayout';
-import AdminNotificationPreferencePage from "./pages/AdminNotificationPreferencePage";
 
 function App() {
   return (
@@ -46,10 +45,6 @@ function App() {
         <Route path="/admin/customers/:customerId" element={
           <ProtectedRoute requiredRole="admin">
             <AdminCustomerProfilePage /></ProtectedRoute>} />
-        <Route path="/admin/notification-preferences" element={
-          <ProtectedRoute requiredRole="admin">
-            <AdminNotificationPreferencePage />
-          </ProtectedRoute>} />
 
         <Route path="/customer" element={
           <ProtectedRoute requiredRole="customer">

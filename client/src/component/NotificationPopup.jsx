@@ -8,7 +8,6 @@ import "./NotificationPopup.css";
 function NotificationPopup() {
   const [showPopup, setShowPopup] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +23,6 @@ function NotificationPopup() {
       if (!userSnap.exists()) return;
 
       const data = userSnap.data();
-      setRole(data.role);
 
       if (data.notificationPreferences?.browser === undefined) {
         setShowPopup(true);
