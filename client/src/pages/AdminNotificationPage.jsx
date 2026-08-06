@@ -17,19 +17,6 @@ function AdminNotificationPage() {
     <StaffLayout title="Notifications">
       <h2>Notifications</h2>
  
-      <div style={{ marginBottom: "16px" }}>
-        <button
-          onClick={() => setActiveTab("reminders")}
-          disabled={activeTab === "reminders"}
-          style={{ marginRight: "8px" }}
-        >
-          Customer Reminders
-        </button>
-        <button onClick={() => setActiveTab("staff")} disabled={activeTab === "staff"}>
-          Staff Alerts
-        </button>
-      </div>
- 
       {activeTab === "reminders" && (
         <>
           <h3>Customer Reminder Log</h3>
@@ -44,16 +31,6 @@ function AdminNotificationPage() {
             error={error}
             unreadCount={unreadCount}
           />
-        </>
-      )}
- 
-      {activeTab === "staff" && (
-        <>
-          <h3>Staff Alerts</h3>
-          <p style={{ color: "#555", marginBottom: "12px" }}>
-            Internal notifications for job, booking, and task events.
-          </p>
-          <StaffNotificationLog />
         </>
       )}
     </StaffLayout>
