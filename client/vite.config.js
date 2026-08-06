@@ -15,6 +15,17 @@ export default defineConfig({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "sw.js",
+
+      // Without this, vite-plugin-pwa does NOT serve/build the service
+      // worker at all when running `vite dev` with injectManifest —
+      // /sw.js 404s, registration throws, and push notifications silently
+      // fail. type: "module" matches the registration logic in
+      // pushSubscription.js (import.meta.env.DEV ? "module" : "classic").
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
+
       injectManifest: {
         // Workbox's precache manifest gets injected wherever
         // `self.__WB_MANIFEST` appears in src/sw.js
