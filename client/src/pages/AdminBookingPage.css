@@ -1,0 +1,5 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Page-specific overrides only — header row uses shared.css's
+   .page-header class directly (no page-specific header styling needed
+   here, unlike AdminCustomersPage.css which was kept for future use). */

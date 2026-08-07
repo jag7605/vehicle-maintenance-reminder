@@ -7,6 +7,7 @@ import EditVehicleModal from "../component/customerProfile/EditVehicleModal";
 import DeleteVehicleModal from "../component/customerProfile/DeleteVehicleModal";
 import StatusConfirmModal from "../component/customerProfile/StatusConfirmModal";
 import SendNotificationModal from "../component/customerProfile/SendNotificationModal";
+import "./AdminCustomerProfilePage.css";
 
 function AdminCustomerProfilePage() {
   const { customerId } = useParams();
@@ -29,18 +30,18 @@ function AdminCustomerProfilePage() {
   } = useCustomerProfile(customerId);
 
   if (pageLoading) return <p>Loading customer...</p>;
-  if (pageError) return <p style={{ color: "red" }}>{pageError}</p>;
+  if (pageError) return <p className="error-text">{pageError}</p>;
 
   return (
     <StaffLayout title="Customers">
       <div>
-        <button type="button" onClick={() => navigate("/admin/customers")} style={{ marginBottom: "12px" }}>
+        <button type="button" onClick={() => navigate("/admin/customers")} className="back-btn">
           ← Back to Customers
         </button>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className="profile-header-row">
           <h2>{customer.firstName} {customer.lastName}</h2>
-          <span style={{ color: isActive ? "green" : "red" }}>
+          <span className={isActive ? "status-active" : "status-inactive"}>
             {isActive ? "Active" : "Inactive"}
           </span>
           <button onClick={statusPopup.open} disabled={statusPopup.loading}>

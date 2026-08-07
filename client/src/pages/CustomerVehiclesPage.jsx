@@ -33,7 +33,7 @@ function CustomerVehiclesPage() {
   return (
     <div>
       <h2>My Vehicles</h2>
-      <table border="1" cellPadding="6">
+      <table>
         <thead>
           <tr>
             <th>Year</th>

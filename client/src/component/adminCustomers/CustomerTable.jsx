@@ -9,7 +9,7 @@ function CustomerTable({ rows }) {
   }
 
   return (
-    <table border="1" cellPadding="6">
+    <table>
       <thead>
         <tr>
           <th>Name</th>

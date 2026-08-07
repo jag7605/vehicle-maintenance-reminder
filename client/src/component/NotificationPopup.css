@@ -1,3 +1,6 @@
+/* Owner: Person C — Shared shell
+   Reference: both UI reference files (used on both admin + customer sides) */
+
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -35,6 +38,12 @@
   margin-bottom: 24px;
 }
 
+.popup-error-text {
+  color: var(--color-error);
+  font-size: 0.9em;
+  text-align: left;
+}
+
 .popup-buttons {
   display: flex;
   justify-content: center;
@@ -42,7 +51,7 @@
 }
 
 .allow-btn {
-  background: #ff9800;
+  background: var(--color-accent);
   color: white;
   border: none;
   padding: 11px 20px;

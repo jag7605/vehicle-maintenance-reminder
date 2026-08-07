@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { getNotificationsByVehicle } from "../firebase/notifications";
 import { formatDate } from "../utils/formatters";
 import DeliveryStatusBadges from "./DeliveryStatusBadges";
- 
+import "./VehicleNotificationHistory.css";
+
 // ---------------------------------------------------------------------------
 // Per-vehicle notification history panel — fetches and displays the
 // reminder log for a single vehicle. Used inside AdminCustomerProfilePage's
@@ -12,7 +13,7 @@ function VehicleNotificationHistory({ vehicleId }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
- 
+
   useEffect(() => {
     async function load() {
       try {
@@ -27,13 +28,13 @@ function VehicleNotificationHistory({ vehicleId }) {
     }
     load();
   }, [vehicleId]);
- 
-  if (loading) return <p style={{ margin: "4px 0" }}>Loading history...</p>;
-  if (error) return <p style={{ color: "red", margin: "4px 0" }}>{error}</p>;
-  if (notifications.length === 0) return <p style={{ margin: "4px 0" }}>No reminders sent yet.</p>;
- 
+
+  if (loading) return <p className="history-status-text">Loading history...</p>;
+  if (error) return <p className="error-text history-status-text">{error}</p>;
+  if (notifications.length === 0) return <p className="history-status-text">No reminders sent yet.</p>;
+
   return (
-    <table border="1" cellPadding="4" style={{ marginTop: "6px", fontSize: "0.9em" }}>
+    <table className="vehicle-history-table">
       <thead>
         <tr>
           <th>Sent</th>
@@ -44,7 +45,7 @@ function VehicleNotificationHistory({ vehicleId }) {
       <tbody>
         {notifications.map((n) => (
           <tr key={n.id}>
-            <td style={{ whiteSpace: "nowrap" }}>{formatDate(n.sentAt)}</td>
+            <td className="sent-cell">{formatDate(n.sentAt)}</td>
             <td>{n.message}</td>
             <td>
               <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
@@ -55,5 +56,5 @@ function VehicleNotificationHistory({ vehicleId }) {
     </table>
   );
 }
- 
+
 export default VehicleNotificationHistory;

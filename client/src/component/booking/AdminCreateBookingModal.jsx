@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllCustomers } from "../../firebase/users";
 import { getVehiclesByOwner } from "../../firebase/vehicles";
 import { getAvailability, createAppointmentAsAdmin } from "../../firebase/appointments";
+import "./AdminCreateBookingModal.css";
 
 const SERVICE_TYPES = [
   "WOF",
@@ -161,28 +162,15 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
   const todayString = formatDateForApi(new Date());
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-      }}
-    >
-      <div style={{ backgroundColor: "white", padding: "20px", minWidth: "360px", borderRadius: "6px" }}>
+    <div className="modal-overlay">
+      <div className="modal-box">
         <h3>New Booking</h3>
-        <p style={{ color: "#555", fontSize: "14px", marginTop: "-8px" }}>
+        <p className="modal-subtext">
           Bookings created here are confirmed immediately — no customer approval step.
         </p>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <label>Customer</label><br />
             <select
               value={selectedCustomerId}
@@ -201,7 +189,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             </select>
           </div>
 
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <label>Vehicle</label><br />
             <select
               value={selectedVehicleId}
@@ -226,7 +214,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             </select>
           </div>
 
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <label>Date</label><br />
             <input
               type="date"
@@ -240,25 +228,24 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
           {availabilityLoading && <p>Loading available slots...</p>}
 
           {availability && availability.closed && (
-            <p style={{ color: "red" }}>The garage is closed on this day.</p>
+            <p className="error-text">The garage is closed on this day.</p>
           )}
 
           {availability && !availability.closed && (
-            <div style={{ marginBottom: "12px" }}>
+            <div className="form-field">
               <label>Time slot</label><br />
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
+              <div className="slot-row">
                 {availability.slots.map((slot) => (
                   <button
                     key={slot.time}
                     type="button"
                     onClick={() => setSelectedSlot(slot.time)}
                     disabled={!slot.available}
-                    style={{
-                      padding: "6px 10px",
-                      border: selectedSlot === slot.time ? "2px solid #2563eb" : "1px solid #ccc",
-                      backgroundColor: !slot.available ? "#eee" : "white",
-                      borderRadius: "4px",
-                    }}
+                    className={
+                      "slot-btn" +
+                      (selectedSlot === slot.time ? " slot-btn-selected" : "") +
+                      (!slot.available ? " slot-btn-unavailable" : "")
+                    }
                   >
                     {slot.time} {!slot.available ? "(Booked)" : ""}
                   </button>
@@ -267,7 +254,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             </div>
           )}
 
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <label>Service type</label><br />
             <select
               value={serviceType}
@@ -288,7 +275,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
           </div>
 
           {additionalServiceTypes.map((additionalType, index) => (
-            <div style={{ marginBottom: "12px" }} key={index}>
+            <div className="form-field" key={index}>
               <label>Additional service type</label><br />
               <select
                 value={additionalType}
@@ -302,14 +289,14 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
               <button
                 type="button"
                 onClick={() => handleRemoveAdditionalService(index)}
-                style={{ marginLeft: "8px" }}
+                className="remove-service-btn"
               >
                 Remove service
               </button>
             </div>
           ))}
 
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <button
               type="button"
               onClick={handleAddAdditionalService}
@@ -319,7 +306,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             </button>
           </div>
 
-          <div style={{ marginBottom: "12px" }}>
+          <div className="form-field">
             <label>Notes</label><br />
             <textarea
               value={notes}
@@ -328,9 +315,9 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             />
           </div>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="error-text">{error}</p>}
 
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className="modal-actions">
             <button type="submit" disabled={submitting}>
               {submitting ? "Creating..." : "Create Booking"}
             </button>

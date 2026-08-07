@@ -105,7 +105,7 @@ function NotificationPopup() {
       </p>
 
       {error && (
-        <p style={{ color: "#c0392b", fontSize: "0.9em", textAlign: "left" }}>
+        <p className="popup-error-text">
           {error}
         </p>
       )}

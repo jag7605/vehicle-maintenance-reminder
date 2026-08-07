@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./JobCompleteModal.css";
 
 function formatDate(value) {
   if (!value) return "—";
@@ -21,21 +22,8 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error, completionR
   }
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-      }}
-    >
-      <div style={{ backgroundColor: "white", padding: "20px", minWidth: "360px", borderRadius: "6px" }}>
+    <div className="modal-overlay">
+      <div className="modal-box">
         {completionResult ? (
           <>
             <h3>Job Completed</h3>
@@ -50,7 +38,7 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error, completionR
               ))}
             </ul>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
+            <div className="modal-actions modal-actions-end">
               <button type="button" onClick={onClose}>
                 Close
               </button>
@@ -69,24 +57,24 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error, completionR
             <p><strong>Booked time:</strong> {formatDate(job.date)}</p>
             {job.notes && <p><strong>Customer notes:</strong> {job.notes}</p>}
 
-            <div style={{ marginTop: "12px" }}>
+            <div className="post-service-field">
               <label>Post-service notes</label><br />
               <textarea
                 value={postServiceNotes}
                 onChange={(e) => setPostServiceNotes(e.target.value)}
                 placeholder="e.g. Used synthetic oil, replaced air filter"
                 rows={3}
-                style={{ width: "100%", marginTop: "4px" }}
+                className="textarea-full"
               />
             </div>
 
-            <p style={{ color: "#555", fontSize: "0.9em", marginTop: "8px" }}>
+            <p className="confirm-note">
               Are you sure you want to mark this job as complete? This cannot be undone.
             </p>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error-text">{error}</p>}
 
-            <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
+            <div className="modal-actions modal-actions-top">
               <button onClick={handleConfirm} disabled={loading}>
                 {loading ? "Completing..." : "Confirm Complete"}
               </button>

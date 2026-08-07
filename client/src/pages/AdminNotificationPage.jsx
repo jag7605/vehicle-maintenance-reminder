@@ -1,40 +1,65 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import StaffLayout from "../component/StaffLayout";
 import { useReminderLog } from "../hooks/useReminderLog";
 import ReminderLog from "../component/adminNotifications/ReminderLog";
-import StaffNotificationLog from "../component/adminNotifications/StaffNotificationLog";
- 
+import "./AdminNotificationPage.css";
+
 // ---------------------------------------------------------------------------
-// Admin Notifications page — tabbed view between the customer reminder log
-// and (future) internal staff alerts. Data loading lives in useReminderLog();
-// this component only handles the tab switch and composition.
+// Admin Notifications page — customer reminder log.
 // ---------------------------------------------------------------------------
 function AdminNotificationPage() {
-  const [activeTab, setActiveTab] = useState("reminders"); // "reminders" | "staff"
-  const { notifications, loading, error, unreadCount } = useReminderLog();
- 
+  const { notifications, loading, error } = useReminderLog();
+  const [customerFilter, setCustomerFilter] = useState("");
+
+  const customerOptions = useMemo(() => {
+    const map = new Map();
+    notifications.forEach((n) => {
+      if (n.customerId) {
+        map.set(n.customerId, n.customerName);
+      }
+    });
+    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1])); // [id, name]
+  }, [notifications]);
+
+  const filteredNotifications = customerFilter
+    ? notifications.filter((n) => n.customerId === customerFilter)
+    : notifications;
+
+  const unreadCount = filteredNotifications.filter((n) => !n.read).length;
+
   return (
     <StaffLayout title="Notifications">
       <h2>Notifications</h2>
- 
-      {activeTab === "reminders" && (
-        <>
-          <h3>Customer Reminder Log</h3>
-          <p style={{ color: "#555", marginBottom: "12px" }}>
-            All reminders sent to customers — manually triggered or automated by
-            the daily schedule. Status shows whether the customer has read
-            each one on their end in the customer portal.
-          </p>
-          <ReminderLog
-            notifications={notifications}
-            loading={loading}
-            error={error}
-            unreadCount={unreadCount}
-          />
-        </>
+
+      <h3>Customer Reminder Log</h3>
+      <p className="page-intro-text">
+        All reminders sent to customers — manually triggered or automated by
+        the daily schedule. Status shows whether the customer has read
+        each one on their end in the customer portal.
+      </p>
+
+      {!loading && !error && (
+        <div className="customer-filter-row">
+          <label>
+            Customer:{" "}
+            <select value={customerFilter} onChange={(e) => setCustomerFilter(e.target.value)}>
+              <option value="">All customers</option>
+              {customerOptions.map(([id, name]) => (
+                <option key={id} value={id}>{name}</option>
+              ))}
+            </select>
+          </label>
+        </div>
       )}
+
+      <ReminderLog
+        notifications={filteredNotifications}
+        loading={loading}
+        error={error}
+        unreadCount={unreadCount}
+      />
     </StaffLayout>
   );
 }
- 
+
 export default AdminNotificationPage;

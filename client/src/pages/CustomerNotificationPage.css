@@ -1,3 +1,8 @@
+/* Owner: Person D
+   Reference: customer_ui_reference.html — base row styling now lives in
+   shared.css (.notif-row/.notif-main/.notif-meta). Only page-specific
+   overrides belong here, if any. */
+
 .notification-card {
     border: 1px solid #ddd;
     padding: 15px;

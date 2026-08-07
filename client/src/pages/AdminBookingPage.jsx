@@ -4,6 +4,7 @@ import BookingCalendar from "../component/booking/BookingCalendar";
 import BookingDetailModal from "../component/booking/BookingDetailModal";
 import AdminCreateBookingModal from "../component/booking/AdminCreateBookingModal";
 import { useAdminBookings } from "../hooks/useAdminBookings";
+import "./AdminBookingPage.css";
 
 function AdminBookingPage() {
   const {
@@ -41,13 +42,13 @@ function AdminBookingPage() {
 
   return (
     <StaffLayout title="Bookings">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="page-header">
         <h2>Bookings</h2>
         <button onClick={() => setShowCreateModal(true)}>+ New Booking</button>
       </div>
 
       {loading && <p>Loading bookings...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
 
       {!loading && !error && (
         <BookingCalendar

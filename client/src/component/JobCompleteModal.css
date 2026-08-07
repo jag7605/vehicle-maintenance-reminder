@@ -1,0 +1,31 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in JobCompleteModal.jsx.
+
+   .modal-overlay, .modal-box, .modal-actions, .error-text now live in
+   shared.css (this modal uses the same overlay/box pattern as
+   AdminCreateBookingModal) — do not redefine them here.
+
+    .modal-actions-top is a small modifier added
+   on top of the shared .modal-actions class, since this file needed
+   slightly different alignment/spacing. */
+
+  
+  .modal-actions-top {
+    margin-top: 16px;
+  }
+  
+  .post-service-field {
+    margin-top: 12px;
+  }
+  
+  .textarea-full {
+    width: 100%;
+    margin-top: 4px;
+  }
+  
+  .confirm-note {
+    color: var(--color-muted);
+    font-size: 0.9em;
+    margin-top: 8px;
+  }

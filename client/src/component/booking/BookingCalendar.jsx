@@ -6,6 +6,7 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enNZ from "date-fns/locale/en-NZ";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./BookingCalendar.css";
 
 const locales = { "en-NZ": enNZ };
 
@@ -20,6 +21,11 @@ const localizer = dateFnsLocalizer({
 const CALENDAR_MIN_TIME = new Date(1970, 0, 1, 9, 0, 0); // 9am
 const CALENDAR_MAX_TIME = new Date(1970, 0, 1, 17, 0, 0); // 5pm
 
+// These intentionally mirror the --status-* tokens in theme.css. Kept as
+// JS constants (not CSS classes) because react-big-calendar's
+// eventPropGetter and this file's legend dots need actual color values
+// at render time — if the status colors in theme.css ever change, update
+// these to match.
 const STATUS_COLORS = {
   pending: "#f59e0b", // amber — needs admin action
   confirmed: "#2563eb", // blue — booked, upcoming
@@ -86,7 +92,7 @@ function BookingCalendar({ appointments, onSelectEvent }) {
     .map(appointmentToEvent);
 
   return (
-    <div style={{ height: "700px" }}>
+    <div className="calendar-wrapper">
       <Calendar
         localizer={localizer}
         events={events}
@@ -106,20 +112,12 @@ function BookingCalendar({ appointments, onSelectEvent }) {
 
       {/* Legend — status colour key. "rejected" isn't listed since those
           events are filtered off the calendar entirely. */}
-      <div style={{ display: "flex", gap: "16px", marginTop: "12px", fontSize: "14px" }}>
+      <div className="calendar-legend">
         {Object.entries(STATUS_COLORS)
           .filter(([status]) => status !== "rejected")
           .map(([status, color]) => (
-          <span key={status} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span
-              style={{
-                display: "inline-block",
-                width: "12px",
-                height: "12px",
-                borderRadius: "3px",
-                backgroundColor: color,
-              }}
-            />
+          <span key={status} className="legend-item">
+            <span className="legend-dot" style={{ backgroundColor: color }} />
             {formatStatus(status)}
           </span>
         ))}

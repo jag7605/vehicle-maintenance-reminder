@@ -1,0 +1,49 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in AdminCreateBookingModal.jsx.
+
+   Note: .slot-btn-selected / .slot-btn-unavailable are conditional
+   classNames driven by component state (selectedSlot, slot.available) —
+   the JS logic that picks which class applies was NOT changed, only the
+   actual color/border values were moved here. Do not remove the
+   conditional className logic in the .jsx when restyling this file. */
+
+/* .modal-overlay, .modal-box, .modal-actions, .error-text moved to
+   shared.css — this modal now shares them with JobCompleteModal instead
+   of duplicating. Do not redefine them here. */
+
+   .modal-subtext {
+    color: var(--color-muted);
+    font-size: 14px;
+    margin-top: -8px;
+  }
+  
+  .form-field {
+    margin-bottom: 12px;
+  }
+  
+  .slot-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  
+  .slot-btn {
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    background-color: white;
+    border-radius: 4px;
+  }
+  
+  .slot-btn-selected {
+    border: 2px solid var(--status-confirmed);
+  }
+  
+  .slot-btn-unavailable {
+    background-color: #eee;
+  }
+  
+  .remove-service-btn {
+    margin-left: 8px;
+  }

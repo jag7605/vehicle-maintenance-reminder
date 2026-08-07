@@ -1,0 +1,20 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in VehicleNotificationHistory.jsx.
+
+   Note: table previously used border="1" cellPadding="4" HTML attribute —
+   removed, same reason as ReminderLog.jsx/AdminJobsPage.jsx: shared.css
+   already defines base table styling (borderless columns). */
+
+   .history-status-text {
+    margin: 4px 0;
+  }
+  
+  .vehicle-history-table {
+    margin-top: 6px;
+    font-size: 0.9em;
+  }
+  
+  .sent-cell {
+    white-space: nowrap;
+  }

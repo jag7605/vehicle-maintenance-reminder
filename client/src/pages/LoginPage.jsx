@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../firebase/auth";
+import "./LoginPage.css";
 
 // Main login component that renders the login form and handles authentication,
 // it checks the user's role after login and redirects them to the correct homepage
@@ -36,9 +37,9 @@ export default function LoginPage() {
     }
   }
 
-// styling 
+// styling
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="login-page-wrapper">
       <div>
         <h1>Vehicle Maintenance</h1>
 
@@ -67,7 +68,7 @@ export default function LoginPage() {
 
           <br />
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="error-text">{error}</p>}
 
           <button type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}

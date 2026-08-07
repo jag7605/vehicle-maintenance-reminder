@@ -1,0 +1,10 @@
+/* Owner: Person C — Floating/shared
+   Reference: admin_ui_reference.html + customer_ui_reference.html
+   Extracted from inline style={{}} in LoginPage.jsx. */
+
+   .login-page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

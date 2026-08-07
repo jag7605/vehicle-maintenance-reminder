@@ -1,0 +1,26 @@
+/* Owner: Person C — Floating/shared
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in Sendnotificationmodal.jsx.
+
+   .modal-overlay / .modal-box now come from shared.css — this file no
+   longer imports modalStyles.js. Once every modal using modalStyles.js
+   has been converted, modalStyles.js itself can be deleted. */
+
+   .notif-option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .btn-full-width {
+    width: 100%;
+  }
+  
+  .modal-error-spacing {
+    margin-top: 12px;
+  }
+  
+  .modal-cancel-row {
+    margin-top: 16px;
+  }

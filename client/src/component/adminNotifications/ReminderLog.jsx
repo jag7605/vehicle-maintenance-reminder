@@ -1,45 +1,42 @@
 import { formatDateTime } from "../../utils/formatters";
 import DeliveryStatusBadges from "../DeliveryStatusBadges";
+import "./ReminderLog.css";
 
 function ReminderLog({ notifications, loading, error, unreadCount }) {
   if (loading) return <p>Loading reminder log...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="error-text">{error}</p>;
   if (notifications.length === 0) return <p>No reminders have been sent yet.</p>;
- 
+
   return (
     <>
       {unreadCount > 0 && (
-        <p style={{ color: "#555" }}>
+        <p className="unread-count-text">
           {unreadCount} notification{unreadCount > 1 ? "s" : ""} unread by customer
         </p>
       )}
- 
-      <div style={{ overflowX: "auto", width: "100%" }}>
-        <table
-          border="1"
-          cellPadding="8"
-          style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}
-        >
+
+      <div className="reminder-log-scroll">
+        <table className="reminder-log-table">
           <thead>
             <tr>
-              <th style={{ width: "150px" }}>Status</th>
-              <th style={{ width: "140px", whiteSpace: "nowrap" }}>Sent</th>
+              <th className="col-status">Status</th>
+              <th className="col-sent">Sent</th>
               <th>Message</th>
-              <th style={{ width: "160px" }}>Delivery</th>
+              <th className="col-delivery">Delivery</th>
             </tr>
           </thead>
           <tbody>
             {notifications.map((n) => (
-              <tr key={n.id} style={{ backgroundColor: n.read ? "transparent" : "#f0f7ff" }}>
-                <td style={{ textAlign: "center" }}>
+              <tr key={n.id} className={n.read ? "" : "reminder-row-unread"}>
+                <td className="status-cell">
                   {n.read ? (
-                    <span style={{ color: "#999" }}>Read by customer</span>
+                    <span className="read-label">Read by customer</span>
                   ) : (
-                    <strong style={{ color: "#0055cc" }}>Unread by customer</strong>
+                    <strong className="unread-label">Unread by customer</strong>
                   )}
                 </td>
-                <td style={{ whiteSpace: "nowrap" }}>{formatDateTime(n.sentAt)}</td>
-                <td style={{ wordBreak: "break-word", maxWidth: "340px" }}>{n.message}</td>
+                <td className="sent-cell">{formatDateTime(n.sentAt)}</td>
+                <td className="message-cell">{n.message}</td>
                 <td>
                   <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
                 </td>
@@ -51,5 +48,5 @@ function ReminderLog({ notifications, loading, error, unreadCount }) {
     </>
   );
 }
- 
+
 export default ReminderLog;

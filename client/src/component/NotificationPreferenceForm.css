@@ -1,0 +1,11 @@
+/* Owner: Person B — Customer
+   Reference: customer_ui_reference.html
+   Extracted from inline style={{}} in NotificationPreferenceForm.jsx. */
+
+   .locked-note-inline {
+    color: var(--color-muted);
+  }
+  
+  .save-success-text {
+    color: var(--status-completed);
+  }

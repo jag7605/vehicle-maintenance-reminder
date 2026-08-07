@@ -1,0 +1,22 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in DeliveryStatusBadges.jsx.
+
+   .channel-sent / .channel-failed is a conditional className driven by
+   status === "sent" — logic unchanged, only the color values moved here. */
+
+   .channel-item {
+    margin-right: 8px;
+  }
+  
+  .channel-disabled {
+    color: var(--color-muted);
+  }
+  
+  .channel-sent {
+    color: var(--status-completed);
+  }
+  
+  .channel-failed {
+    color: #d64545;
+  }

@@ -1,4 +1,4 @@
-import { overlayStyle, modalBoxStyle } from "../modalStyles";
+import "./Sendnotificationmodal.css";
 
 function SendNotificationModal({ popup }) {
   const { vehicle, wofDuePastDue, oilChangeDuePastDue, error, loading, close, onSelect } = popup;
@@ -6,16 +6,16 @@ function SendNotificationModal({ popup }) {
   if (!vehicle) return null;
 
   return (
-    <div style={overlayStyle}>
-      <div style={modalBoxStyle}>
+    <div className="modal-overlay">
+      <div className="modal-box">
         <h3>Send Notification: {vehicle.make} {vehicle.model} ({vehicle.rego})</h3>
         <p>Choose which message to send to the customer.</p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}>
+        <div className="notif-option-list">
           <button
             onClick={() => onSelect("wofDue")}
             disabled={loading}
-            style={{ width: "100%" }}
+            className="btn-full-width"
           >
             {loading ? "Sending..." : wofDuePastDue ? "Send Overdue WoF Reminder" : "WoF Due"}
           </button>
@@ -23,7 +23,7 @@ function SendNotificationModal({ popup }) {
           <button
             onClick={() => onSelect("oilChangeDue")}
             disabled={loading}
-            style={{ width: "100%" }}
+            className="btn-full-width"
           >
             {loading ? "Sending..." : oilChangeDuePastDue ? "Send Overdue Oil Change Reminder" : "Oil Change Due"}
           </button>
@@ -33,9 +33,9 @@ function SendNotificationModal({ popup }) {
           </button>
         </div>
 
-        {error && <p style={{ color: "red", marginTop: "12px" }}>{error}</p>}
+        {error && <p className="error-text modal-error-spacing">{error}</p>}
 
-        <div style={{ marginTop: "16px" }}>
+        <div className="modal-cancel-row">
           <button type="button" onClick={close} disabled={loading}>Cancel</button>
         </div>
       </div>

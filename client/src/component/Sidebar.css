@@ -1,3 +1,6 @@
+/* Owner: Person C — Shared shell
+   Reference: admin_ui_reference.html + customer_ui_reference.html (.sidebar, .sidebar-link, etc.) */
+
 .sidebar {
   width: 315px;
   min-width: 315px;

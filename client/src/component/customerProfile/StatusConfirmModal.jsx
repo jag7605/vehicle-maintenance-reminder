@@ -1,20 +1,20 @@
-import { overlayStyle, modalBoxStyle } from "../modalStyles";
+import "./StatusConfirmModal.css";
 
 function StatusConfirmModal({ popup, customer, isActive }) {
   const { show, loading, error, close, onConfirm } = popup;
- 
+
   if (!show) return null;
- 
+
   return (
-    <div style={overlayStyle}>
-      <div style={modalBoxStyle}>
+    <div className="modal-overlay">
+      <div className="modal-box">
         <h3>
           {isActive ? "Deactivate" : "Activate"} {customer.firstName} {customer.lastName}
         </h3>
         {isActive && <p>They will not be able to log in until reactivated.</p>}
- 
-        {error && <p style={{ color: "red" }}>{error}</p>}
- 
+
+        {error && <p className="error-text">{error}</p>}
+
         <button onClick={onConfirm} disabled={loading}>
           {loading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
         </button>{" "}
@@ -23,6 +23,5 @@ function StatusConfirmModal({ popup, customer, isActive }) {
     </div>
   );
 }
- 
+
 export default StatusConfirmModal;
- 

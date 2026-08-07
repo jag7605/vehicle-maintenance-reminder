@@ -2,6 +2,7 @@ import { useState } from "react";
 import StaffLayout from "../component/StaffLayout";
 import JobCompleteModal from "../component/JobCompleteModal";
 import { useAdminJobs } from "../hooks/useAdminJobs";
+import "./AdminJobsPage.css";
 
 function formatTime(value) {
   if (!value) return "—";
@@ -49,21 +50,21 @@ function AdminJobsPage() {
   return (
     <StaffLayout title="Jobs">
       <h2>Today's Jobs</h2>
-      <p style={{ color: "#555", marginBottom: "12px" }}>
+      <p className="page-intro-text">
         Confirmed bookings scheduled for today. "Mark as Complete" unlocks
         once a job's booked start time has passed.
       </p>
 
       {loading && <p>Loading today's jobs...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
 
       {!loading && !error && jobs.length === 0 && (
         <p>No confirmed jobs scheduled for today.</p>
       )}
 
       {!loading && !error && jobs.length > 0 && (
-        <div style={{ overflowX: "auto", width: "100%" }}>
-          <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="jobs-table-scroll">
+          <table className="jobs-table">
             <thead>
               <tr>
                 <th>Time</th>
@@ -77,7 +78,7 @@ function AdminJobsPage() {
             <tbody>
               {jobs.map((job) => (
                 <tr key={job.id}>
-                  <td style={{ whiteSpace: "nowrap" }}>{formatTime(job.date)}</td>
+                  <td className="time-cell">{formatTime(job.date)}</td>
                   <td>{job.customerName}</td>
                   <td>{job.vehicleLabel}</td>
                   <td>
@@ -85,7 +86,7 @@ function AdminJobsPage() {
                       .filter(Boolean)
                       .join(", ") || "—"}
                   </td>
-                  <td style={{ maxWidth: "240px", wordBreak: "break-word" }}>
+                  <td className="notes-cell">
                     {job.notes || "—"}
                   </td>
                   <td>

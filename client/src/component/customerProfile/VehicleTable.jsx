@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { formatDate, isPastDate } from "../../utils/formatters";
 import DeliveryStatusBadges from "../DeliveryStatusBadges";
 import VehicleNotificationHistory from "../VehicleNotificationHistory";
+import "./VehicleTable.css";
 
 // ---------------------------------------------------------------------------
 // Renders the customer's vehicle list, plus each row's inline reminder
@@ -25,7 +26,7 @@ function VehicleTable({
   }
 
   return (
-    <table border="1" cellPadding="6">
+    <table>
       <thead>
         <tr>
           <th>Year</th>
@@ -53,11 +54,11 @@ function VehicleTable({
                 <td>{vehicle.model}</td>
                 <td>{vehicle.rego}</td>
                 <td>{vehicle.mileage}</td>
-                <td style={isPastDate(vehicle.nextWofDate) ? { color: "red" } : undefined}>
+                <td className={isPastDate(vehicle.nextWofDate) ? "date-flag" : undefined}>
                   {formatDate(vehicle.nextWofDate)}
                   {isPastDate(vehicle.nextWofDate) && " (Overdue)"}
                 </td>
-                <td style={isPastDate(vehicle.nextOilChangeDate) ? { color: "red" } : undefined}>
+                <td className={isPastDate(vehicle.nextOilChangeDate) ? "date-flag" : undefined}>
                   {formatDate(vehicle.nextOilChangeDate)}
                   {isPastDate(vehicle.nextOilChangeDate) && " (Overdue)"}
                 </td>
@@ -87,7 +88,7 @@ function VehicleTable({
                         <DeliveryStatusBadges deliveryStatus={result.deliveryStatus} />
                       </span>
                     ) : (
-                      <span style={{ color: "red" }}>
+                      <span className="error-text">
                         <strong>Failed:</strong> {result.error}
                       </span>
                     )}

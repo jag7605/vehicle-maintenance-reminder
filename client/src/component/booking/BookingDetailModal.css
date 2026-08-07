@@ -1,0 +1,18 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in BookingDetailModal.jsx.
+
+   .modal-overlay / .modal-box / .error-text now come from shared.css.
+   .modal-actions-wrap is a small modifier on top of shared.css's
+   .modal-actions, adding margin-top and flex-wrap for this file's
+   confirm/reject/close button row. */
+
+   .job-hint-text {
+    color: var(--color-muted);
+    font-size: 0.9em;
+  }
+  
+  .modal-actions-wrap {
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }

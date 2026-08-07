@@ -1,0 +1,8 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   No page-specific styles needed — this table uses shared.css's
+   .date-flag (overdue WoF/Oil dates) and .error-text (failed reminder)
+   classes directly. Not imported in VehicleTable.jsx since there's
+   nothing here to import. If page-specific styling is needed later,
+   add the rules here and add `import "./VehicleTable.css";` back into
+   VehicleTable.jsx at that point. */

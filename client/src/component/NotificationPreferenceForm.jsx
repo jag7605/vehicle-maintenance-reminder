@@ -1,3 +1,5 @@
+import "./NotificationPreferenceForm.css";
+
 function NotificationPreferenceForm({ fields, prefs, setPref, onSave, message }) {
   return (
     <div>
@@ -11,17 +13,17 @@ function NotificationPreferenceForm({ fields, prefs, setPref, onSave, message })
               onChange={(e) => setPref(key, e.target.checked)}
             />
             {" "}{label}
-            {locked && <span style={{ color: "#888" }}> (always on)</span>}
+            {locked && <span className="locked-note-inline"> (always on)</span>}
           </label>
           <br /><br />
         </div>
       ))}
- 
+
       <button onClick={onSave}>Save Preferences</button>
- 
-      {message && <p style={{ color: "green" }}>{message}</p>}
+
+      {message && <p className="save-success-text">{message}</p>}
     </div>
   );
 }
- 
+
 export default NotificationPreferenceForm;

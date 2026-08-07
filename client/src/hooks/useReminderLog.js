@@ -1,18 +1,35 @@
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+import { getAllCustomers } from "../firebase/users";
 
 export function useReminderLog() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
- 
+
   useEffect(() => {
     async function load() {
       try {
-        const q = query(collection(db, "notifications"), orderBy("sentAt", "desc"));
-        const snapshot = await getDocs(q);
-        const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const [snapshot, customerData] = await Promise.all([
+          getDocs(query(collection(db, "notifications"), orderBy("sentAt", "desc"))),
+          getAllCustomers(),
+        ]);
+
+        const customerMap = new Map(customerData.map((c) => [c.id, c]));
+
+        const data = snapshot.docs.map((d) => {
+          const notification = { id: d.id, ...d.data() };
+          const customer = customerMap.get(notification.customerId);
+
+          return {
+            ...notification,
+            customerName: customer
+              ? `${customer.firstName} ${customer.lastName}`
+              : "Unknown customer",
+          };
+        });
+
         setNotifications(data);
       } catch (err) {
         console.error(err);
@@ -23,8 +40,8 @@ export function useReminderLog() {
     }
     load();
   }, []);
- 
+
   const unreadCount = notifications.filter((n) => !n.read).length;
- 
+
   return { notifications, loading, error, unreadCount };
 }

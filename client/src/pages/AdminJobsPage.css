@@ -1,0 +1,32 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in AdminJobsPage.jsx.
+
+   Note: table previously used border="1" cellPadding="8" HTML attributes —
+   removed for the same reason as ReminderLog.jsx: shared.css already
+   defines base table/th/td styling (borderless columns, row separators
+   only). This page's table will now look consistent with the rest of
+   the app instead of using the old browser-default gridlines. */
+
+   .page-intro-text {
+    color: var(--color-muted);
+    margin-bottom: 12px;
+  }
+  
+  .jobs-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+  }
+  
+  .jobs-table {
+    width: 100%;
+  }
+  
+  .time-cell {
+    white-space: nowrap;
+  }
+  
+  .notes-cell {
+    max-width: 240px;
+    word-break: break-word;
+  }

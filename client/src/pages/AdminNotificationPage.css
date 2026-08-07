@@ -1,0 +1,11 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html */
+
+   .page-intro-text {
+    color: var(--color-muted);
+    margin-bottom: 12px;
+  }
+
+  .customer-filter-row {
+    margin-bottom: 12px;
+  }

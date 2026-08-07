@@ -1,0 +1,25 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in AdminCustomerProfilePage.jsx.
+
+   .status-active / .status-inactive is a conditional className driven
+   by the isActive value from useCustomerProfile — logic unchanged,
+   only the color values moved here. */
+
+   .back-btn {
+    margin-bottom: 12px;
+  }
+  
+  .profile-header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .status-active {
+    color: var(--status-completed);
+  }
+  
+  .status-inactive {
+    color: #d64545;
+  }

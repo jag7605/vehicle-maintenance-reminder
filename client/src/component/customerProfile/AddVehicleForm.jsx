@@ -117,7 +117,7 @@ function AddVehicleForm({ customerName, form }) {
           </small>
         </div>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
         <button type="submit" disabled={loading}>
           {loading ? "Saving..." : "Add Vehicle"}

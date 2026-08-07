@@ -1,0 +1,6 @@
+/* Owner: Person C — Floating/shared
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in EditVehicleModal.jsx.
+
+   .modal-overlay / .modal-box / .error-text now come from shared.css —
+   this file no longer imports modalStyles.js. */

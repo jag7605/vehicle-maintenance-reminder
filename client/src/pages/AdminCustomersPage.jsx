@@ -2,6 +2,7 @@ import { useAdminCustomers } from "../hooks/useAdminCustomers";
 import StaffLayout from "../component/StaffLayout";
 import CustomerTable from "../component/adminCustomers/CustomerTable";
 import SignUpModal from "../component/adminCustomers/SignUpModal";
+import "./AdminCustomersPage.css";
 
 // ---------------------------------------------------------------------------
 // Admin Customers page.
@@ -22,12 +23,12 @@ function AdminCustomerPage() {
   } = useAdminCustomers();
 
   if (loading) return <p>Loading customers...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
     <StaffLayout title="Customers">
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="page-header">
           <h2>Customers</h2>
           <button onClick={signUpPopup.open}>Sign Up New Customer</button>
         </div>

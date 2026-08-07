@@ -1,0 +1,65 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in ReminderLog.jsx.
+
+   Note: the table previously used HTML attributes border="1" cellPadding="8"
+   instead of CSS — these were removed since shared.css already defines
+   base table/th/td styling. If this looks different from before, that's
+   expected; it's now using the shared table look instead of the raw
+   browser-default bordered table.
+
+   Note: .reminder-row-unread is a conditional className driven by
+   n.read in the component — the JS logic was not changed, only the
+   actual color values were moved here. */
+
+   .unread-count-text {
+    color: var(--color-muted);
+  }
+  
+  .reminder-log-scroll {
+    overflow-x: auto;
+    width: 100%;
+  }
+  
+  .reminder-log-table {
+    width: 100%;
+    min-width: 600px;
+  }
+  
+  .col-status {
+    width: 150px;
+  }
+  
+  .col-sent {
+    width: 140px;
+    white-space: nowrap;
+  }
+  
+  .col-delivery {
+    width: 160px;
+  }
+  
+  .reminder-row-unread {
+    background-color: #f0f7ff;
+  }
+  
+  .status-cell {
+    text-align: center;
+  }
+  
+  .read-label {
+    color: var(--color-muted);
+  }
+  
+  .unread-label {
+    color: #0055cc;
+  }
+  
+  .sent-cell {
+    white-space: nowrap;
+  }
+  
+  .message-cell {
+    word-break: break-word;
+    max-width: 340px;
+  }

@@ -1,0 +1,30 @@
+/* Owner: Person D — Floating/shared
+   Reference: admin_ui_reference.html + customer_ui_reference.html
+   Extracted from inline style={{}} in MessagePopup.jsx.
+
+   .modal-overlay / .modal-box / .modal-actions come from shared.css.
+   .message-popup-box adds this file's slightly different width
+   constraints on top of the shared .modal-box.
+
+   .message-popup-title / .message-popup-title-error is a conditional
+   className driven by the isError prop — logic unchanged, only the
+   color values moved here. */
+
+   .message-popup-box {
+    min-width: 320px;
+    max-width: 480px;
+  }
+  
+  .message-popup-title {
+    color: inherit;
+    margin-top: 0;
+  }
+  
+  .message-popup-title-error {
+    color: red;
+    margin-top: 0;
+  }
+  
+  .message-popup-text {
+    white-space: pre-line;
+  }

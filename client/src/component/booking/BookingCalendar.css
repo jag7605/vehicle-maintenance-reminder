@@ -1,0 +1,35 @@
+/* Owner: Person A — Admin
+   Reference: admin_ui_reference.html
+   Extracted from inline style={{}} in BookingCalendar.jsx.
+
+   NOT extracted: eventPropGetter's backgroundColor and the legend dot's
+   backgroundColor. These are data-driven per-status (not a simple
+   two-state toggle), and react-big-calendar needs an actual color value
+   passed at render time — not something a CSS class can supply cleanly
+   without a runtime DOM lookup. Left as inline style, sourced from the
+   STATUS_COLORS constant in the .jsx (which intentionally mirrors
+   theme.css's --status-* tokens — keep both in sync if colors change). */
+
+   .calendar-wrapper {
+    height: 700px;
+  }
+  
+  .calendar-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
