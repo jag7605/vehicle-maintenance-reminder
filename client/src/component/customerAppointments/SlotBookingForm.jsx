@@ -1,3 +1,5 @@
+import "./SlotBookingForm.css";
+
 const SERVICE_TYPES = [
   "WOF",
   "Oil Change",

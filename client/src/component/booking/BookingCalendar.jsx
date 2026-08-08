@@ -92,7 +92,7 @@ function BookingCalendar({ appointments, onSelectEvent }) {
     .map(appointmentToEvent);
 
   return (
-    <div className="calendar-wrapper">
+    <div className="admin-calendar-wrapper">
       <Calendar
         localizer={localizer}
         events={events}

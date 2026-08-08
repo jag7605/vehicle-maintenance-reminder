@@ -1,159 +1,80 @@
-/* Owner: Person D
-   Reference: customer_ui_reference.html (.tab-row, .booking-grid, .mini-calendar, .upcoming-item overrides if any) */
+/* Owner: Person B
+   Reference: customer_ui_reference.html (.tab-row, .booking-grid, .mini-calendar, .upcoming-item overrides if any)
 
-.customer-appointments-page {
-  padding: 20px;
-}
+   IMPORTANT: .slots-section, .slot-buttons, .slot-button, .selected-slot,
+   .booking-form, .book-button, .upcoming-list, .upcoming-appointment-item,
+   and .cancel-button used to be defined here too, but those classes
+   actually belong to child components (SlotBookingForm.jsx,
+   UpcomingAppointmentsList.jsx), not this page. CSS classNames in this
+   project are global (no CSS Modules/scoping), so having the same class
+   name defined in two files causes a silent collision — whichever file's
+   <link>/import order wins overrides the other with no warning. Removed
+   from here; now defined only in SlotBookingForm.css and
+   UpcomingAppointmentsList.css where they're actually used. */
 
-.appointment-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+   .customer-appointments-page {
+    padding: 20px;
+  }
+  
+  .appointment-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tab-button {
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .active-tab {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+  }
+  
+  .calendar-wrapper {
+    height: 500px;
+    min-height: 500px;
+    margin-bottom: 24px;
+    background-color: white;
+  }
 
-.tab-button {
-  padding: 10px 16px;
-  border: 1px solid #ccc;
-  background-color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.active-tab {
-  background-color: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
-
-.calendar-wrapper {
-  height: 500px;
-  min-height: 500px;
-  margin-bottom: 24px;
-  background-color: white;
-}
-
-.calendar-wrapper .rbc-calendar {
-  height: 100%;
-}
-
-.rbc-off-range-bg {
-  background-color: white;
-}
-
-.rbc-off-range {
-  color: black;
-}
-
-.blocked-day {
-  background-color: #e5e7eb !important;
-  color: #9ca3af !important;
-  cursor: not-allowed;
-}
-
-.selected-day {
-  background-color: #dbeafe !important;
-}
-
-.error-message {
-  color: red;
-}
-
-.success-message {
-  color: green;
-}
-
-.slots-section {
-  margin-top: 20px;
-}
-
-.slot-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.slot-button {
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-
-.slot-button.booked {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.selected-slot {
-  background-color: #f59e0b;
-}
-
-.booking-form {
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 420px;
-}
-
-.booking-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-weight: bold;
-}
-
-.booking-form select,
-.booking-form textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.booking-form textarea {
-  min-height: 80px;
-}
-
-.book-button {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #16a34a;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.book-button:disabled {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.upcoming-list {
-  margin-top: 20px;
-}
-
-.upcoming-appointment-item {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 14px;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cancel-button {
-  background-color: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.cancel-button:hover {
-  background-color: #b91c1c;
-}
+  /* .calendar-wrapper is intentionally shared with BookingCalendarPicker.jsx,
+   which renders inside this page and has no CSS file of its own — this
+   is deliberate, not a missing scaffold. Renamed the admin side's
+   unrelated same-named class to .admin-calendar-wrapper to prevent a
+   collision (see BookingCalendar.css). */
+  
+  .calendar-wrapper .rbc-calendar {
+    height: 100%;
+  }
+  
+  .rbc-off-range-bg {
+    background-color: white;
+  }
+  
+  .rbc-off-range {
+    color: black;
+  }
+  
+  .blocked-day {
+    background-color: #e5e7eb !important;
+    color: #9ca3af !important;
+    cursor: not-allowed;
+  }
+  
+  .selected-day {
+    background-color: #dbeafe !important;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  
+  .success-message {
+    color: green;
+  }

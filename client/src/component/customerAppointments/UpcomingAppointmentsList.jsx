@@ -1,3 +1,5 @@
+import "./UpcomingAppointmentsList.css";
+
 function formatAppointmentDate(date) {
   return date.toLocaleString("en-NZ", {
     day: "numeric",
@@ -32,17 +34,17 @@ function UpcomingAppointmentsList({ appointments, onCancel }) {
               <div>
                 <strong>{appointment.vehicleName}</strong>
 
-                <p>{formatAppointmentDate(appointment.appointmentDate)}</p>
+                <p className="appointment-meta">{formatAppointmentDate(appointment.appointmentDate)}</p>
 
-                <p>Status: {formatStatus(appointment.status)}</p>
+                <p className="appointment-meta">Status: {formatStatus(appointment.status)}</p>
 
-                <p>
+                <p className="appointment-meta">
                   {allServiceTypes.length > 0
                     ? allServiceTypes.join(", ")
                     : "Service appointment"}
                 </p>
 
-                {appointment.notes && <p>{appointment.notes}</p>}
+                {appointment.notes && <p className="appointment-notes">{appointment.notes}</p>}
               </div>
 
               <button

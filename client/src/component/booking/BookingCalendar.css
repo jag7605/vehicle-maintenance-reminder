@@ -10,7 +10,7 @@
    STATUS_COLORS constant in the .jsx (which intentionally mirrors
    theme.css's --status-* tokens — keep both in sync if colors change). */
 
-   .calendar-wrapper {
+  .admin-calendar-wrapper {
     height: 700px;
   }
   

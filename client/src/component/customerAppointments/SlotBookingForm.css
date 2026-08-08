@@ -1,0 +1,85 @@
+/* Owner: Person B — Customer
+   Reference: customer_ui_reference.html (booking form + slot buttons)
+   Kept independent class names (.slot-button/.selected-slot/.booked) —
+   similar in spirit to the admin side's AdminCreateBookingModal.jsx slot
+   buttons (.slot-btn/.slot-btn-selected/.slot-btn-unavailable) but not
+   the same classes, since these are two separate components. Consider
+   referencing that file's visual treatment for consistency, but no need
+   to literally share classes across admin/customer.
+
+   .selected-slot and .booked are conditional classNames driven by
+   component state/props — logic unchanged, only the look is being
+   defined here. */
+
+   .slots-section {
+    margin-top: 16px;
+  }
+  
+  .slot-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  
+  .slot-button {
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .selected-slot {
+    border: 2px solid var(--status-confirmed);
+  }
+  
+  .booked {
+    background-color: #eee;
+    color: var(--color-muted);
+    cursor: not-allowed;
+  }
+  
+  .booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .booking-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+  
+  .booking-form select,
+  .booking-form textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    font-size: 14px;
+    color: var(--color-text);
+  }
+  
+  .remove-service-button {
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  
+  .add-service-button {
+    align-self: flex-start;
+  }
+  
+  .book-button {
+    background: var(--color-blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-card);
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
