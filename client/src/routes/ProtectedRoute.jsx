@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseConfig';
+import './ProtectedRoute.css';
 
 function ProtectedRoute({ children, requiredRole }) {
   const [status, setStatus] = useState('loading');
@@ -36,7 +37,7 @@ function ProtectedRoute({ children, requiredRole }) {
     return () => unsubscribe(); // <-- cleanup sits here, inside useEffect but outside the callback
   }, [requiredRole]);
 
-  if (status === 'loading') return <p>Loading...</p>;
+  if (status === 'loading') return <p className="route-loading-text">Loading...</p>;
   if (status === 'unauthorized') return <Navigate to="/" />;
   return children;
 }

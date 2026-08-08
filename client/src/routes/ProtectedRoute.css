@@ -1,0 +1,12 @@
+/* Owner: Person C — Floating/shared
+   Reference: none needed yet — this component has almost no visual
+   surface (renders children, a redirect, or this loading text).
+   route-loading-text is the only styled element. If the team wants a
+   proper loading state later (spinner, logo, animation), this is the
+   class/file to extend. */
+
+   .route-loading-text {
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: 40px;
+  }
