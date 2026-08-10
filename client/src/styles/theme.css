@@ -45,6 +45,13 @@
     --status-completed: #16a34a;
     --status-cancelled: #9ca3af;
   
+    /* ---- Font ---- */
+    --font-body: Arial, Helvetica, "Helvetica Neue", sans-serif; 
+    /* --font-body: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif; */
+    /* --font-body: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
+    /* --font-body: Calibri, Candara, "Segoe UI", Optima, sans-serif; */
+    /* --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; */
+
     /* ---- Shape ---- */
     --radius-card: 8px;
   

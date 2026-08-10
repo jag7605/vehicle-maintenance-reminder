@@ -240,3 +240,8 @@
     color: var(--color-muted);
     margin: 2px 0;
   }
+
+  /* ---------- Fonts ---------- */
+  body {
+    font-family: var(--font-body);
+  }
