@@ -29,18 +29,32 @@ function AdminCustomerPage() {
     <StaffLayout title="Customers">
       <div>
         <div className="page-header">
-          <h2>Customers</h2>
-          <button onClick={signUpPopup.open}>Sign Up New Customer</button>
+          <h1>Customers</h1>
+          <button className="btn btn-primary" onClick={signUpPopup.open}>
+            Sign Up New Customer
+          </button>
         </div>
 
-        <div>
-          <button onClick={() => setStatusTab("active")} disabled={statusTab === "active"}>
+        <div className="status-tab-row">
+          <button
+            className={`btn btn-sm ${statusTab === "active" ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => setStatusTab("active")}
+            disabled={statusTab === "active"}
+          >
             Active
-          </button>{" "}
-          <button onClick={() => setStatusTab("inactive")} disabled={statusTab === "inactive"}>
+          </button>
+          <button
+            className={`btn btn-sm ${statusTab === "inactive" ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => setStatusTab("inactive")}
+            disabled={statusTab === "inactive"}
+          >
             Inactive
-          </button>{" "}
-          <button onClick={() => setStatusTab("all")} disabled={statusTab === "all"}>
+          </button>
+          <button
+            className={`btn btn-sm ${statusTab === "all" ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => setStatusTab("all")}
+            disabled={statusTab === "all"}
+          >
             All
           </button>
         </div>

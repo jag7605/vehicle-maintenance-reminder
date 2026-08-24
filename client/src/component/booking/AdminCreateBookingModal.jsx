@@ -22,6 +22,22 @@ function formatDateForApi(date) {
   return `${year}-${month}-${day}`;
 }
 
+// Combines a "yyyy-MM-dd" date string with a "HH:mm" slot time into a real
+// Date, so we can compare it against "now". Only matters for today's date —
+// getAvailability() only tracks whether a slot is already booked, not
+// whether its start time has already passed, so that check has to happen
+// here on the client (and again server-side in createAppointmentAsAdmin,
+// same as customer bookings).
+function slotDateTime(dateString, time) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  const [hour, minute] = time.split(":").map(Number);
+  return new Date(year, month - 1, day, hour, minute);
+}
+
+function isSlotInPast(dateString, time) {
+  return slotDateTime(dateString, time) <= new Date();
+}
+
 function AdminCreateBookingModal({ onClose, onCreated }) {
   const [customers, setCustomers] = useState([]);
   const [customersLoading, setCustomersLoading] = useState(true);
@@ -126,6 +142,14 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
 
     if (!selectedCustomerId || !selectedVehicleId || !selectedSlot || !serviceType) {
       setError("Customer, vehicle, time slot, and service type are all required.");
+      return;
+    }
+
+    // Re-check in case the selected slot's time has passed since it was
+    // picked (e.g. modal left open past the slot's start time).
+    if (isSlotInPast(dateString, selectedSlot)) {
+      setError("That time slot has already passed. Please choose another slot.");
+      setSelectedSlot("");
       return;
     }
 
@@ -235,21 +259,25 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
             <div className="form-field">
               <label>Time slot</label><br />
               <div className="slot-row">
-                {availability.slots.map((slot) => (
-                  <button
-                    key={slot.time}
-                    type="button"
-                    onClick={() => setSelectedSlot(slot.time)}
-                    disabled={!slot.available}
-                    className={
-                      "slot-btn" +
-                      (selectedSlot === slot.time ? " slot-btn-selected" : "") +
-                      (!slot.available ? " slot-btn-unavailable" : "")
-                    }
-                  >
-                    {slot.time} {!slot.available ? "(Booked)" : ""}
-                  </button>
-                ))}
+                {availability.slots.map((slot) => {
+                  const past = isSlotInPast(dateString, slot.time);
+                  const disabled = !slot.available || past;
+                  return (
+                    <button
+                      key={slot.time}
+                      type="button"
+                      onClick={() => setSelectedSlot(slot.time)}
+                      disabled={disabled}
+                      className={
+                        "slot-btn" +
+                        (selectedSlot === slot.time ? " slot-btn-selected" : "") +
+                        (disabled ? " slot-btn-unavailable" : "")
+                      }
+                    >
+                      {slot.time} {!slot.available ? "(Booked)" : past ? "(Past)" : ""}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -289,7 +317,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
               <button
                 type="button"
                 onClick={() => handleRemoveAdditionalService(index)}
-                className="remove-service-btn"
+                className="btn btn-secondary btn-sm remove-service-btn"
               >
                 Remove service
               </button>
@@ -301,6 +329,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
               type="button"
               onClick={handleAddAdditionalService}
               disabled={!canAddMore}
+              className={`btn btn-sm ${canAddMore ? "btn-secondary" : "btn-disabled"}`}
             >
               Add additional service +
             </button>
@@ -318,11 +347,11 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
           {error && <p className="error-text">{error}</p>}
 
           <div className="modal-actions">
-            <button type="submit" disabled={submitting}>
-              {submitting ? "Creating..." : "Create Booking"}
-            </button>
-            <button type="button" onClick={onClose} disabled={submitting}>
+            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={submitting}>
               Cancel
+            </button>
+            <button type="submit" className={`btn ${submitting ? "btn-disabled" : "btn-primary"}`} disabled={submitting}>
+              {submitting ? "Creating..." : "Create Booking"}
             </button>
           </div>
         </form>

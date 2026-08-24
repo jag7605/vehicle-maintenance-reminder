@@ -37,7 +37,10 @@ function BookingDetailModal({
         {appointment.customerPhone && <p><strong>Phone:</strong> {appointment.customerPhone}</p>}
         <p><strong>Date:</strong> {formatDate(appointment.date)}</p>
         <p><strong>Service type:</strong> {[appointment.serviceType, ...(appointment.additionalServiceTypes || [])].filter(Boolean).join(", ") || "—"}</p>
-        <p><strong>Status:</strong> {formatStatus(status)}</p>
+        <p>
+          <strong>Status:</strong>{" "}
+          <span className={`badge badge-${status}`}>{formatStatus(status)}</span>
+        </p>
         {appointment.notes && <p><strong>Notes:</strong> {appointment.notes}</p>}
 
         {status === "confirmed" && (
@@ -51,16 +54,16 @@ function BookingDetailModal({
         <div className="modal-actions modal-actions-wrap">
           {status === "pending" && (
             <>
-              <button onClick={onConfirm} disabled={loading}>
+              <button className={`btn ${loading ? "btn-disabled" : "btn-primary"}`} onClick={onConfirm} disabled={loading}>
                 {loading ? "Working..." : "Confirm"}
               </button>
-              <button onClick={onReject} disabled={loading}>
+              <button className={`btn ${loading ? "btn-disabled" : "btn-danger"}`} onClick={onReject} disabled={loading}>
                 {loading ? "Working..." : "Reject"}
               </button>
             </>
           )}
 
-          <button type="button" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Close
           </button>
         </div>

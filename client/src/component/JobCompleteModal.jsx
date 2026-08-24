@@ -39,7 +39,7 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error, completionR
             </ul>
 
             <div className="modal-actions modal-actions-end">
-              <button type="button" onClick={onClose}>
+              <button type="button" className="btn btn-primary" onClick={onClose}>
                 Close
               </button>
             </div>
@@ -75,11 +75,15 @@ function JobCompleteModal({ job, onClose, onConfirm, loading, error, completionR
             {error && <p className="error-text">{error}</p>}
 
             <div className="modal-actions modal-actions-top">
-              <button onClick={handleConfirm} disabled={loading}>
-                {loading ? "Completing..." : "Confirm Complete"}
-              </button>
-              <button type="button" onClick={onClose} disabled={loading}>
+              <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
                 Cancel
+              </button>
+              <button
+                className={`btn ${loading ? "btn-disabled" : "btn-primary"}`}
+                onClick={handleConfirm}
+                disabled={loading}
+              >
+                {loading ? "Completing..." : "Confirm Complete"}
               </button>
             </div>
           </>

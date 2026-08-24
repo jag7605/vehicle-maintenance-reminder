@@ -49,7 +49,9 @@ function AdminJobsPage() {
 
   return (
     <StaffLayout title="Jobs">
-      <h2>Today's Jobs</h2>
+      <div className="page-header">
+        <h1>Today's Jobs</h1>
+      </div>
       <p className="page-intro-text">
         Confirmed bookings scheduled for today. "Mark as Complete" unlocks
         once a job's booked start time has passed.
@@ -91,6 +93,9 @@ function AdminJobsPage() {
                   </td>
                   <td>
                     <button
+                      className={`btn btn-sm ${
+                        !job.canComplete || actionLoading[job.id] ? "btn-disabled" : "btn-primary"
+                      }`}
                       onClick={() => openCompleteModal(job)}
                       disabled={!job.canComplete || actionLoading[job.id]}
                       title={

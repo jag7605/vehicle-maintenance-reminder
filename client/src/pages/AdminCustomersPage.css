@@ -1,4 +1,6 @@
-/* Owner: Person A — Admin
-   Reference: admin_ui_reference.html
-   Page-specific overrides only — shared header row styling now comes
-   from shared.css's .page-header class (see AdminCustomersPage.jsx). */
+
+.status-tab-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
