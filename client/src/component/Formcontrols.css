@@ -1,0 +1,70 @@
+.modal-box label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.modal-box input[type="text"],
+.modal-box input[type="email"],
+.modal-box input[type="tel"],
+.modal-box input[type="number"],
+.modal-box input[type="date"],
+.modal-box select,
+.modal-box textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-card);
+  margin-bottom: 12px;
+}
+
+.modal-box textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.modal-box input:focus,
+.modal-box select:focus,
+.modal-box textarea:focus {
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgba(30, 94, 255, 0.15);
+}
+
+.modal-box input:disabled,
+.modal-box select:disabled,
+.modal-box textarea:disabled {
+  background: var(--color-bg);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+.modal-box .form-field,
+.modal-box form > div {
+  margin-bottom: 12px;
+}
+
+.input-control,
+.select-control {
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-card);
+}
+
+.input-control:focus,
+.select-control:focus {
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgba(30, 94, 255, 0.15);
+}

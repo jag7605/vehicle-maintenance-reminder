@@ -3,6 +3,7 @@ import { getAllCustomers } from "../../firebase/users";
 import { getVehiclesByOwner } from "../../firebase/vehicles";
 import { getAvailability, createAppointmentAsAdmin } from "../../firebase/appointments";
 import "./AdminCreateBookingModal.css";
+import "../FormControls.css";
 
 const SERVICE_TYPES = [
   "WOF",

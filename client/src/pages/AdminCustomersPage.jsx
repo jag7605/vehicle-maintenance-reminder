@@ -5,6 +5,7 @@ import CustomerTable from "../component/adminCustomers/CustomerTable";
 import SignUpModal from "../component/adminCustomers/SignUpModal";
 import Pagination from "../component/Pagination";
 import "./AdminCustomersPage.css";
+import "../component/FormControls.css";
 
 const PAGE_SIZE = 10;
 
@@ -67,6 +68,7 @@ function AdminCustomerPage() {
 
         <input
           type="text"
+          className="input-control"
           placeholder="Search by name, phone, email, or rego"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

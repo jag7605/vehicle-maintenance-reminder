@@ -5,6 +5,7 @@ import { usePagination } from "../hooks/usePagination";
 import ReminderLog from "../component/adminNotifications/ReminderLog";
 import Pagination from "../component/Pagination";
 import "./AdminNotificationPage.css";
+import "../component/FormControls.css";
 
 const PAGE_SIZE = 10;
 
@@ -42,9 +43,10 @@ function AdminNotificationPage() {
   return (
     <StaffLayout title="Notifications">
       <div className="page-header">
-        <h1>Customer Reminder Log</h1>
+        <h1>Notifications</h1>
       </div>
 
+      <h2>Customer Reminder Log</h2>
       <p className="page-intro-text">
         All reminders sent to customers — manually triggered or automated by
         the daily schedule. Status shows whether the customer has read
@@ -55,7 +57,7 @@ function AdminNotificationPage() {
         <div className="customer-filter-row">
           <label>
             Customer:{" "}
-            <select value={customerFilter} onChange={(e) => setCustomerFilter(e.target.value)}>
+            <select value={customerFilter} onChange={(e) => setCustomerFilter(e.target.value)} className="select-control">
               <option value="">All customers</option>
               {customerOptions.map(([id, name]) => (
                 <option key={id} value={id}>{name}</option>

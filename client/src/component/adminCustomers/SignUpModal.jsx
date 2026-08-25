@@ -1,4 +1,5 @@
 import "./SignUpModal.css";
+import "../FormControls.css";
 
 function SignUpModal({ popup }) {
   const {
