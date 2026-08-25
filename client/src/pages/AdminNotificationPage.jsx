@@ -1,8 +1,12 @@
 import { useMemo, useState } from "react";
 import StaffLayout from "../component/StaffLayout";
 import { useReminderLog } from "../hooks/useReminderLog";
+import { usePagination } from "../hooks/usePagination";
 import ReminderLog from "../component/adminNotifications/ReminderLog";
+import Pagination from "../component/Pagination";
 import "./AdminNotificationPage.css";
+
+const PAGE_SIZE = 10;
 
 // ---------------------------------------------------------------------------
 // Admin Notifications page — customer reminder log.
@@ -25,13 +29,22 @@ function AdminNotificationPage() {
     ? notifications.filter((n) => n.customerId === customerFilter)
     : notifications;
 
+  // Unread count reflects the full filtered set, not just the current page —
+  // otherwise switching pages would make the count look like it's changing
+  // when nothing about read/unread status actually did.
   const unreadCount = filteredNotifications.filter((n) => !n.read).length;
+
+  const { pageItems, currentPage, totalPages, setPage } = usePagination(
+    filteredNotifications,
+    PAGE_SIZE
+  );
 
   return (
     <StaffLayout title="Notifications">
-      <h2>Notifications</h2>
+      <div className="page-header">
+        <h1>Customer Reminder Log</h1>
+      </div>
 
-      <h3>Customer Reminder Log</h3>
       <p className="page-intro-text">
         All reminders sent to customers — manually triggered or automated by
         the daily schedule. Status shows whether the customer has read
@@ -53,11 +66,19 @@ function AdminNotificationPage() {
       )}
 
       <ReminderLog
-        notifications={filteredNotifications}
+        notifications={pageItems}
         loading={loading}
         error={error}
         unreadCount={unreadCount}
       />
+
+      {!loading && !error && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </StaffLayout>
   );
 }

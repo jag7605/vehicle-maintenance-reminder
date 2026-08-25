@@ -3,6 +3,48 @@ import { getAllCustomers } from "../firebase/users";
 import { getAllVehicles } from "../firebase/vehicles";
 import { signUpCustomer } from "../firebase/auth";
 
+const CACHE_TTL_MS = 30_000;
+let cache = null; // { rows, fetchedAt }
+
+export function invalidateAdminCustomersCache() {
+  cache = null;
+}
+
+function isCacheFresh() {
+  return cache && Date.now() - cache.fetchedAt < CACHE_TTL_MS;
+}
+
+function buildRows(customerList, vehicleList) {
+  // O(customers + vehicles) instead of the previous O(customers × vehicles)
+  // nested filter — group vehicles by ownerId once, up front, then look
+  // each customer's vehicles up in O(1) instead of re-scanning the full
+  // vehicle list per customer.
+  const vehiclesByOwner = new Map();
+  for (const vehicle of vehicleList) {
+    const list = vehiclesByOwner.get(vehicle.ownerId);
+    if (list) {
+      list.push(vehicle);
+    } else {
+      vehiclesByOwner.set(vehicle.ownerId, [vehicle]);
+    }
+  }
+
+  const rows = [];
+  for (const customer of customerList) {
+    const customerVehicles = vehiclesByOwner.get(customer.id);
+
+    if (!customerVehicles || customerVehicles.length === 0) {
+      rows.push({ customer, vehicle: null });
+    } else {
+      for (const vehicle of customerVehicles) {
+        rows.push({ customer, vehicle });
+      }
+    }
+  }
+
+  return rows;
+}
+
 // ---------------------------------------------------------------------------
 // useAdminCustomers
 //
@@ -12,10 +54,13 @@ import { signUpCustomer } from "../firebase/auth";
 // calls or filtering logic in the component itself.
 // ---------------------------------------------------------------------------
 export function useAdminCustomers() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(() => (isCacheFresh() ? cache.rows : []));
   const [searchTerm, setSearchTerm] = useState("");
   const [statusTab, setStatusTab] = useState("active"); // "active" | "inactive" | "all"
-  const [loading, setLoading] = useState(true);
+  // If we already have fresh cached rows, skip the loading state entirely —
+  // the page can render immediately instead of flashing "Loading..." for
+  // data it's about to show unchanged a moment later.
+  const [loading, setLoading] = useState(!isCacheFresh());
   const [error, setError] = useState("");
 
   // Sign-up popup
@@ -27,29 +72,22 @@ export function useAdminCustomers() {
   const [signUpError, setSignUpError] = useState("");
   const [signUpLoading, setSignUpLoading] = useState(false);
 
-  async function loadData() {
+  async function loadData({ force = false } = {}) {
+    if (!force && isCacheFresh()) {
+      setRows(cache.rows);
+      setLoading(false);
+      return;
+    }
+
     try {
       const [customerList, vehicleList] = await Promise.all([
         getAllCustomers(),
         getAllVehicles(),
       ]);
 
-      // Build one row per vehicle. Customers with no vehicles get a single
-      // row with blank vehicle columns, since accounts without a vehicle
-      // are still possible for now.
-      const builtRows = [];
-      customerList.forEach((customer) => {
-        const customerVehicles = vehicleList.filter((v) => v.ownerId === customer.id);
+      const builtRows = buildRows(customerList, vehicleList);
 
-        if (customerVehicles.length === 0) {
-          builtRows.push({ customer, vehicle: null });
-        } else {
-          customerVehicles.forEach((vehicle) => {
-            builtRows.push({ customer, vehicle });
-          });
-        }
-      });
-
+      cache = { rows: builtRows, fetchedAt: Date.now() };
       setRows(builtRows);
     } catch {
       setError("Failed to load customers.");
@@ -60,6 +98,7 @@ export function useAdminCustomers() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function openSignUpPopup() {
@@ -98,7 +137,9 @@ export function useAdminCustomers() {
       await signUpCustomer({ firstName, lastName, email, phone });
       setShowSignUp(false);
       setLoading(true);
-      await loadData(); // refresh the customer list so the new account appears
+      // force: true — a brand-new customer must never be masked by a
+      // still-fresh cache from before they existed.
+      await loadData({ force: true });
     } catch (err) {
       setSignUpError(err.message);
     } finally {
@@ -151,6 +192,9 @@ export function useAdminCustomers() {
     setStatusTab,
     searchTerm,
     setSearchTerm,
+    // Exposed so the page can offer a manual "Refresh" action if it wants
+    // one — bypasses the cache entirely.
+    refresh: () => loadData({ force: true }),
     signUpPopup: {
       show: showSignUp,
       firstName,

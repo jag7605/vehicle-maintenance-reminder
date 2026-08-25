@@ -1,0 +1,25 @@
+.table-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.table-card table {
+  margin: 0;
+}
+
+.table-card thead th {
+  background: var(--color-bg);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.table-card th:not(:last-child),
+.table-card td:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.table-card tbody tr:hover {
+  background: var(--color-bg);
+}

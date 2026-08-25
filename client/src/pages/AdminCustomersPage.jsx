@@ -1,8 +1,12 @@
 import { useAdminCustomers } from "../hooks/useAdminCustomers";
+import { usePagination } from "../hooks/usePagination";
 import StaffLayout from "../component/StaffLayout";
 import CustomerTable from "../component/adminCustomers/CustomerTable";
 import SignUpModal from "../component/adminCustomers/SignUpModal";
+import Pagination from "../component/Pagination";
 import "./AdminCustomersPage.css";
+
+const PAGE_SIZE = 10;
 
 // ---------------------------------------------------------------------------
 // Admin Customers page.
@@ -21,6 +25,8 @@ function AdminCustomerPage() {
     setSearchTerm,
     signUpPopup,
   } = useAdminCustomers();
+
+  const { pageItems, currentPage, totalPages, setPage } = usePagination(filteredRows, PAGE_SIZE);
 
   if (loading) return <p>Loading customers...</p>;
   if (error) return <p className="error-text">{error}</p>;
@@ -66,7 +72,13 @@ function AdminCustomerPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <CustomerTable rows={filteredRows} />
+        <CustomerTable rows={pageItems} />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
 
         <SignUpModal popup={signUpPopup} />
       </div>

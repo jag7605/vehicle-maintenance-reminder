@@ -3,6 +3,18 @@ import { getAllAppointments, completeAppointment } from "../firebase/appointment
 import { getAllCustomers } from "../firebase/users";
 import { getAllVehicles } from "../firebase/vehicles";
 
+
+const CACHE_TTL_MS = 10_000;
+let cache = null; // { jobs, fetchedAt }
+
+export function invalidateAdminJobsCache() {
+  cache = null;
+}
+
+function isCacheFresh() {
+  return cache && Date.now() - cache.fetchedAt < CACHE_TTL_MS;
+}
+
 function enrichAppointments(appointments, customerMap, vehicleMap) {
   return appointments.map((appt) => {
     const customer = customerMap.get(appt.customerId);
@@ -44,8 +56,8 @@ function hasStartTimePassed(dateValue) {
 }
 
 export function useAdminJobs() {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs] = useState(() => (isCacheFresh() ? cache.jobs : []));
+  const [loading, setLoading] = useState(!isCacheFresh());
   const [error, setError] = useState("");
 
   // Per-job action state, keyed by appointmentId — mirrors the pattern used
@@ -53,7 +65,13 @@ export function useAdminJobs() {
   const [actionLoading, setActionLoading] = useState({});
   const [actionError, setActionError] = useState({});
 
-  const refresh = useCallback(async () => {
+  const load = useCallback(async ({ force = false } = {}) => {
+    if (!force && isCacheFresh()) {
+      setJobs(cache.jobs);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -76,6 +94,7 @@ export function useAdminJobs() {
           canComplete: hasStartTimePassed(appt.date),
         }));
 
+      cache = { jobs: todaysConfirmedJobs, fetchedAt: Date.now() };
       setJobs(todaysConfirmedJobs);
     } catch {
       setError("Failed to load today's jobs.");
@@ -84,9 +103,11 @@ export function useAdminJobs() {
     }
   }, []);
 
+  const refresh = useCallback(() => load({ force: true }), [load]);
+
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    load();
+  }, [load]);
 
   // Marks a job complete via the dedicated completion endpoint, passing
   // along the admin-entered postServiceNotes. Always routes through the
@@ -102,7 +123,14 @@ export function useAdminJobs() {
       // Completed jobs drop off the "today's confirmed jobs" list entirely,
       // matching the same "filter it off" pattern used for rejected bookings
       // on the calendar.
-      setJobs((prev) => prev.filter((job) => job.id !== appointmentId));
+      const updated = jobs.filter((job) => job.id !== appointmentId);
+      setJobs(updated);
+
+      // Write-through — the cache needs to reflect the completion too,
+      // or a remount within the TTL would briefly show the job again.
+      if (cache) {
+        cache = { jobs: updated, fetchedAt: cache.fetchedAt };
+      }
 
       return result; // { success, appointment, deliveryStatus }
     } catch (err) {

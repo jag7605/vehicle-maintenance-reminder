@@ -1,9 +1,12 @@
+/* Owner: Person C — Shared shell
+   Reference: admin_ui_reference.html + customer_ui_reference.html (.sidebar, .sidebar-link, etc.) */
+
 .sidebar {
   width: 315px;
   min-width: 315px;
   height: auto;
-  background: #212121;
-  color: #f1efe9;
+  background: #192957;
+  color: white;
 
   display: flex;
   flex-basis: content;
@@ -11,73 +14,56 @@
   gap: 5rem;
 }
 
+
 .sidebar-section {
   padding: 20px;
-  border-top: 1px solid #2a2e37;
+  border-top: 1px solid #4e659c;
 }
 
 .sidebar-section h3 {
-  margin: 0 0 15px;
-  font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #0c9c93; /* eyebrow label — darker teal */
+  margin-bottom: 15px;
+  font-weight: 400;
 }
 
 .sidebar-section a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #9297a1;
+  display: block;
+  color: white;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  padding: 10px 12px;
-  margin: 2px 0;
-  border-radius: 8px;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  padding: 10px 0;
 }
 
 .sidebar-section a:hover {
-  color: #f1efe9;
-  background: #1a1a1a;
+  color: #ff9800;
 }
 
 .sidebar-link.active {
-  color: #212121;
-  background: #65dcd5;
-  font-weight: 700;
-}
-
-.sidebar-link.active:hover {
-  color: #212121;
-  background: #65dcd5;
+  color: #ff9800;
 }
 
 /* footer at bottom */
 .sidebar-footer {
   margin-top: initial;
   padding: 20px;
-  border-top: 1px solid #2a2e37;
+  border-top: 1px solid #4e659c;
 }
 
 .logout-button {
   font-size: 14px;
-  font-weight: 600;
   border: none;
   background: transparent;
-  color: #9297a1;
+  color: white;
   padding: 8px 0;
 }
 
 .logout-button:hover {
-  color: #65dcd5;
+  color: #ff9800;
   cursor: pointer;
 }
 
 .logout-button:active {
-  color: #585d68;
+  color: darkgray;
 }
 
 .user-row {
@@ -92,10 +78,9 @@
   height: 45px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #65dcd5;
+  border: 2px solid gray;
   margin-right: 10px;
   flex-shrink: 0;
-  background: #1a1a1a;
 }
 
 .user-avatar img {
@@ -107,12 +92,11 @@
 
 .user-info strong {
   display: block;
-  color: #f1efe9;
-  font-size: 15px;
+  color: white;
 }
 
 .user-info p {
   margin: 3px 0 0;
-  font-size: 13px;
-  color: #585d68;
+  font-size: 14px;
+  color: #b7c4e8;
 }
