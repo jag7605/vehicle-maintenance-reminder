@@ -1,3 +1,151 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html
-   New file — this page currently has no CSS/className styling. */
+/* Main page */
+
+.customer-vehicles-page {
+   width: 100%;
+}
+
+
+/* Page heading */
+
+.customer-vehicles-title {
+   margin: 0 0 28px;
+
+   color: #1a1a1a;
+
+   font-size: 28px;
+   font-weight: 700;
+}
+
+
+/* Table container */
+
+.customer-vehicles-table-wrapper {
+   width: 100%;
+
+   overflow-x: auto;
+
+   background-color: #ffffff;
+
+   border: 1px solid #e3e3e3;
+   border-radius: 8px;
+}
+
+
+/* Table */
+
+.customer-vehicles-table {
+   width: 100%;
+
+   border-collapse: collapse;
+
+   background-color: #ffffff;
+}
+
+
+/* Table headings */
+
+.customer-vehicles-table thead {
+   background-color: #f7f8f9;
+}
+
+.customer-vehicles-table th {
+   padding: 12px 14px;
+
+   color: #0c9c93;
+
+   font-size: 11px;
+   font-weight: 700;
+
+   letter-spacing: 0.5px;
+
+   text-align: left;
+   text-transform: uppercase;
+
+   white-space: nowrap;
+
+   border-bottom: 1px solid #e3e3e3;
+   border-right: 1px solid #e3e3e3;
+}
+
+.customer-vehicles-table th:last-child {
+   border-right: none;
+}
+
+
+/* Table cells */
+
+.customer-vehicles-table td {
+   padding: 13px 14px;
+
+   color: #1a1a1a;
+
+   font-size: 14px;
+
+   white-space: nowrap;
+
+   border-bottom: 1px solid #e3e3e3;
+   border-right: 1px solid #e3e3e3;
+}
+
+.customer-vehicles-table td:last-child {
+   border-right: none;
+}
+
+
+/* Remove bottom border from final row */
+
+.customer-vehicles-table tbody tr:last-child td {
+   border-bottom: none;
+}
+
+
+/* Hover */
+
+.customer-vehicles-table tbody tr {
+   transition: background-color 0.2s ease;
+}
+
+.customer-vehicles-table tbody tr:hover {
+   background-color: #f2f2f2;
+}
+
+
+/* Empty state */
+
+.customer-vehicles-empty {
+   padding: 20px;
+
+   color: #5b5b5b;
+
+   font-size: 14px;
+
+   background-color: #ffffff;
+
+   border: 1px solid #e3e3e3;
+   border-radius: 8px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+   .customer-vehicles-title {
+      margin-bottom: 20px;
+
+      font-size: 24px;
+   }
+
+   .customer-vehicles-table th {
+      padding: 10px 12px;
+
+      font-size: 10px;
+   }
+
+   .customer-vehicles-table td {
+      padding: 11px 12px;
+
+      font-size: 13px;
+   }
+
+}

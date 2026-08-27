@@ -1,5 +1,4 @@
-/* Owner: Person B
-   Customer Homepage */
+/* Customer Homepage */
 
 
 /* Main page */
@@ -56,8 +55,7 @@
 .customer-home-overview-card:hover {
   border-color: #65dcd5;
 
-  box-shadow: 0 3px 10px
-    rgba(0, 0, 0, 0.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
 }
 
 
@@ -240,8 +238,7 @@
 .customer-home-upcoming-card:hover {
   border-color: #65dcd5;
 
-  box-shadow: 0 3px 10px
-    rgba(0, 0, 0, 0.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
 }
 
 

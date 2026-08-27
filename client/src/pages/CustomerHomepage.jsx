@@ -1,12 +1,7 @@
 import NotificationPopup from "../component/NotificationPopup";
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 import { db } from "../firebase/firebaseConfig";
@@ -323,8 +318,8 @@ function CustomerHomepage() {
         <h1 className="customer-home-title">
           Dashboard
         </h1>
-        
-        
+
+
         {error && (
           <p className="customer-home-error">
             {error}
@@ -369,8 +364,8 @@ function CustomerHomepage() {
                           {item.overdue
                             ? `${item.service} overdue`
                             : `${item.service} due ${formatDate(
-                                item.date
-                              )}`}
+                              item.date
+                            )}`}
                         </span>
                       </div>
                     ))}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../firebase/firebaseConfig";
 import { getVehiclesByOwner } from "../firebase/vehicles";
 import { formatDate } from "../utils/formatters";
+import "./CustomerVehiclesPage.css";
 
 function CustomerVehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -26,45 +27,92 @@ function CustomerVehiclesPage() {
     fetchVehicles();
   }, []);
 
-  if (status === "loading") return <p>Loading vehicles...</p>;
-  if (status === "error") return <p>Something went wrong. Please try again.</p>;
-  if (vehicles.length === 0) return <p>No vehicles found.</p>;
+  if (status === "loading") {
+    return <p>Loading vehicles...</p>;
+  }
+
+  if (status === "error") {
+    return <p>Something went wrong. Please try again.</p>;
+  }
 
   return (
-    <div>
-      <h2>My Vehicles</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Make</th>
-            <th>Model</th>
-            <th>Rego</th>
-            <th>Mileage</th>
-            <th>Next WoF Date</th>
-            <th>Next Oil Change Date</th>
-            <th>Next Service Mileage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {vehicles.map((vehicle) => (
-            <tr key={vehicle.id}>
-              <td>{vehicle.year}</td>
-              <td>{vehicle.make}</td>
-              <td>{vehicle.model}</td>
-              <td>{vehicle.rego}</td>
-              <td>{vehicle.mileage}</td>
-              <td>{formatDate(vehicle.nextWofDate)}</td>
-              <td>{formatDate(vehicle.nextOilChangeDate)}</td>
-              <td>
-                {vehicle.nextServiceMileage != null
-                  ? `${vehicle.nextServiceMileage.toLocaleString()} km`
-                  : "—"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="customer-vehicles-page">
+
+      <h1 className="customer-vehicles-title">
+        My Vehicles
+      </h1>
+
+      {vehicles.length === 0 ? (
+        <div className="customer-vehicles-empty">
+          No vehicles found.
+        </div>
+      ) : (
+        <div className="customer-vehicles-table-wrapper">
+
+          <table className="customer-vehicles-table">
+
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Rego</th>
+                <th>Mileage (km)</th>
+                <th>Next WoF</th>
+                <th>Next Oil Change</th>
+                <th>Next Service (km)</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {vehicles.map((vehicle) => (
+                <tr key={vehicle.id}>
+
+                  <td>
+                    {vehicle.year || "—"}
+                  </td>
+
+                  <td>
+                    {vehicle.make || "—"}
+                  </td>
+
+                  <td>
+                    {vehicle.model || "—"}
+                  </td>
+
+                  <td>
+                    {vehicle.rego || "—"}
+                  </td>
+
+                  <td>
+                    {vehicle.mileage != null
+                      ? vehicle.mileage.toLocaleString()
+                      : "—"}
+                  </td>
+
+                  <td>
+                    {formatDate(vehicle.nextWofDate)}
+                  </td>
+
+                  <td>
+                    {formatDate(vehicle.nextOilChangeDate)}
+                  </td>
+
+                  <td>
+                    {vehicle.nextServiceMileage != null
+                      ? `${vehicle.nextServiceMileage.toLocaleString()} km`
+                      : "—"}
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+
+        </div>
+      )}
+
     </div>
   );
 }
