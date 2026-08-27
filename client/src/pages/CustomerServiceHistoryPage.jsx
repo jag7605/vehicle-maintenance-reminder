@@ -74,80 +74,185 @@ function CustomerServiceHistoryPage() {
     return Array.from(set).sort();
   }, [appointments]);
 
-  const filteredAppointments = appointments.filter((appt) => {
-    if (vehicleFilter && appt.vehicle?.id !== vehicleFilter) return false;
-    if (serviceTypeFilter) {
-      const types = [appt.serviceType, ...(appt.additionalServiceTypes || [])];
-      if (!types.includes(serviceTypeFilter)) return false;
-    }
-    return true;
-  });
+  const filteredAppointments = appointments.filter(
+    (appt) => {
+      if (
+        vehicleFilter &&
+        appt.vehicle?.id !== vehicleFilter
+      ) {
+        return false;
+      }
 
-  if (status === "loading") return <p>Loading service history...</p>;
-  if (status === "error") return <p>Something went wrong. Please try again.</p>;
-  if (appointments.length === 0) return <p>No completed services yet.</p>;
+      if (serviceTypeFilter) {
+        const types = [
+          appt.serviceType,
+          ...(appt.additionalServiceTypes || []),
+        ];
+
+        if (!types.includes(serviceTypeFilter)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  );
+
+  if (status === "loading") {
+    return <p>Loading service history...</p>;
+  }
+
+  if (status === "error") {
+    return (
+      <p>
+        Something went wrong. Please try again.
+      </p>
+    );
+  }
 
   return (
-    <div>
-      <h2>Service History</h2>
+    <div className="customer-history-page">
 
-      <div className="history-filters">
-        <label>
-          Vehicle:{" "}
-          <select value={vehicleFilter} onChange={(e) => setVehicleFilter(e.target.value)}>
-            <option value="">All vehicles</option>
-            {vehicleOptions.map(([id, label]) => (
-              <option key={id} value={id}>{label}</option>
-            ))}
-          </select>
-        </label>
-        {"  "}
-        <label>
-          Service type:{" "}
-          <select value={serviceTypeFilter} onChange={(e) => setServiceTypeFilter(e.target.value)}>
-            <option value="">All service types</option>
-            {serviceTypeOptions.map((type) => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <h1 className="customer-history-title">
+        Service History
+      </h1>
 
-      {filteredAppointments.length === 0 ? (
-        <p>No services match the selected filters.</p>
+      {appointments.length === 0 ? (
+        <div className="customer-history-empty">
+          No completed services yet.
+        </div>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Vehicle</th>
-              <th>Rego</th>
-              <th>Service Type</th>
-              <th>Your Notes</th>
-              <th>Service Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAppointments.map((appt) => (
-              <tr key={appt.id}>
-                <td>{formatDate(appt.date)}</td>
-                <td>
-                  {appt.vehicle
-                    ? `${appt.vehicle.year} ${appt.vehicle.make} ${appt.vehicle.model}`
-                    : "—"}
-                </td>
-                <td>{appt.vehicle?.rego || "—"}</td>
-                <td>
-                  {[appt.serviceType, ...(appt.additionalServiceTypes || [])]
-                    .filter(Boolean)
-                    .join(", ") || "—"}
-                </td>
-                <td>{appt.notes || "—"}</td>
-                <td>{appt.postServiceNotes || "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          <div className="history-filters">
+
+            <label>
+              Vehicle
+
+              <select
+                value={vehicleFilter}
+                onChange={(e) =>
+                  setVehicleFilter(e.target.value)
+                }
+              >
+                <option value="">
+                  All vehicles
+                </option>
+
+                {vehicleOptions.map(
+                  ([id, label]) => (
+                    <option
+                      key={id}
+                      value={id}
+                    >
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+
+            <label>
+              Service Type
+
+              <select
+                value={serviceTypeFilter}
+                onChange={(e) =>
+                  setServiceTypeFilter(
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">
+                  All service types
+                </option>
+
+                {serviceTypeOptions.map(
+                  (type) => (
+                    <option
+                      key={type}
+                      value={type}
+                    >
+                      {type}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+          </div>
+
+
+          {filteredAppointments.length === 0 ? (
+            <div className="customer-history-empty">
+              No services match the selected filters.
+            </div>
+          ) : (
+            <div className="customer-history-table-wrapper">
+
+              <table className="customer-history-table">
+
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Rego</th>
+                    <th>Service Type</th>
+                    <th>Your Notes</th>
+                    <th>Service Notes</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {filteredAppointments.map(
+                    (appt) => (
+                      <tr key={appt.id}>
+
+                        <td>
+                          {formatDate(appt.date)}
+                        </td>
+
+                        <td>
+                          {appt.vehicle
+                            ? `${appt.vehicle.year} ${appt.vehicle.make} ${appt.vehicle.model}`
+                            : "—"}
+                        </td>
+
+                        <td>
+                          {appt.vehicle?.rego || "—"}
+                        </td>
+
+                        <td>
+                          {[
+                            appt.serviceType,
+                            ...(appt.additionalServiceTypes ||
+                              []),
+                          ]
+                            .filter(Boolean)
+                            .join(", ") || "—"}
+                        </td>
+
+                        <td>
+                          {appt.notes || "—"}
+                        </td>
+
+                        <td>
+                          {appt.postServiceNotes ||
+                            "—"}
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
+          )}
+        </>
       )}
     </div>
   );

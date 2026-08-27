@@ -1,11 +1,237 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html
-   Extracted from inline style={{}} in CustomerServiceHistoryPage.jsx.
+/* 
+   Base table styling is available in shared.css.
+   This file contains styles specific to the
+   Customer Service History page.
+*/
 
-   Note: table previously used border="1" cellPadding="6" HTML attribute —
-   removed, same reason as other tables in the app: shared.css already
-   defines base table styling (borderless columns). */
 
-   .history-filters {
-    margin-bottom: 12px;
+/* Main page */
+
+.customer-history-page {
+  width: 100%;
+}
+
+
+/* Page title */
+
+.customer-history-title {
+  margin: 0 0 28px;
+
+  color: #1a1a1a;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+/* =========================
+   FILTERS
+   ========================= */
+
+.history-filters {
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+.history-filters label {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.history-filters select {
+  min-width: 180px;
+
+  padding: 9px 12px;
+
+  background-color: #ffffff;
+
+  color: #1a1a1a;
+
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.history-filters select:focus {
+  outline: none;
+
+  border-color: #65dcd5;
+}
+
+
+/* =========================
+   TABLE CONTAINER
+   ========================= */
+
+.customer-history-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+}
+
+
+/* =========================
+   TABLE
+   ========================= */
+
+.customer-history-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background-color: #ffffff;
+}
+
+
+/* Table headings */
+
+.customer-history-table thead {
+  background-color: #f7f8f9;
+}
+
+.customer-history-table th {
+  padding: 12px 14px;
+
+  color: #0c9c93;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+}
+
+.customer-history-table th:last-child {
+  border-right: none;
+}
+
+
+/* Table cells */
+
+.customer-history-table td {
+  padding: 13px 14px;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+
+  vertical-align: top;
+
+  border-bottom: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+}
+
+.customer-history-table td:last-child {
+  border-right: none;
+}
+
+
+/* Remove border from last row */
+
+.customer-history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* Row hover */
+
+.customer-history-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.customer-history-table tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+
+/* =========================
+   EMPTY MESSAGE
+   ========================= */
+
+.customer-history-empty {
+  padding: 20px;
+
+  background-color: #ffffff;
+
+  color: #5b5b5b;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 650px) {
+
+  .customer-history-title {
+    margin-bottom: 20px;
+
+    font-size: 24px;
   }
+
+
+  /* Put filters underneath each other */
+
+  .history-filters {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 12px;
+  }
+
+  .history-filters select {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* Smaller table */
+
+  .customer-history-table th {
+    padding: 10px 12px;
+
+    font-size: 10px;
+  }
+
+  .customer-history-table td {
+    padding: 11px 12px;
+
+    font-size: 13px;
+  }
+
+}

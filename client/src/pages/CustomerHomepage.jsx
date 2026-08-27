@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { collection, getDocs, query, where, } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-
 import { db } from "../firebase/firebaseConfig";
 import { getAppointmentsByCustomer } from "../firebase/appointments";
 import { getVehiclesByOwner } from "../firebase/vehicles";
-
 import "./CustomerHomepage.css";
 
 function CustomerHomepage() {
