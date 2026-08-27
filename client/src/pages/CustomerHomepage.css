@@ -1,101 +1,419 @@
 /* Owner: Person B
-   Reference: customer_ui_reference.html (.dashboard-lower, .list-row, .empty-note) */
-   
-.customer-dashboard {
-  color: white;
+   Customer Homepage */
+
+
+/* Main page */
+
+.customer-home {
+  width: 100%;
+  background-color: #ffffff;
 }
 
-.upcoming-appointment-card {
-  background-color: #1b2f5c;
-  border: 1px solid #3b5c9c;
-  border-radius: 14px;
-  max-width: 760px;
-  overflow: hidden;
-}
 
-.appointment-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 18px 24px;
-  border-bottom: 1px solid #5d77ad;
-}
+/* Dashboard title */
 
-.appointment-card-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-  color: white;
-}
+.customer-home-title {
+  margin: 0 0 28px;
 
-.view-all-button {
-  position: absolute;
-  right: 20px;
-  background-color: #ff9700;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 18px;
+  color: #1a1a1a;
+
+  font-size: 28px;
   font-weight: 700;
-  cursor: pointer;
 }
 
-.view-all-button:hover {
-  background-color: #e68600;
-}
 
-.appointment-row {
+/* =========================
+   OVERVIEW CARDS
+   ========================= */
+
+.customer-home-overview {
   display: grid;
-  grid-template-columns: 220px 1fr 120px;
-  align-items: center;
-  gap: 20px;
-  padding: 42px 26px;
-  border-bottom: 1px solid #5d77ad;
-  font-size: 22px;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 16px;
+
+  margin-bottom: 20px;
 }
 
-.appointment-row:last-child {
+.customer-home-overview-card {
+  min-height: 110px;
+
+  padding: 16px;
+
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.customer-home-overview-card:hover {
+  border-color: #65dcd5;
+
+  box-shadow: 0 3px 10px
+    rgba(0, 0, 0, 0.06);
+}
+
+
+/* Small teal headings */
+
+.customer-home-overview-label {
+  margin: 0 0 8px;
+
+  color: #0c9c93;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+
+/* Big numbers */
+
+.customer-home-number {
+  margin: 0;
+
+  color: #1a1a1a;
+
+  font-size: 32px;
+  font-weight: 700;
+
+  line-height: 1.1;
+}
+
+
+/* Normal smaller text */
+
+.customer-home-small-text {
+  margin: 4px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* Empty messages */
+
+.customer-home-empty {
+  margin: 0;
+
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* =========================
+   NEEDS ATTENTION
+   ========================= */
+
+.customer-home-attention-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.customer-home-attention-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 7px 0;
+
+  border-bottom: 1px solid #e5e5e5;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+}
+
+.customer-home-attention-row:first-child {
+  padding-top: 0;
+}
+
+.customer-home-attention-row:last-child {
   border-bottom: none;
 }
 
-.appointment-date,
-.appointment-details {
-  color: white;
+.customer-home-due {
+  color: #e53935;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-align: right;
+
+  white-space: nowrap;
 }
 
-.status-badge {
-  justify-self: end;
-  padding: 8px 12px;
-  border-radius: 7px;
-  font-size: 16px;
+.customer-home-more {
+  margin: 5px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   RECENT SERVICE
+   ========================= */
+
+.customer-home-recent-service {
+  display: block;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.customer-home-service-date {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   UPCOMING APPOINTMENTS
+   ========================= */
+
+.customer-home-upcoming-section {
+  margin-top: 20px;
+}
+
+.customer-home-upcoming-heading {
+  margin-bottom: 8px;
+}
+
+.customer-home-upcoming-heading h2 {
+  margin: 0;
+
+  color: #1a1a1a;
+
+  font-size: 20px;
   font-weight: 700;
-  color: white;
 }
 
-.status-badge.confirmed {
-  background-color: #00e62e;
+.customer-home-upcoming-heading p {
+  margin: 4px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 13px;
 }
 
-.status-badge.pending {
-  background-color: #ff9700;
+
+/* Appointment box */
+
+.customer-home-upcoming-card {
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
 }
 
-.status-badge.cancelled {
-  background-color: #9ca3af;
+.customer-home-upcoming-card:hover {
+  border-color: #65dcd5;
+
+  box-shadow: 0 3px 10px
+    rgba(0, 0, 0, 0.06);
 }
 
-.status-badge.rejected {
-  background-color: #9ca3af;
+
+/* Each appointment row */
+
+.customer-home-appointment-row {
+  display: grid;
+
+  grid-template-columns: 165px 1fr auto;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid #e5e5e5;
 }
 
-.appointment-message,
-.appointment-error {
-  padding: 30px;
-  font-size: 18px;
+.customer-home-appointment-row:last-child {
+  border-bottom: none;
 }
 
-.appointment-error {
-  color: #ffb4b4;
+
+/* Date and time */
+
+.customer-home-appointment-date {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.customer-home-appointment-date strong {
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.customer-home-appointment-date span {
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* Vehicle and service */
+
+.customer-home-appointment-details {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.customer-home-appointment-details strong {
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.customer-home-appointment-details span {
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* =========================
+   STATUS BADGES
+   ========================= */
+
+.badge {
+  display: inline-block;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* Confirmed = teal */
+
+.badge-confirmed {
+  background-color: #65dcd5;
+
+  color: #212121;
+}
+
+
+/* Pending */
+
+.badge-pending {
+  background-color: #f1efe9;
+
+  color: #5b5b5b;
+}
+
+
+/* Cancelled */
+
+.badge-cancelled {
+  background-color: #eeeeee;
+
+  color: #5b5b5b;
+}
+
+
+/* =========================
+   ERROR
+   ========================= */
+
+.customer-home-error {
+  margin-bottom: 16px;
+
+  color: #e53935;
+
+  font-size: 13px;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 950px) {
+
+  .customer-home-overview {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 650px) {
+
+  .customer-home-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .customer-home-appointment-row {
+    grid-template-columns: 1fr;
+
+    gap: 8px;
+  }
+
+  .customer-home-appointment-row .badge {
+    width: fit-content;
+  }
+
+  .customer-home-attention-row {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .customer-home-due {
+    text-align: left;
+  }
+
 }
