@@ -1,35 +1,129 @@
-/* Owner: Person B
-   Reference: customer_ui_reference.html — base row styling now lives in
-   shared.css (.notif-row/.notif-main/.notif-meta). Only page-specific
-   overrides belong here, if any. */
+/* 
+   Base notification row styling is in shared.css:
+   .notif-row
+   .notif-main
+   .notif-meta
 
-.notification-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+   Only customer notification page styles belong here.
+*/
+
+
+/* Main page */
+
+.customer-notification-page {
+    width: 100%;
+}
+
+
+/* Page heading */
+
+.customer-notification-page .page-header {
+    margin-bottom: 28px;
+}
+
+.customer-notification-page .page-header h1 {
+    margin: 0;
+
+    color: #1a1a1a;
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+/* Notification box */
+
+.customer-notification-card {
+    padding: 0;
+
+    overflow: hidden;
+}
+
+
+/* Notification rows */
+
+.customer-notification-page .notif-row {
+    padding: 16px 20px;
+
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+    background-color: #ffffff;
+
+    transition: background-color 0.2s ease;
 }
 
-.notification-card.read {
-    background-color: white;
+
+/* Make unread rows white as well */
+
+.customer-notification-page .notif-row.unread {
+    background-color: #ffffff;
 }
 
-.notification-card.unread {
-    background-color: #e8f1ff;
+
+/* Darker hover */
+
+.customer-notification-page .notif-row:hover,
+.customer-notification-page .notif-row.unread:hover {
+    background-color: #f2f2f2;
 }
 
-.notification-alert {
-    width: 28px;
-    height: 28px;
+
+/* Unread notification dot */
+
+.customer-notification-page .unread-dot {
+    display: inline-block;
+
+    width: 8px;
+    height: 8px;
+
+    margin-right: 10px;
+
+    flex-shrink: 0;
+
+    background-color: #65dcd5;
+
     border-radius: 50%;
-    background-color: #ff4d4d;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+}
+
+
+/* Notification date */
+
+.customer-notification-page .notif-meta {
+    color: #5b5b5b;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+
+/* Empty notification message */
+
+.customer-notification-empty {
+    margin: 0;
+
+    padding: 20px;
+
+    color: #5b5b5b;
+
+    font-size: 14px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    .customer-notification-page .page-header {
+        margin-bottom: 20px;
+    }
+
+    .customer-notification-page .page-header h1 {
+        font-size: 24px;
+    }
+
+    .customer-notification-page .notif-row {
+        padding: 14px 16px;
+    }
+
 }

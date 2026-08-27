@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection,  query,  where, onSnapshot, doc, updateDoc,} from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, updateDoc, } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
 import "./CustomerNotificationPage.css";
 
@@ -49,8 +49,10 @@ function CustomerNotificationPage() {
                     setNotifications(notificationList);
                     setLoading(false);
                 },
+
                 (error) => {
                     console.error("Error loading notifications:", error);
+
                     setError("Failed to load notifications.");
                     setLoading(false);
                 }
@@ -87,18 +89,45 @@ function CustomerNotificationPage() {
 
         const date = sentAt.toDate ? sentAt.toDate() : new Date(sentAt);
 
-        return date.toLocaleString("en-NZ", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-        });
-    };
+        const today = new Date();
 
-    const unreadCount = notifications.filter(
-        (notification) => notification.read === false
-    ).length;
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        const time = date
+            .toLocaleTimeString("en-NZ", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+            })
+            .toUpperCase();
+
+        const isToday =
+            date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear();
+
+        const isYesterday =
+            date.getDate() === yesterday.getDate() &&
+            date.getMonth() === yesterday.getMonth() &&
+            date.getFullYear() === yesterday.getFullYear();
+
+        if (isToday) {
+            return `Today, ${time}`;
+        }
+
+        if (isYesterday) {
+            return `Yesterday, ${time}`;
+        }
+
+        const normalDate = date.toLocaleDateString("en-NZ", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
+
+        return `${normalDate}, ${time}`;
+    };
 
     if (loading) {
         return <p>Loading notifications...</p>;
@@ -109,39 +138,53 @@ function CustomerNotificationPage() {
     }
 
     return (
-        <div>
-            <h1>Notifications</h1>
+        <div className="customer-notification-page">
 
-            <h3>Please click on a notification to mark it as read.</h3>
+            <div className="page-header">
+                <h1>Notifications</h1>
+            </div>
 
-            <p className="notification-count">
-                Unread notifications: <strong>{unreadCount}</strong> 
-            </p>
+            <div className="card customer-notification-card">
 
-            {notifications.length === 0 ? (
-                <p>No notifications yet.</p>
-            ) : (
-                notifications.map((notification) => (
-                    <div
-                        key={notification.id}
-                        onClick={() =>
-                            markAsRead(notification.id, notification.read)
-                        }
-                        className={`notification-card ${
-                            notification.read ? "read" : "unread"
-                        }`}
-                    >
-                        <div>
-                            <p>{notification.message}</p>
-                            <small>{formatDate(notification.sentAt)}</small>
+                {notifications.length === 0 ? (
+                    <p className="customer-notification-empty">
+                        No notifications yet.
+                    </p>
+                ) : (
+                    notifications.map((notification) => (
+                        <div
+                            key={notification.id}
+                            onClick={() =>
+                                markAsRead(
+                                    notification.id,
+                                    notification.read
+                                )
+                            }
+                            className={`notif-row ${notification.read ? "read" : "unread"
+                                }`}
+                        >
+
+                            <div className="notif-main">
+
+                                {!notification.read && (
+                                    <span className="unread-dot"></span>
+                                )}
+
+                                <span>
+                                    {notification.message}
+                                </span>
+
+                            </div>
+
+                            <p className="notif-meta">
+                                {formatDate(notification.sentAt)}
+                            </p>
+
                         </div>
+                    ))
+                )}
 
-                        {!notification.read && (
-                            <div className="notification-alert">!</div>
-                        )}
-                    </div>
-                ))
-            )}
+            </div>
         </div>
     );
 }
