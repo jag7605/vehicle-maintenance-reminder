@@ -21,9 +21,7 @@
 }
 
 
-/* =========================
-   OVERVIEW CARDS
-   ========================= */
+/* OVERVIEW CARDS */
 
 .customer-home-overview {
   display: grid;
@@ -109,9 +107,7 @@
 }
 
 
-/* =========================
-   NEEDS ATTENTION
-   ========================= */
+/* NEEDS ATTENTION */
 
 .customer-home-attention-list {
   display: flex;
@@ -164,9 +160,7 @@
 }
 
 
-/* =========================
-   RECENT SERVICE
-   ========================= */
+/* RECENT SERVICE */
 
 .customer-home-recent-service {
   display: block;
@@ -188,9 +182,7 @@
 }
 
 
-/* =========================
-   UPCOMING APPOINTMENTS
-   ========================= */
+/* UPCOMING APPOINTMENTS */
 
 .customer-home-upcoming-section {
   margin-top: 20px;
@@ -311,9 +303,7 @@
 }
 
 
-/* =========================
-   STATUS BADGES
-   ========================= */
+/* STATUS BADGES */
 
 .badge {
   display: inline-block;
@@ -356,9 +346,7 @@
 }
 
 
-/* =========================
-   ERROR
-   ========================= */
+/* ERROR */
 
 .customer-home-error {
   margin-bottom: 16px;
@@ -369,9 +357,7 @@
 }
 
 
-/* =========================
-   TABLET
-   ========================= */
+/* TABLET */
 
 @media (max-width: 950px) {
 
@@ -382,9 +368,7 @@
 }
 
 
-/* =========================
-   MOBILE
-   ========================= */
+/*  MOBILE */
 
 @media (max-width: 650px) {
 

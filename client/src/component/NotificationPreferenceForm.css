@@ -1,11 +1,214 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html
-   Extracted from inline style={{}} in NotificationPreferenceForm.jsx. */
+/* Main form */
 
-   .locked-note-inline {
-    color: var(--color-muted);
+.notification-preference-form {
+  width: 100%;
+}
+
+
+/* Preference rows */
+
+.preference-list {
+  width: 100%;
+}
+
+.preference-row {
+  min-height: 68px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.preference-row:first-child {
+  padding-top: 4px;
+}
+
+.preference-row:last-child {
+  border-bottom: none;
+}
+
+
+/* Preference text */
+
+.preference-info {
+  flex: 1;
+}
+
+.preference-title {
+  margin: 0;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.preference-description {
+  margin: 5px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* TOGGLE */
+
+.preference-toggle {
+  position: relative;
+
+  width: 42px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+}
+
+.preference-toggle input {
+  position: absolute;
+
+  opacity: 0;
+
+  width: 0;
+  height: 0;
+}
+
+.preference-slider {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: #d4d4d4;
+
+  border-radius: 24px;
+
+  transition: 0.2s;
+}
+
+.preference-slider::before {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  left: 3px;
+  top: 3px;
+
+  background-color: #ffffff;
+
+  border-radius: 50%;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
+  transition: 0.2s;
+}
+
+
+/* Toggle turned on */
+
+.preference-toggle input:checked+.preference-slider {
+  background-color: #65dcd5;
+}
+
+.preference-toggle input:checked+.preference-slider::before {
+  transform: translateX(18px);
+}
+
+
+/* Keyboard focus */
+
+.preference-toggle input:focus+.preference-slider {
+  outline: 2px solid #0c9c93;
+  outline-offset: 2px;
+}
+
+
+/* SMS unavailable */
+
+.locked-note-inline {
+  color: #5b5b5b;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* SAVE */
+
+.preference-save-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 18px;
+}
+
+.preference-save-button {
+  padding: 10px 16px;
+
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.preference-save-button:hover {
+  background-color: #53c9c2;
+}
+
+
+/* Save message */
+
+.save-success-text {
+  margin: 0;
+
+  color: #0c9c93;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+  .preference-row {
+    min-height: 64px;
+
+    gap: 12px;
   }
-  
-  .save-success-text {
-    color: var(--status-completed);
+
+  .preference-save-area {
+    align-items: flex-start;
+
+    flex-direction: column;
   }
+
+}

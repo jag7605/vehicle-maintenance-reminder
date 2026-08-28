@@ -1,3 +1,189 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html
-   New file — this page currently has no CSS/className styling. */
+/* Main page */
+
+.customer-profile-page {
+   width: 100%;
+}
+
+
+/* Page title */
+
+.customer-profile-title {
+   margin: 0 0 28px;
+
+   color: #1a1a1a;
+
+   font-size: 28px;
+   font-weight: 700;
+}
+
+
+/* PROFILE BANNER */
+
+.customer-profile-banner {
+   display: flex;
+
+   align-items: center;
+   justify-content: space-between;
+
+   padding: 20px;
+
+   margin-bottom: 16px;
+
+   background-color: #ffffff;
+
+   border: 1px solid #e3e3e3;
+   border-radius: 8px;
+}
+
+
+.customer-profile-user {
+   display: flex;
+
+   align-items: center;
+
+   gap: 16px;
+}
+
+
+/* circle */
+
+.customer-profile-avatar {
+   width: 56px;
+   height: 56px;
+
+   display: flex;
+
+   align-items: center;
+   justify-content: center;
+
+   flex-shrink: 0;
+
+   background-color: #65dcd5;
+
+   color: #212121;
+
+   border-radius: 50%;
+
+   font-size: 18px;
+   font-weight: 700;
+}
+
+
+.customer-profile-user h2 {
+   margin: 0 0 5px;
+
+   color: #1a1a1a;
+
+   font-size: 18px;
+   font-weight: 700;
+}
+
+
+.customer-profile-user p {
+   margin: 0;
+
+   color: #5b5b5b;
+
+   font-size: 13px;
+}
+
+
+/* CONTACT INFORMATION */
+
+.customer-profile-contact-grid {
+   display: grid;
+
+   grid-template-columns: repeat(2, 1fr);
+
+   gap: 16px;
+
+   margin-bottom: 16px;
+}
+
+
+.customer-profile-contact-card {
+   padding: 18px;
+
+   background-color: #ffffff;
+
+   border: 1px solid #e3e3e3;
+   border-radius: 8px;
+}
+
+
+/* Teal headings */
+
+.customer-profile-label {
+   margin: 0 0 10px;
+
+   color: #0c9c93;
+
+   font-size: 11px;
+   font-weight: 700;
+
+   letter-spacing: 0.8px;
+}
+
+
+.customer-profile-contact-card strong {
+   display: block;
+
+   margin-bottom: 6px;
+
+   color: #1a1a1a;
+
+   font-size: 14px;
+   font-weight: 700;
+}
+
+
+.customer-profile-contact-card span {
+   color: #5b5b5b;
+
+   font-size: 12px;
+}
+
+
+/* NOTIFICATION PREFERENCES */
+
+.customer-profile-preferences {
+   padding: 20px;
+
+   background-color: #ffffff;
+
+   border: 1px solid #e3e3e3;
+   border-radius: 8px;
+}
+
+
+/*  MOBILE */
+
+@media (max-width: 650px) {
+
+   .customer-profile-title {
+      margin-bottom: 20px;
+
+      font-size: 24px;
+   }
+
+
+   .customer-profile-contact-grid {
+      grid-template-columns: 1fr;
+   }
+
+
+   .customer-profile-banner {
+      padding: 16px;
+   }
+
+
+   .customer-profile-contact-card {
+      padding: 16px;
+   }
+
+
+   .customer-profile-preferences {
+      padding: 16px;
+   }
+
+}

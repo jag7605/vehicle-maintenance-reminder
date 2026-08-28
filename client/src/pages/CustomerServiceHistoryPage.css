@@ -24,9 +24,7 @@
 }
 
 
-/* =========================
-   FILTERS
-   ========================= */
+/* FILTERS */
 
 .history-filters {
   display: flex;
@@ -75,9 +73,7 @@
 }
 
 
-/* =========================
-   TABLE CONTAINER
-   ========================= */
+/* TABLE CONTAINER  */
 
 .customer-history-table-wrapper {
   width: 100%;
@@ -91,9 +87,7 @@
 }
 
 
-/* =========================
-   TABLE
-   ========================= */
+/* TABLE */
 
 .customer-history-table {
   width: 100%;
@@ -171,11 +165,6 @@
   background-color: #f2f2f2;
 }
 
-
-/* =========================
-   EMPTY MESSAGE
-   ========================= */
-
 .customer-history-empty {
   padding: 20px;
 
@@ -188,11 +177,6 @@
 
   font-size: 14px;
 }
-
-
-/* =========================
-   MOBILE
-   ========================= */
 
 @media (max-width: 650px) {
 
