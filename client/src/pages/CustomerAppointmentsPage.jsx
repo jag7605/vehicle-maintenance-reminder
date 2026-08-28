@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useCustomerAppointments } from "../hooks/useCustomerAppointments";
 import BookingCalendarPicker from "../component/customerAppointments/BookingCalendarPicker";
 import SlotBookingForm from "../component/customerAppointments/SlotBookingForm";
@@ -7,8 +6,6 @@ import MessagePopup from "../component/MessagePopup";
 import "./CustomerAppointmentsPage.css";
 
 function CustomerAppointmentsPage() {
-  const [activeTab, setActiveTab] = useState("book");
-
   const {
     selectedDate,
     selectedSlot,
@@ -40,38 +37,43 @@ function CustomerAppointmentsPage() {
   } = useCustomerAppointments();
 
   async function handleBook() {
-    const success = await handleBookAppointment();
-    if (success) setActiveTab("upcoming");
+    await handleBookAppointment();
   }
 
   return (
     <div className="customer-appointments-page">
-      <h1>Appointments</h1>
 
-      <div className="appointment-tabs">
-        <button
-          type="button"
-          className={activeTab === "book" ? "tab-button active-tab" : "tab-button"}
-          onClick={() => setActiveTab("book")}
-        >
-          Book Appointment
-        </button>
+      <h1 className="customer-appointments-title">
+        Appointments
+      </h1>
 
-        <button
-          type="button"
-          className={activeTab === "upcoming" ? "tab-button active-tab" : "tab-button"}
-          onClick={() => setActiveTab("upcoming")}
-        >
-          My Upcoming Appointments
-        </button>
-      </div>
+      <MessagePopup
+        message={error}
+        isError
+        onClose={() => setError("")}
+      />
 
-      <MessagePopup message={error} isError onClose={() => setError("")} />
-      <MessagePopup message={bookingMessage} onClose={() => setBookingMessage("")} />
+      <MessagePopup
+        message={bookingMessage}
+        onClose={() => setBookingMessage("")}
+      />
 
-      {activeTab === "book" && (
-        <>
-          <p>Select a date on the calendar to view available appointment slots.</p>
+
+      <div className="customer-appointments-layout">
+
+        <div className="customer-new-appointment">
+
+          <div className="customer-appointment-section-header">
+
+            <p className="customer-appointment-label">
+              NEW APPOINTMENT
+            </p>
+
+            <p className="customer-appointment-description">
+            </p>
+
+          </div>
+
 
           <BookingCalendarPicker
             onSelectSlot={handleSelectDate}
@@ -96,15 +98,31 @@ function CustomerAppointmentsPage() {
             bookingLoading={bookingLoading}
             onBook={handleBook}
           />
-        </>
-      )}
 
-      {activeTab === "upcoming" && (
-        <UpcomingAppointmentsList
-          appointments={upcomingAppointments}
-          onCancel={handleCancelAppointment}
-        />
-      )}
+        </div>
+
+        <div className="customer-upcoming-appointments">
+          
+
+          <div className="customer-appointment-section-header">
+
+            <p className="customer-appointment-label">
+              UPCOMING APPOINTMENTS
+            </p>
+
+          </div>
+
+
+          <UpcomingAppointmentsList
+            appointments={upcomingAppointments}
+            onCancel={handleCancelAppointment}
+          />
+
+        </div>
+
+
+      </div>
+
     </div>
   );
 }

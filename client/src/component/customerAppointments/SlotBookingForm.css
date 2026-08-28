@@ -1,85 +1,254 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html (booking form + slot buttons)
-   Kept independent class names (.slot-button/.selected-slot/.booked) —
-   similar in spirit to the admin side's AdminCreateBookingModal.jsx slot
-   buttons (.slot-btn/.slot-btn-selected/.slot-btn-unavailable) but not
-   the same classes, since these are two separate components. Consider
-   referencing that file's visual treatment for consistency, but no need
-   to literally share classes across admin/customer.
+.slots-section {
+  margin-top: 18px;
+}
 
-   .selected-slot and .booked are conditional classNames driven by
-   component state/props — logic unchanged, only the look is being
-   defined here. */
 
-   .slots-section {
-    margin-top: 16px;
-  }
-  
+.slots-section h2 {
+  margin: 0 0 14px;
+
+  color: #1a1a1a;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+
+.slots-section p {
+  margin: 8px 0;
+
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+.slot-buttons {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 8px;
+
+  margin: 14px 0 20px;
+}
+
+
+.slot-button {
+  padding: 9px 8px;
+
+  background-color: #ffffff;
+
+  color: #1a1a1a;
+
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.slot-button:hover:not(:disabled) {
+  background-color: #f2f2f2;
+
+  border-color: #65dcd5;
+}
+
+
+.slot-button.selected-slot {
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border: 1px solid #65dcd5;
+
+  font-weight: 700;
+}
+
+
+.slot-button.booked {
+  background-color: #f2f2f2;
+
+  color: #aaaaaa;
+
+  border-color: #e3e3e3;
+
+  text-decoration: line-through;
+
+  cursor: not-allowed;
+}
+
+
+.booking-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+  margin-top: 16px;
+}
+
+
+.booking-form label {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  background-color: #ffffff;
+
+  color: #1a1a1a;
+
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+
+  font-size: 13px;
+
+  outline: none;
+}
+
+
+.booking-form select:focus,
+.booking-form textarea:focus {
+  border-color: #65dcd5;
+}
+
+
+.booking-form textarea {
+  min-height: 90px;
+
+  resize: vertical;
+
+  font-family: inherit;
+}
+
+
+.remove-service-button {
+  align-self: flex-start;
+
+  margin-top: 4px;
+
+  padding: 6px 10px;
+
+  background-color: #ffffff;
+
+  color: #d64545;
+
+  border: 1px solid #efcaca;
+  border-radius: 6px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.remove-service-button:hover {
+  background-color: #fff5f5;
+}
+
+
+.add-service-button {
+  align-self: flex-start;
+
+  padding: 7px 11px;
+
+  background-color: #ffffff;
+
+  color: #0c9c93;
+
+  border: 1px solid #65dcd5;
+  border-radius: 6px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.add-service-button:hover:not(:disabled) {
+  background-color: #eafaf9;
+}
+
+
+.add-service-button:disabled {
+  background-color: #f5f5f5;
+
+  color: #aaaaaa;
+
+  border-color: #dddddd;
+
+  cursor: not-allowed;
+}
+
+
+.book-button {
+  align-self: flex-start;
+
+  margin-top: 6px;
+
+  padding: 10px 16px;
+
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.book-button:hover:not(:disabled) {
+  background-color: #53c9c2;
+}
+
+
+.book-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 650px) {
+
   .slot-buttons {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 12px 0;
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .slot-button {
-    padding: 6px 10px;
-    border: 1px solid var(--color-border);
-    background-color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .selected-slot {
-    border: 2px solid var(--status-confirmed);
-  }
-  
-  .booked {
-    background-color: #eee;
-    color: var(--color-muted);
-    cursor: not-allowed;
-  }
-  
-  .booking-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  
-  .booking-form label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--color-muted);
-  }
-  
-  .booking-form select,
-  .booking-form textarea {
-    padding: 10px 12px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    font-size: 14px;
-    color: var(--color-text);
-  }
-  
-  .remove-service-button {
-    align-self: flex-start;
-    margin-top: 4px;
-  }
-  
-  .add-service-button {
-    align-self: flex-start;
-  }
-  
+
+
   .book-button {
-    background: var(--color-blue);
-    color: white;
-    border: none;
-    border-radius: var(--radius-card);
-    padding: 10px 18px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
+    width: 100%;
   }
+
+}

@@ -239,7 +239,7 @@
 .customer-home-appointment-row {
   display: grid;
 
-  grid-template-columns: 165px 1fr auto;
+  grid-template-columns: 110px 1fr auto;
 
   align-items: center;
 
@@ -272,12 +272,20 @@
   font-weight: 600;
 }
 
-.customer-home-appointment-date span {
+
+.customer-home-appointment-date {
   color: #5b5b5b;
 
   font-size: 13px;
-}
+  display: flex;
+  flex-direction: column;
 
+  gap: 3px;
+
+  padding-right: 16px;
+
+  border-right: 1px solid #e5e5e5;
+}
 
 /* Vehicle and service */
 
@@ -331,18 +339,18 @@
 /* Pending */
 
 .badge-pending {
-  background-color: #f1efe9;
+  background-color: #fff4e7;
 
-  color: #5b5b5b;
+  color: #9c6a0c;
 }
 
 
 /* Cancelled */
 
 .badge-cancelled {
-  background-color: #eeeeee;
+  background-color: #f8e7e7;
 
-  color: #5b5b5b;
+  color: #9c0c0c;
 }
 
 

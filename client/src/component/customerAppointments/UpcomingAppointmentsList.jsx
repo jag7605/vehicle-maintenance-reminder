@@ -18,8 +18,6 @@ function formatStatus(status) {
 function UpcomingAppointmentsList({ appointments, onCancel }) {
   return (
     <div className="upcoming-list">
-      <h2>My Upcoming Appointments</h2>
-
       {appointments.length === 0 ? (
         <p>You have no upcoming appointments.</p>
       ) : (
@@ -36,7 +34,9 @@ function UpcomingAppointmentsList({ appointments, onCancel }) {
 
                 <p className="appointment-meta">{formatAppointmentDate(appointment.appointmentDate)}</p>
 
-                <p className="appointment-meta">Status: {formatStatus(appointment.status)}</p>
+                <p className={`appointment-meta appointment-status ${appointment.status?.toLowerCase()}`}>
+                  Status: {formatStatus(appointment.status)}
+                </p>
 
                 <p className="appointment-meta">
                   {allServiceTypes.length > 0

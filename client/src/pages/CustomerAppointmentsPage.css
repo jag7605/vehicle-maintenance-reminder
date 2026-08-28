@@ -1,80 +1,250 @@
-/* Owner: Person B
-   Reference: customer_ui_reference.html (.tab-row, .booking-grid, .mini-calendar, .upcoming-item overrides if any)
+/* MAIN PAGE*/
 
-   IMPORTANT: .slots-section, .slot-buttons, .slot-button, .selected-slot,
-   .booking-form, .book-button, .upcoming-list, .upcoming-appointment-item,
-   and .cancel-button used to be defined here too, but those classes
-   actually belong to child components (SlotBookingForm.jsx,
-   UpcomingAppointmentsList.jsx), not this page. CSS classNames in this
-   project are global (no CSS Modules/scoping), so having the same class
-   name defined in two files causes a silent collision — whichever file's
-   <link>/import order wins overrides the other with no warning. Removed
-   from here; now defined only in SlotBookingForm.css and
-   UpcomingAppointmentsList.css where they're actually used. */
+.customer-appointments-page {
+  width: 100%;
+}
 
-   .customer-appointments-page {
-    padding: 20px;
+
+.customer-appointments-title {
+  margin: 0 0 28px;
+
+  color: #1a1a1a;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+/* TWO COLUMN LAYOUT */
+
+.customer-appointments-layout {
+  display: grid;
+
+  grid-template-columns: 1.15fr 0.85fr;
+
+  gap: 16px;
+
+  align-items: start;
+}
+
+
+/* MAIN CARDS */
+
+.customer-new-appointment,
+.customer-upcoming-appointments {
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+
+  border-radius: 8px;
+
+  padding: 20px;
+}
+
+
+/* SECTION HEADER */
+
+.customer-appointment-section-header {
+  margin-bottom: 16px;
+}
+
+
+.customer-appointment-label {
+  margin: 0;
+
+  color: #0c9c93;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+}
+
+
+.customer-appointment-description {
+  margin: 6px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* CALENDAR */
+
+.calendar-wrapper {
+  height: 360px;
+
+  min-height: 360px;
+
+  margin-bottom: 20px;
+
+  background-color: #ffffff;
+}
+
+
+.calendar-wrapper .rbc-calendar {
+  height: 100%;
+}
+
+
+/* Calendar toolbar */
+
+.customer-appointments-page .rbc-toolbar {
+  margin-bottom: 14px;
+}
+
+
+.customer-appointments-page .rbc-toolbar-label {
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.customer-appointments-page .rbc-btn-group button {
+  padding: 6px 10px;
+
+  background-color: #ffffff;
+
+  color: #1a1a1a;
+
+  border: 1px solid #e3e3e3;
+
+  font-size: 12px;
+}
+
+
+.customer-appointments-page .rbc-btn-group button:hover {
+  background-color: #f2f2f2;
+}
+
+
+.customer-appointments-page .rbc-btn-group button.rbc-active {
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border-color: #65dcd5;
+}
+
+
+/* Calendar borders */
+
+.customer-appointments-page .rbc-month-view {
+  border: 1px solid #e3e3e3;
+
+  border-radius: 6px;
+
+  overflow: hidden;
+}
+
+
+.customer-appointments-page .rbc-header {
+  padding: 8px 4px;
+
+  color: #5b5b5b;
+
+  background-color: #f7f8f9;
+
+  border-color: #e3e3e3;
+
+  font-size: 11px;
+}
+
+
+.customer-appointments-page .rbc-day-bg {
+  border-color: #e3e3e3;
+}
+
+
+.customer-appointments-page .rbc-date-cell {
+  padding: 6px;
+
+  font-size: 12px;
+}
+
+
+/* Outside current month */
+
+.customer-appointments-page .rbc-off-range-bg {
+  background-color: #fafafa;
+}
+
+
+.customer-appointments-page .rbc-off-range {
+  color: #b5b5b5;
+}
+
+
+/* Disabled days */
+
+.customer-appointments-page .blocked-day {
+  background-color: #f2f2f2 !important;
+
+  color: #b5b5b5 !important;
+
+  cursor: not-allowed;
+}
+
+
+/* Selected day */
+
+.customer-appointments-page .selected-day {
+  background-color: #dff8f6 !important;
+}
+
+
+/* MESSAGE TEXT */
+
+.error-message {
+  color: #d64545;
+}
+
+
+.success-message {
+  color: #0c9c93;
+}
+
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+
+  .customer-appointments-layout {
+    grid-template-columns: 1fr;
   }
-  
-  .appointment-tabs {
-    display: flex;
-    gap: 10px;
+
+
+  .customer-upcoming-appointments {
+    margin-top: 0;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+  .customer-appointments-title {
     margin-bottom: 20px;
-  }
-  
-  .tab-button {
-    padding: 10px 16px;
-    border: 1px solid #ccc;
-    background-color: white;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .active-tab {
-    background-color: #2563eb;
-    color: white;
-    border-color: #2563eb;
-  }
-  
-  .calendar-wrapper {
-    height: 500px;
-    min-height: 500px;
-    margin-bottom: 24px;
-    background-color: white;
+
+    font-size: 24px;
   }
 
-  /* .calendar-wrapper is intentionally shared with BookingCalendarPicker.jsx,
-   which renders inside this page and has no CSS file of its own — this
-   is deliberate, not a missing scaffold. Renamed the admin side's
-   unrelated same-named class to .admin-calendar-wrapper to prevent a
-   collision (see BookingCalendar.css). */
-  
-  .calendar-wrapper .rbc-calendar {
-    height: 100%;
+
+  .customer-new-appointment,
+  .customer-upcoming-appointments {
+    padding: 16px;
   }
-  
-  .rbc-off-range-bg {
-    background-color: white;
+
+
+  .calendar-wrapper {
+    height: 330px;
+
+    min-height: 330px;
   }
-  
-  .rbc-off-range {
-    color: black;
-  }
-  
-  .blocked-day {
-    background-color: #e5e7eb !important;
-    color: #9ca3af !important;
-    cursor: not-allowed;
-  }
-  
-  .selected-day {
-    background-color: #dbeafe !important;
-  }
-  
-  .error-message {
-    color: red;
-  }
-  
-  .success-message {
-    color: green;
-  }
+
+}

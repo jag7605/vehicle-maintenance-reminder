@@ -1,44 +1,194 @@
-/* Owner: Person B — Customer
-   Reference: customer_ui_reference.html
-   Kept independent from shared.css's .upcoming-item pattern (used on
-   Service History) — this component uses its own class names
-   (.upcoming-list, .upcoming-appointment-item, .cancel-button) by
-   deliberate choice, not an oversight. Style these directly rather than
-   renaming to match shared.css. */
+.upcoming-list {
+  display: flex;
+  flex-direction: column;
 
-   .upcoming-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
+  gap: 10px;
+
+  width: 100%;
+}
+
+
+/* APPOINTMENT CARD */
+
+.upcoming-appointment-item {
+  display: flex;
+
+  align-items: stretch;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  min-height: 90px;
+
+  padding: 16px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+
+  position: relative;
+}
+
+
+/* APPOINTMENT INFO */
+
+.upcoming-appointment-item > div {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding-right: 150px;
+}
+
+
+/* Vehicle name */
+
+.upcoming-appointment-item strong {
+  color: #5b5b5b;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  margin-bottom: 4px;
+}
+
+
+/* General appointment information */
+
+.appointment-meta {
+  margin: 2px 0;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* SERVICE TYPE */
+
+.appointment-meta:nth-of-type(3) {
+  order: -1;
+
+  margin-bottom: 5px;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+/* STATUS */
+
+.appointment-meta:nth-of-type(2) {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  width: fit-content;
+
+  margin: 0;
+
+  padding: 10px 10px;
+
+  background-color: #e7f8f6;
+
+  color: #0c9c93;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.apointment-status.confirmed {
+  background-color: #e7f8f6;
+  color: #0c9c93;
+}
+
+
+.appointment-status.pending {
+  background-color: #fff4e7;
+  color: #9c6a0c;
+}
+
+
+.appointment-status.cancelled {
+  background-color: #f8e7e7;
+  color: #9c0c0c;
+}
+
+/* NOTES */
+
+.appointment-notes {
+  margin: 7px 0 0;
+
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* CANCEL BUTTON */
+
+.cancel-button {
+  flex-shrink: 0;
+
+  align-self: flex-end;
+
+  padding: 8px 12px;
+
+  background-color: #ffffff;
+
+  color: #d64545;
+
+  border: 1px solid #efcaca;
+  border-radius: 6px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.cancel-button:hover {
+  background-color: #fff5f5;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
   .upcoming-appointment-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    padding: 16px;
-  }
-  
-  .cancel-button {
-    background: white;
-    border: 1px solid #f0c4c4;
-    color: var(--color-error);
-    border-radius: var(--radius-card);
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
+    min-height: 130px;
   }
 
-  .appointment-meta {
-    font-size: 13px;
-    color: var(--color-muted);
-    margin: 2px 0;
+
+  .upcoming-appointment-item > div {
+    padding-right: 120px;
   }
-  
-  .appointment-notes {
-    font-size: 13px;
-    margin: 6px 0 0;
+
+
+  .appointment-meta:nth-of-type(2) {
+    top: 14px;
+    right: 14px;
   }
+
+
+  .cancel-button {
+    position: absolute;
+
+    right: 14px;
+    bottom: 14px;
+  }
+
+}
