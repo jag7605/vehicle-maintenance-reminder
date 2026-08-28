@@ -2,5 +2,64 @@
    Reference: admin_ui_reference.html
    Extracted from inline style={{}} in StatusConfirmModal.jsx.
 
-   .modal-overlay / .modal-box / .error-text now come from shared.css —
-   this file no longer imports modalStyles.js. */
+   .modal-overlay / .modal-box / .error-text / .modal-actions /
+   .modal-actions-end all come from shared.css — NOT redefined here.
+   .modal-box-warning / .modal-box-positive are ADDITIVE modifier classes
+   applied alongside .modal-box, not a redefinition of it.
+
+   NOTE: .modal-box h3 is now duplicated identically across THREE files
+   (EditVehicleModal.css, DeleteVehicleModal.css, this one). Worth
+   flagging to Person D now rather than waiting for the 4th — this is a
+   clear case for shared.css per the brief's own "2+ pages = shared.css"
+   rule. */
+
+.modal-box h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.modal-box-warning {
+  border-top: 4px solid var(--status-pending);
+}
+
+.modal-box-positive {
+  border-top: 4px solid var(--color-blue);
+}
+
+.modal-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-card);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.modal-status-banner p {
+  margin: 0;
+}
+
+.modal-status-banner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* No dedicated "warning"/"positive" banner tokens exist in theme.css.
+   Reusing --status-pending (amber) and --color-blue as the closest
+   semantic fits, tinted via rgba() since var() can't be used inside
+   rgba() directly — same limitation flagged elsewhere (Sidebar.css,
+   NotificationPopup.css). Flagging in case Person D wants proper tokens
+   for these later. */
+.modal-status-banner.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--status-pending);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.modal-status-banner.positive {
+  background: rgba(30, 94, 255, 0.08);
+  color: var(--color-blue);
+  border: 1px solid rgba(30, 94, 255, 0.25);
+}

@@ -9,13 +9,13 @@ function SendNotificationModal({ popup }) {
     <div className="modal-overlay">
       <div className="modal-box">
         <h3>Send Notification: {vehicle.make} {vehicle.model} ({vehicle.rego})</h3>
-        <p>Choose which message to send to the customer.</p>
+        <p className="modal-subtext">Choose which message to send to the customer.</p>
 
         <div className="notif-option-list">
           <button
             onClick={() => onSelect("wofDue")}
             disabled={loading}
-            className="btn-full-width"
+            className="btn btn-secondary btn-full-width"
           >
             {loading ? "Sending..." : wofDuePastDue ? "Send Overdue WoF Reminder" : "WoF Due"}
           </button>
@@ -23,20 +23,31 @@ function SendNotificationModal({ popup }) {
           <button
             onClick={() => onSelect("oilChangeDue")}
             disabled={loading}
-            className="btn-full-width"
+            className="btn btn-secondary btn-full-width"
           >
             {loading ? "Sending..." : oilChangeDuePastDue ? "Send Overdue Oil Change Reminder" : "Oil Change Due"}
           </button>
 
-          <button onClick={() => onSelect("carReady")} disabled={loading}>
+          <button
+            onClick={() => onSelect("carReady")}
+            disabled={loading}
+            className="btn btn-secondary btn-full-width"
+          >
             {loading ? "Sending..." : "Your Car Is Ready"}
           </button>
         </div>
 
         {error && <p className="error-text modal-error-spacing">{error}</p>}
 
-        <div className="modal-cancel-row">
-          <button type="button" onClick={close} disabled={loading}>Cancel</button>
+        <div className="modal-actions modal-actions-end">
+          <button
+            type="button"
+            className="btn btn-secondary notif-cancel-btn"
+            onClick={close}
+            disabled={loading}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>

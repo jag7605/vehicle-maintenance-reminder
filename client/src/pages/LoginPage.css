@@ -1,10 +1,264 @@
 /* Owner: Person C — Floating/shared
    Reference: admin_ui_reference.html + customer_ui_reference.html
-   Extracted from inline style={{}} in LoginPage.jsx. */
+   Extracted from inline style={{}} in LoginPage.jsx.
 
-   .login-page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+   NOTE: this page intentionally breaks from the rest of the app's light
+   theme (matches the sidebar's dark treatment instead). theme.css doesn't
+   currently have tokens for "text on a dark background" — the values
+   below marked with a comment are hardcoded for that reason and would be
+   good candidates for new tokens (e.g. --color-sidebar-text,
+   --color-sidebar-text-muted) if Person D wants to formalize them,
+   consistent with the same flag raised on Sidebar.css. */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+.login-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-sidebar-bg);
+  color: white; /* no light-on-dark text token yet */
+}
+
+@media (min-width: 900px) {
+  .login-page-wrapper {
+    flex-direction: row;
   }
+}
+
+/* ---------- Left: gauge hero ---------- */
+.login-hero {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 32px;
+  border-bottom: 1px solid var(--color-sidebar-border);
+}
+
+@media (min-width: 900px) {
+  .login-hero {
+    width: 46%;
+    border-bottom: none;
+    border-right: 1px solid var(--color-sidebar-border);
+    padding: 0 32px;
+  }
+}
+
+.login-glow {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(101, 220, 213, 0.18) 0%, rgba(101, 220, 213, 0) 70%);
+  filter: blur(6px);
+  pointer-events: none;
+  animation: loginGlowPulse 4s ease-in-out infinite;
+}
+
+@keyframes loginGlowPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.6; }
+}
+
+.login-needle {
+  transform-origin: 160px 160px;
+  animation: loginNeedleSweep 1.6s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
+}
+
+@keyframes loginNeedleSweep {
+  0% { transform: rotate(-120deg); }
+  55% { transform: rotate(18deg); }
+  75% { transform: rotate(-8deg); }
+  100% { transform: rotate(2deg); }
+}
+
+.login-wordmark {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0 20px;
+}
+
+.login-wordmark span {
+  width: 52px;
+  height: 68px;
+  background: #1A1A1A; /* no token for field/tile-on-dark yet, matches Sidebar's flagged pattern */
+  border: 1px solid var(--color-sidebar-border);
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  color: white;
+}
+
+.login-tagline {
+  max-width: 280px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6); /* no light-muted token yet */
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.login-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35); /* no light-faint token yet */
+}
+
+.login-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  display: inline-block;
+}
+
+/* ---------- Right: form ---------- */
+.login-form-side {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px;
+}
+
+@media (min-width: 900px) {
+  .login-form-side {
+    width: 54%;
+    padding: 0 24px;
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.login-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 0;
+  color: white;
+}
+
+.login-subtext {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin: 8px 0 32px;
+  line-height: 1.6;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.login-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--radius-card);
+  padding: 0 14px;
+  height: 44px;
+  background: #1A1A1A; /* no token for field-on-dark yet */
+  border: 1px solid var(--color-sidebar-border);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-row:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(101, 220, 213, 0.15);
+}
+
+.input-icon {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.form-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  font-family: var(--font-body);
+}
+
+.password-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.login-submit {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-card);
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-sidebar-bg);
+  font-weight: 600;
+  font-size: 15px;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.login-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(101, 220, 213, 0.18);
+}
+
+.login-submit:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-needle { animation: none !important; transform: rotate(2deg) !important; }
+  .login-glow { animation: none !important; opacity: 0.45 !important; }
+}

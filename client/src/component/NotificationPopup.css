@@ -24,7 +24,9 @@
 }
 
 .popup-icon {
-  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  color: var(--color-accent);
   margin-bottom: 10px;
 }
 
@@ -34,7 +36,7 @@
 }
 
 .popup-box p {
-  color: #555;
+  color: var(--color-muted);
   margin-bottom: 24px;
 }
 
@@ -50,22 +52,16 @@
   gap: 12px;
 }
 
+/* Structural button properties (padding/radius/font-weight/cursor) come
+   from shared.css's .btn — this just adds the accent color on top of it.
+   Text uses --color-sidebar-bg for contrast, same dark-on-accent pattern
+   used on the sidebar's active pill and the login page's submit button. */
 .allow-btn {
   background: var(--color-accent);
-  color: white;
-  border: none;
-  padding: 11px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+  color: var(--color-sidebar-bg);
 }
 
-.decline-btn {
-  background: #e5e7eb;
-  color: #333;
-  border: none;
-  padding: 11px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
+/* Decline button now reuses shared.css's .btn-secondary directly —
+   removed the old .decline-btn rule, which was duplicating
+   .btn-secondary's white/border/dark-text treatment with slightly
+   different hardcoded values (#e5e7eb / #333). */

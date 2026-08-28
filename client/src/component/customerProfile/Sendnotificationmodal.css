@@ -2,25 +2,100 @@
    Reference: admin_ui_reference.html
    Extracted from inline style={{}} in Sendnotificationmodal.jsx.
 
-   .modal-overlay / .modal-box now come from shared.css — this file no
-   longer imports modalStyles.js. Once every modal using modalStyles.js
-   has been converted, modalStyles.js itself can be deleted. */
+   .modal-overlay / .modal-box / .modal-actions / .modal-actions-end /
+   .btn / .btn-secondary / .error-text all come from shared.css.
 
-   .notif-option-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 16px;
-  }
-  
-  .btn-full-width {
-    width: 100%;
-  }
-  
-  .modal-error-spacing {
-    margin-top: 12px;
-  }
-  
-  .modal-cancel-row {
-    margin-top: 16px;
-  }
+   .modal-subtext is NOT redefined here — it already exists in Person A's
+   AdminCreateBookingModal.css with compatible rules (muted, 14px, tucked
+   under the heading), so this file just reuses it rather than risking a
+   conflicting duplicate. Checked before use, per the collision rule.
+
+   .modal-actions-end usage here now matches JobCompleteModal.css
+   (Person A) and MessagePopup.css (Person D), which both use the same
+   "modal-actions modal-actions-end" pairing for their button rows —
+   this was previously a bespoke .modal-cancel-row here instead.
+
+   NOTE: .modal-box h3 is now duplicated identically across ALL FOUR
+   modal files (Edit/Delete/StatusConfirm/this one). Definitely worth
+   flagging to Person D now — clear shared.css candidate. */
+
+.modal-box h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.notif-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Belt-and-braces: styles any button inside this specific wrapper
+   directly, so it still renders correctly even if the "btn btn-secondary
+   btn-full-width" classNames on the buttons themselves didn't make it
+   into the deployed JSX for some reason. Scoped to .notif-option-list
+   only (unique to this file, not shared) so it can't leak into any
+   other component's buttons. */
+.notif-option-list button {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  background: white;
+  color: var(--color-text);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.notif-option-list button:disabled {
+  background: #e4e7ec;
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+.notif-option-list .btn-secondary:hover:not(:disabled),
+.notif-option-list button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+/* Guaranteed fallback for the Cancel button — fully self-contained,
+   doesn't depend on shared.css's .btn/.btn-secondary at all. Added
+   because the shared classes weren't taking effect on this specific
+   button despite matching the working Cancel buttons on
+   EditVehicleModal/DeleteVehicleModal exactly. Unique class name,
+   can't affect any other file. */
+.notif-cancel-btn {
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  padding: 10px 18px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  background: white !important;
+  color: var(--color-text) !important;
+  cursor: pointer !important;
+  font-family: var(--font-body) !important;
+}
+
+.notif-cancel-btn:hover:not(:disabled) {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+}
+
+.notif-cancel-btn:disabled {
+  background: #e4e7ec !important;
+  color: var(--color-muted) !important;
+  cursor: not-allowed !important;
+}
+
+.modal-error-spacing {
+  margin-top: 12px;
+}
