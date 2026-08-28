@@ -1,0 +1,279 @@
+/* Main page */
+
+.customer-garage-page {
+  width: 100%;
+}
+
+
+/* Page title */
+
+.customer-garage-title {
+  margin: 0 0 28px;
+
+  color: #1a1a1a;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+/* GARAGE BANNER */
+
+.customer-garage-banner {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 20px;
+
+  margin-bottom: 16px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+}
+
+
+/* Left side of banner */
+
+.customer-garage-main {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+}
+
+
+/* VMR square */
+
+.customer-garage-logo {
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border-radius: 8px;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+
+/* Garage name */
+
+.customer-garage-main h2 {
+  margin: 0 0 5px;
+
+  color: #1a1a1a;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+
+/* Garage description */
+
+.customer-garage-main p {
+  margin: 0;
+
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* Open badge */
+
+.customer-garage-badge {
+  padding: 6px 10px;
+
+  background-color: #65dcd5;
+
+  color: #212121;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* CONTACT CARDS */
+
+.customer-garage-contact-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+
+.customer-garage-contact-card {
+  padding: 18px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+}
+
+
+/* Teal headings */
+
+.customer-garage-label {
+  margin: 0 0 10px;
+
+  color: #0c9c93;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+}
+
+
+.customer-garage-contact-card strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #1a1a1a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.customer-garage-contact-card span {
+  color: #5b5b5b;
+
+  font-size: 12px;
+}
+
+
+/* OPENING HOURS */
+
+.customer-garage-hours-card {
+  padding: 20px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+}
+
+
+.customer-garage-hours-row {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #e3e3e3;
+}
+
+
+.customer-garage-hours-row:last-child {
+  padding-bottom: 0;
+
+  border-bottom: none;
+}
+
+
+.customer-garage-hours-row strong {
+  color: #1a1a1a;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+.customer-garage-hours-row span {
+  color: #5b5b5b;
+
+  font-size: 13px;
+}
+
+
+/* Sunday */
+
+.customer-garage-hours-row .customer-garage-closed {
+  color: #d64545;
+
+  font-weight: 600;
+}
+
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+  .customer-garage-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+  .customer-garage-title {
+    margin-bottom: 20px;
+
+    font-size: 24px;
+  }
+
+
+  .customer-garage-banner {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding: 16px;
+  }
+
+
+  .customer-garage-contact-card {
+    padding: 16px;
+  }
+
+
+  .customer-garage-hours-card {
+    padding: 16px;
+  }
+
+
+  .customer-garage-hours-row {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 4px;
+  }
+
+}

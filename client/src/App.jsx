@@ -14,6 +14,7 @@ import CustomerVehicles from './pages/CustomerVehiclesPage';
 import CustomerHistory from './pages/CustomerServiceHistoryPage';
 import CustomerProfile from './pages/CustomerProfilePage';
 import CustomerLayout from './component/CustomerLayout';
+import CustomerGarageInfoPage from './pages/CustomerGarageInfoPage';
 
 function App() {
   return (
@@ -78,6 +79,11 @@ function App() {
           <Route path="profile" element={
             <ProtectedRoute requiredRole="customer">
               <CustomerProfile />
+            </ProtectedRoute>
+          } />
+          <Route path="garage" element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerGarageInfoPage />
             </ProtectedRoute>
           } />
         </Route>

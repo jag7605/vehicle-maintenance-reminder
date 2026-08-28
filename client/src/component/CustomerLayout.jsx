@@ -25,6 +25,7 @@ const customerMenu = [
     title: "Account",
     items: [
       { label: "Profile", path: "/customer/profile" },
+      { label: "Garage Info", path: "/customer/garage" },
     ],
   },
 ];
