@@ -4,13 +4,7 @@ import DeliveryStatusBadges from "../DeliveryStatusBadges";
 import VehicleNotificationHistory from "../VehicleNotificationHistory";
 import "./VehicleTable.css";
 
-// ---------------------------------------------------------------------------
-// Renders the customer's vehicle list, plus each row's inline reminder
-// result and expandable notification history. Pure presentational.
-//
-// "Send Reminder" now opens the notify popup (onOpenNotify) rather than
-// firing the API call directly — the popup is what actually sends it.
-// ---------------------------------------------------------------------------
+
 function VehicleTable({
   vehicles,
   reminderLoading,
@@ -67,13 +61,17 @@ function VehicleTable({
                     ? `${vehicle.nextServiceMileage.toLocaleString()} km`
                     : "—"}
                 </td>
-                <td>
-                  <button onClick={() => onEdit(vehicle)}>Edit</button>{" "}
-                  <button onClick={() => onDelete(vehicle)}>Delete</button>{" "}
-                  <button onClick={() => onOpenNotify(vehicle)} disabled={isLoadingReminder}>
+                <td style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => onEdit(vehicle)}>Edit</button>
+                  <button className="btn btn-danger btn-sm" onClick={() => onDelete(vehicle)}>Delete</button>
+                  <button
+                    className={`btn btn-sm ${isLoadingReminder ? "btn-disabled" : "btn-primary"}`}
+                    onClick={() => onOpenNotify(vehicle)}
+                    disabled={isLoadingReminder}
+                  >
                     {isLoadingReminder ? "Sending..." : "Send Notification"}
-                  </button>{" "}
-                  <button onClick={() => onToggleHistory(vehicle.id)}>
+                  </button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => onToggleHistory(vehicle.id)}>
                     {historyOpen ? "Hide History" : "Show History"}
                   </button>
                 </td>

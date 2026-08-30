@@ -1,4 +1,7 @@
-.modal-box label {
+
+
+.modal-box label,
+.form-panel label {
   display: block;
   font-size: 13px;
   font-weight: 600;
@@ -12,7 +15,14 @@
 .modal-box input[type="number"],
 .modal-box input[type="date"],
 .modal-box select,
-.modal-box textarea {
+.modal-box textarea,
+.form-panel input[type="text"],
+.form-panel input[type="email"],
+.form-panel input[type="tel"],
+.form-panel input[type="number"],
+.form-panel input[type="date"],
+.form-panel select,
+.form-panel textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 9px 12px;
@@ -25,14 +35,18 @@
   margin-bottom: 12px;
 }
 
-.modal-box textarea {
+.modal-box textarea,
+.form-panel textarea {
   resize: vertical;
   min-height: 70px;
 }
 
 .modal-box input:focus,
 .modal-box select:focus,
-.modal-box textarea:focus {
+.modal-box textarea:focus,
+.form-panel input:focus,
+.form-panel select:focus,
+.form-panel textarea:focus {
   outline: none;
   border-color: var(--color-blue);
   box-shadow: 0 0 0 3px rgba(30, 94, 255, 0.15);
@@ -40,16 +54,32 @@
 
 .modal-box input:disabled,
 .modal-box select:disabled,
-.modal-box textarea:disabled {
+.modal-box textarea:disabled,
+.form-panel input:disabled,
+.form-panel select:disabled,
+.form-panel textarea:disabled {
   background: var(--color-bg);
   color: var(--color-muted);
   cursor: not-allowed;
 }
 
+.modal-box label,
+.form-panel label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+
 .modal-box .form-field,
-.modal-box form > div {
+.modal-box form > div,
+.form-panel .form-field,
+.form-panel > div {
   margin-bottom: 12px;
 }
+
 
 .input-control,
 .select-control {
@@ -67,4 +97,23 @@
   outline: none;
   border-color: var(--color-blue);
   box-shadow: 0 0 0 3px rgba(30, 94, 255, 0.15);
+}
+
+
+.standalone-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+
+.standalone-form > div {
+  margin-bottom: 12px;
+}
+
+.standalone-form .input-control,
+.standalone-form .select-control {
+  width: 100%;
+  box-sizing: border-box;
 }
