@@ -243,5 +243,6 @@
 
   /* ---------- Fonts ---------- */
   body {
+    margin: 0;
     font-family: var(--font-body);
   }

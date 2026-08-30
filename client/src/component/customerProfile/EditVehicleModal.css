@@ -2,5 +2,51 @@
    Reference: admin_ui_reference.html
    Extracted from inline style={{}} in EditVehicleModal.jsx.
 
-   .modal-overlay / .modal-box / .error-text now come from shared.css —
-   this file no longer imports modalStyles.js. */
+   .modal-overlay / .modal-box / .error-text / .modal-actions /
+   .modal-actions-end all come from shared.css — not redefined here.
+
+   NOTE: class names below (.modal-field-group, .modal-field-label,
+   .modal-field-input, .modal-field-hint) were checked against the rest
+   of the codebase first to avoid the global-class-collision issue
+   flagged in the brief — in particular, .form-field already exists in
+   Person A's AdminCreateBookingModal.css with different rules, so that
+   name was deliberately avoided here. */
+
+.modal-box h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.modal-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.modal-field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.modal-field-input {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 9px 12px;
+  font-size: 14px;
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.modal-field-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(101, 220, 213, 0.15);
+}
+
+.modal-field-hint {
+  font-size: 12px;
+  color: var(--color-muted);
+}

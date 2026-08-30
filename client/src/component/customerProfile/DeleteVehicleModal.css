@@ -2,5 +2,35 @@
    Reference: admin_ui_reference.html
    Extracted from inline style={{}} in DeleteVehicleModal.jsx.
 
-   .modal-overlay / .modal-box / .error-text now come from shared.css —
-   this file no longer imports modalStyles.js. */
+   .modal-overlay / .modal-box / .error-text / .modal-actions /
+   .modal-actions-end all come from shared.css — not redefined here.
+
+   NOTE: .modal-box h3 styling duplicates the same rule in
+   EditVehicleModal.css (this is the 2nd file with it) — per the brief's
+   own rule ("does this exact pattern appear identically on 2+ pages? if
+   yes, it likely belongs in shared.css"), this is a candidate to flag to
+   Person D once all four modals are done, rather than keep duplicating
+   it a 3rd/4th time. */
+
+.modal-box h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.modal-vehicle-summary {
+  margin-bottom: 16px;
+}
+
+.modal-vehicle-summary p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.modal-confirm-text {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 600;
+}

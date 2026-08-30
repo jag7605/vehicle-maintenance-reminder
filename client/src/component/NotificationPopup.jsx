@@ -3,6 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
 import { enableBrowserPush, disableBrowserPush } from "../utils/pushSubscription";
+import { MdNotificationsActive } from "react-icons/md";
 import "./NotificationPopup.css";
 
 function NotificationPopup() {
@@ -96,7 +97,9 @@ function NotificationPopup() {
   return (
   <div className="popup-overlay">
     <div className="popup-box">
-      <div className="popup-icon">🔔</div>
+      <div className="popup-icon">
+        <MdNotificationsActive size={40} />
+      </div>
 
       <h2>Enable Notifications?</h2>
 
@@ -111,11 +114,11 @@ function NotificationPopup() {
       )}
 
       <div className="popup-buttons">
-        <button className="allow-btn" onClick={handleAllow} disabled={loading}>
+        <button className="btn allow-btn" onClick={handleAllow} disabled={loading}>
           {loading ? "Requesting..." : "Allow Notifications"}
         </button>
 
-        <button className="decline-btn" onClick={handleDecline} disabled={loading}>
+        <button className="btn btn-secondary" onClick={handleDecline} disabled={loading}>
           Not Now
         </button>
       </div>

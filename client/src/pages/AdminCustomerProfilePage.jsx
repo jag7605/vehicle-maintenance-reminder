@@ -7,7 +7,7 @@ import AddVehicleForm from "../component/customerProfile/AddVehicleForm";
 import EditVehicleModal from "../component/customerProfile/EditVehicleModal";
 import DeleteVehicleModal from "../component/customerProfile/DeleteVehicleModal";
 import StatusConfirmModal from "../component/customerProfile/StatusConfirmModal";
-import SendNotificationModal from "../component/customerProfile/SendNotificationModal";
+import SendNotificationModal from "../component/customerProfile/Sendnotificationmodal";
 import "./AdminCustomerProfilePage.css";
 
 function AdminCustomerProfilePage() {

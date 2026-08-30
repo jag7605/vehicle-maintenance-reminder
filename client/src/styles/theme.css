@@ -22,11 +22,11 @@
 
 :root {
     /* ---- Colors: sidebar / shell ---- */
-    --color-sidebar-bg: #192957;
-    --color-sidebar-border: #4e659c;
+    --color-sidebar-bg: #212121;
+    --color-sidebar-border: #2A2E37;
   
     /* ---- Colors: accents ---- */
-    --color-accent: #ff9800;   /* existing active-nav-link orange */
+    --color-accent: #65DCD5;   /* updated Sprint 6 accent — was #ff9800 */
     --color-blue: #1e5eff;     /* primary action / brand blue, from UI reference */
   
     /* ---- Colors: text ---- */

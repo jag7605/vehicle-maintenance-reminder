@@ -6,12 +6,15 @@
 
 .dashboard-layout {
   display: flex;
-  min-height: calc(100vh - 88px);
+  height: 100vh;
+  overflow: hidden;
 }
 
 .dashboard-content {
   flex: 1;
   min-width: 0;
+  height: 100%;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 30px;
   background-color: white;
