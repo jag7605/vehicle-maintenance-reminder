@@ -1,8 +1,13 @@
 import { useState } from "react";
 import StaffLayout from "../component/StaffLayout";
 import JobCompleteModal from "../component/JobCompleteModal";
+import TableCard from "../component/TableCard";
 import { useAdminJobs } from "../hooks/useAdminJobs";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../component/Pagination";
 import "./AdminJobsPage.css";
+
+const PAGE_SIZE = 10;
 
 function formatTime(value) {
   if (!value) return "—";
@@ -25,6 +30,8 @@ function AdminJobsPage() {
 
   const [selectedJob, setSelectedJob] = useState(null);
   const [completionResult, setCompletionResult] = useState(null);
+
+  const { pageItems, currentPage, totalPages, setPage } = usePagination(jobs, PAGE_SIZE);
 
   function openCompleteModal(job) {
     setSelectedJob(job);
@@ -49,7 +56,9 @@ function AdminJobsPage() {
 
   return (
     <StaffLayout title="Jobs">
-      <h2>Today's Jobs</h2>
+      <div className="page-header">
+        <h1>Today's Jobs</h1>
+      </div>
       <p className="page-intro-text">
         Confirmed bookings scheduled for today. "Mark as Complete" unlocks
         once a job's booked start time has passed.
@@ -64,6 +73,7 @@ function AdminJobsPage() {
 
       {!loading && !error && jobs.length > 0 && (
         <div className="jobs-table-scroll">
+          <TableCard>
           <table className="jobs-table">
             <thead>
               <tr>
@@ -76,7 +86,7 @@ function AdminJobsPage() {
               </tr>
             </thead>
             <tbody>
-              {jobs.map((job) => (
+              {pageItems.map((job) => (
                 <tr key={job.id}>
                   <td className="time-cell">{formatTime(job.date)}</td>
                   <td>{job.customerName}</td>
@@ -91,6 +101,9 @@ function AdminJobsPage() {
                   </td>
                   <td>
                     <button
+                      className={`btn btn-sm ${
+                        !job.canComplete || actionLoading[job.id] ? "btn-disabled" : "btn-primary"
+                      }`}
                       onClick={() => openCompleteModal(job)}
                       disabled={!job.canComplete || actionLoading[job.id]}
                       title={
@@ -106,7 +119,16 @@ function AdminJobsPage() {
               ))}
             </tbody>
           </table>
+          </TableCard>
         </div>
+      )}
+
+      {!loading && !error && jobs.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       )}
 
       {selectedJob && (

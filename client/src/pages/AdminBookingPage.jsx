@@ -43,8 +43,10 @@ function AdminBookingPage() {
   return (
     <StaffLayout title="Bookings">
       <div className="page-header">
-        <h2>Bookings</h2>
-        <button onClick={() => setShowCreateModal(true)}>+ New Booking</button>
+        <h1>Bookings</h1>
+        <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+          + New Booking
+        </button>
       </div>
 
       {loading && <p>Loading bookings...</p>}

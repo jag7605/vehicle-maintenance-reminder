@@ -15,10 +15,16 @@ function StatusConfirmModal({ popup, customer, isActive }) {
 
         {error && <p className="error-text">{error}</p>}
 
-        <button onClick={onConfirm} disabled={loading}>
-          {loading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
-        </button>{" "}
-        <button type="button" onClick={close}>Cancel</button>
+        <div className="modal-actions">
+          <button type="button" className="btn btn-secondary" onClick={close}>Cancel</button>
+          <button
+            className={`btn ${loading ? "btn-disabled" : isActive ? "btn-danger" : "btn-primary"}`}
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {loading ? "Updating..." : isActive ? "Deactivate" : "Activate"}
+          </button>
+        </div>
       </div>
     </div>
   );

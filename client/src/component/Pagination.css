@@ -1,0 +1,15 @@
+
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.pagination-ellipsis {
+  color: var(--color-muted);
+  padding: 0 4px;
+  font-size: 14px;
+}

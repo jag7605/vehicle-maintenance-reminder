@@ -1,25 +1,191 @@
-/* Owner: Person A — Admin
-   Reference: admin_ui_reference.html
-   Extracted from inline style={{}} in AdminCustomerProfilePage.jsx.
 
-   .status-active / .status-inactive is a conditional className driven
-   by the isActive value from useCustomerProfile — logic unchanged,
-   only the color values moved here. */
 
-   .back-btn {
-    margin-bottom: 12px;
+.admin-customer-profile-page {
+  width: 100%;
+}
+
+
+
+.admin-customer-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-customer-profile-main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+
+.admin-customer-avatar {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--color-blue);
+  color: white;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-customer-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.profile-header-row h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.admin-customer-profile-info p {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+
+
+.status-active {
+  background-color: var(--status-completed);
+}
+
+.status-inactive {
+  background-color: var(--color-error);
+}
+
+/* =========================
+   TOP RIGHT BUTTONS
+   ========================= */
+
+.admin-customer-profile-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* =========================
+   CURRENT VEHICLES CARD
+   ========================= */
+
+.admin-current-vehicles-card {
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 18px 20px;
+}
+
+.admin-section-header h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.admin-vehicle-count {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.admin-current-vehicles-content {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 20px 20px;
+}
+
+/* =========================
+   ADD VEHICLE CARD
+   ========================= */
+
+.admin-add-vehicle-card {
+  padding: 20px;
+}
+
+.admin-add-vehicle-label {
+  margin: 0 0 6px;
+  color: var(--color-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.admin-add-vehicle-heading {
+  margin: 0 0 18px;
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+
+.admin-add-vehicle-card .standalone-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px var(--spacing-md);
+}
+
+.admin-add-vehicle-card .standalone-form small {
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 1000px) {
+  .admin-add-vehicle-card .standalone-form {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 650px) {
+  .admin-customer-profile-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-customer-profile-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
   .profile-header-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
-  
-  .status-active {
-    color: var(--status-completed);
+
+  .admin-add-vehicle-card .standalone-form {
+    grid-template-columns: 1fr;
   }
-  
-  .status-inactive {
-    color: #d64545;
+
+  .admin-add-vehicle-card {
+    padding: 16px;
   }
+}

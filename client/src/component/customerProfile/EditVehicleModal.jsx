@@ -1,4 +1,5 @@
 import "./EditVehicleModal.css";
+import "../FormControls.css";
 
 function EditVehicleModal({ popup }) {
   const {
@@ -80,10 +81,12 @@ function EditVehicleModal({ popup }) {
 
           {error && <p className="error-text">{error}</p>}
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>{" "}
-          <button type="button" onClick={close}>Cancel</button>
+          <div className="modal-actions">
+            <button type="button" className="btn btn-secondary" onClick={close}>Cancel</button>
+            <button type="submit" className={`btn ${loading ? "btn-disabled" : "btn-primary"}`} disabled={loading}>
+              {loading ? "Saving..." : "Save"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

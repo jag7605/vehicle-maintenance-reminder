@@ -1,4 +1,5 @@
 import "./SignUpModal.css";
+import "../FormControls.css";
 
 function SignUpModal({ popup }) {
   const {
@@ -46,10 +47,14 @@ function SignUpModal({ popup }) {
 
           {error && <p className="error-text">{error}</p>}
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create Account"}
-          </button>{" "}
-          <button type="button" onClick={close}>Cancel</button>
+          <div className="modal-actions modal-actions-end">
+            <button type="button" className="btn btn-secondary" onClick={close}>
+              Cancel
+            </button>
+            <button type="submit" className={`btn ${loading ? "btn-disabled" : "btn-primary"}`} disabled={loading}>
+              {loading ? "Creating..." : "Create Account"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -5,7 +5,18 @@ import {
 } from "../firebase/appointments";
 import { getAllCustomers } from "../firebase/users";
 import { getAllVehicles } from "../firebase/vehicles";
- 
+
+const CACHE_TTL_MS = 30_000;
+let cache = null; // { appointments, fetchedAt }
+
+export function invalidateAdminBookingsCache() {
+  cache = null;
+}
+
+function isCacheFresh() {
+  return cache && Date.now() - cache.fetchedAt < CACHE_TTL_MS;
+}
+
 function enrichAppointments(appointments, customerMap, vehicleMap) {
   return appointments.map((appt) => {
     const customer = customerMap.get(appt.customerId);
@@ -25,8 +36,8 @@ function enrichAppointments(appointments, customerMap, vehicleMap) {
 }
  
 export function useAdminBookings() {
-  const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [appointments, setAppointments] = useState(() => (isCacheFresh() ? cache.appointments : []));
+  const [loading, setLoading] = useState(!isCacheFresh());
   const [error, setError] = useState("");
  
   // Per-appointment action state, keyed by appointmentId — mirrors the
@@ -34,7 +45,13 @@ export function useAdminBookings() {
   const [actionLoading, setActionLoading] = useState({});
   const [actionError, setActionError] = useState({});
  
-  const refresh = useCallback(async () => {
+  const load = useCallback(async ({ force = false } = {}) => {
+    if (!force && isCacheFresh()) {
+      setAppointments(cache.appointments);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError("");
  
@@ -48,17 +65,23 @@ export function useAdminBookings() {
       const customerMap = new Map(customerData.map((c) => [c.id, c]));
       const vehicleMap = new Map(vehicleData.map((v) => [v.id, v]));
  
-      setAppointments(enrichAppointments(appointmentData, customerMap, vehicleMap));
+      const enriched = enrichAppointments(appointmentData, customerMap, vehicleMap);
+      cache = { appointments: enriched, fetchedAt: Date.now() };
+      setAppointments(enriched);
     } catch {
       setError("Failed to load bookings.");
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Exposed to callers (e.g. after creating a booking) — always bypasses
+  // the cache, since the whole point is to see the just-created booking.
+  const refresh = useCallback(() => load({ force: true }), [load]);
  
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    load();
+  }, [load]);
  
   // status: "confirmed" | "rejected" | "completed"
   // Always routes through the PATCH endpoint
@@ -69,9 +92,17 @@ export function useAdminBookings() {
  
     try {
       await updateAppointmentStatus(appointmentId, status);
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === appointmentId ? { ...a, status } : a))
+
+      const updated = appointments.map((a) =>
+        a.id === appointmentId ? { ...a, status } : a
       );
+      setAppointments(updated);
+
+      // Write-through — keep the cache in sync with the change we just
+      // made, rather than leaving it stale until the TTL expires.
+      if (cache) {
+        cache = { appointments: updated, fetchedAt: cache.fetchedAt };
+      }
     } catch (err) {
       setActionError((prev) => ({ ...prev, [appointmentId]: err.message }));
     } finally {

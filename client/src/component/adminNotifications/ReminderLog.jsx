@@ -1,5 +1,6 @@
 import { formatDateTime } from "../../utils/formatters";
 import DeliveryStatusBadges from "../DeliveryStatusBadges";
+import TableCard from "../TableCard";
 import "./ReminderLog.css";
 
 function ReminderLog({ notifications, loading, error, unreadCount }) {
@@ -16,34 +17,36 @@ function ReminderLog({ notifications, loading, error, unreadCount }) {
       )}
 
       <div className="reminder-log-scroll">
-        <table className="reminder-log-table">
-          <thead>
-            <tr>
-              <th className="col-status">Status</th>
-              <th className="col-sent">Sent</th>
-              <th>Message</th>
-              <th className="col-delivery">Delivery</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notifications.map((n) => (
-              <tr key={n.id} className={n.read ? "" : "reminder-row-unread"}>
-                <td className="status-cell">
-                  {n.read ? (
-                    <span className="read-label">Read by customer</span>
-                  ) : (
-                    <strong className="unread-label">Unread by customer</strong>
-                  )}
-                </td>
-                <td className="sent-cell">{formatDateTime(n.sentAt)}</td>
-                <td className="message-cell">{n.message}</td>
-                <td>
-                  <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
-                </td>
+        <TableCard>
+          <table className="reminder-log-table">
+            <thead>
+              <tr>
+                <th className="col-status">Status</th>
+                <th className="col-sent">Sent</th>
+                <th>Message</th>
+                <th className="col-delivery">Delivery</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {notifications.map((n) => (
+                <tr key={n.id} className={n.read ? "" : "reminder-row-unread"}>
+                  <td className="status-cell">
+                    {n.read ? (
+                      <span className="read-label">Read by customer</span>
+                    ) : (
+                      <strong className="unread-label">Unread by customer</strong>
+                    )}
+                  </td>
+                  <td className="sent-cell">{formatDateTime(n.sentAt)}</td>
+                  <td className="message-cell">{n.message}</td>
+                  <td>
+                    <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableCard>
       </div>
     </>
   );

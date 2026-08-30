@@ -16,10 +16,12 @@ function DeleteVehicleModal({ popup }) {
 
         {error && <p className="error-text">{error}</p>}
 
-        <button onClick={onConfirm} disabled={loading}>
-          {loading ? "Deleting..." : "Delete"}
-        </button>{" "}
-        <button type="button" onClick={close}>Cancel</button>
+        <div className="modal-actions">
+          <button type="button" className="btn btn-secondary" onClick={close}>Cancel</button>
+          <button className={`btn ${loading ? "btn-disabled" : "btn-danger"}`} onClick={onConfirm} disabled={loading}>
+            {loading ? "Deleting..." : "Delete"}
+          </button>
+        </div>
       </div>
     </div>
   );
