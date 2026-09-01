@@ -7,7 +7,7 @@ import Pagination from "../component/Pagination";
 import "./AdminNotificationPage.css";
 import "../component/FormControls.css";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 // ---------------------------------------------------------------------------
 // Admin Notifications page — customer reminder log.
@@ -67,13 +67,6 @@ function AdminNotificationPage() {
         </div>
       )}
 
-      <ReminderLog
-        notifications={pageItems}
-        loading={loading}
-        error={error}
-        unreadCount={unreadCount}
-      />
-
       {!loading && !error && (
         <Pagination
           currentPage={currentPage}
@@ -81,6 +74,13 @@ function AdminNotificationPage() {
           onPageChange={setPage}
         />
       )}
+
+      <ReminderLog
+        notifications={pageItems}
+        loading={loading}
+        error={error}
+        unreadCount={unreadCount}
+      />
     </StaffLayout>
   );
 }

@@ -118,3 +118,8 @@
     }
 
 }
+
+/* Spacing between pagination and notification box */
+.customer-notification-page .pagination-row {
+    margin-bottom: 16px;
+  }

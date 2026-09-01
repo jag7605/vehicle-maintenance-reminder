@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { db } from "../firebase/firebaseConfig";
 import { getAppointmentsByCustomer } from "../firebase/appointments";
 import { getVehiclesByOwner } from "../firebase/vehicles";
+import { getCustomerById } from "../firebase/users";
 import "./CustomerHomepage.css";
 
 function CustomerHomepage() {
@@ -15,6 +16,7 @@ function CustomerHomepage() {
   const [attentionItems, setAttentionItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentService, setRecentService] = useState(null);
+  const [firstName, setFirstName] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,11 +44,15 @@ function CustomerHomepage() {
           appointments,
           vehicles,
           notificationSnapshot,
+          customerData,
         ] = await Promise.all([
           getAppointmentsByCustomer(user.uid),
           getVehiclesByOwner(user.uid),
           getDocs(notificationsQuery),
+          getCustomerById(user.uid),
         ]);
+
+        setFirstName(customerData?.firstName || "");
 
         const now = new Date();
 
@@ -70,6 +76,7 @@ function CustomerHomepage() {
         */
 
         const futureBookings = appointments.filter((appointment) => {
+          // eslint-disable-next-line react-hooks/immutability
           const appointmentDate = getDateValue(appointment.date);
 
           if (!appointmentDate) {
@@ -90,6 +97,7 @@ function CustomerHomepage() {
             return {
               ...appointment,
               appointmentDate: getDateValue(appointment.date),
+              // eslint-disable-next-line react-hooks/immutability
               vehicleText: getVehicleText(vehicle),
             };
           })
@@ -314,7 +322,7 @@ function CustomerHomepage() {
       <div className="customer-home">
 
         <h1 className="customer-home-title">
-          Dashboard
+          {firstName ? `Welcome, ${firstName}` : "Dashboard"}
         </h1>
 
 
@@ -414,7 +422,7 @@ function CustomerHomepage() {
                 <p className="customer-home-small-text">
                   {unreadCount === 1
                     ? "New notification"
-                    : "New notifications"}
+                    : "Unread notifications"}
                 </p>
               </>
             )}

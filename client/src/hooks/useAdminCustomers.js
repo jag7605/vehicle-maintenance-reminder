@@ -97,8 +97,8 @@ export function useAdminCustomers() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function openSignUpPopup() {

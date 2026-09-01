@@ -3,4 +3,4 @@
    Extracted from inline style={{}} in SignUpModal.jsx.
 
    .modal-overlay / .modal-box / .error-text now come from shared.css —
-   this file no longer imports modalStyles.js. */
+   this file no longer imports modalStyles.js. No specific CSS is needed for this modal, will use shared elements. */

@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./Sidebar.css";
 import logout from "../firebase/logout.js";

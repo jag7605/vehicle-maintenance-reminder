@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNotificationPreferences } from "../hooks/useNotificationPreferences";
 import NotificationPreferenceForm from "../component/NotificationPreferenceForm";
 import { auth } from "../firebase/firebaseConfig";
+import { getCustomerById } from "../firebase/users";
 import "./CustomerProfilePage.css";
 
 const FIELDS = [
@@ -20,10 +22,30 @@ function CustomerProfilePage() {
     PUSH_MANAGED_FIELDS
   );
 
+  const [customer, setCustomer] = useState(null);
+
+  useEffect(() => {
+    async function loadCustomer() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const data = await getCustomerById(user.uid);
+        setCustomer(data);
+      } catch (err) {
+        console.error("Failed to load customer profile:", err);
+      }
+    }
+
+    loadCustomer();
+  }, []);
+
   const user = auth.currentUser;
-  const customerName = user?.displayName || "Customer";
-  const customerEmail = user?.email || "No email provided";
-  const customerPhone = user?.phoneNumber || "No phone number provided";
+  const customerName = customer
+    ? `${customer.firstName || ""} ${customer.lastName || ""}`.trim() || "Customer"
+    : "Customer";
+  const customerEmail = customer?.email || user?.email || "No email provided";
+  const customerPhone = customer?.phone || "No phone number provided";
   const initials = customerName.split(" ").map((name) => name.charAt(0)).join("").slice(0, 2).toUpperCase();
 
   return (

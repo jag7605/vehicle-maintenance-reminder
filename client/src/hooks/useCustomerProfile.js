@@ -4,6 +4,8 @@ import { getCustomerById, setCustomerActiveStatus } from "../firebase/users";
 import { vehicleMakesModels } from "../data/vehicleMakesModels";
 import { timestampToDateInput, isPastDate } from "../utils/formatters";
 import { calculateNextWoFDate, calculateNextOilChangeDate } from "../utils/serviceDateCalculators";
+import { invalidateAdminCustomersCache } from "./useAdminCustomers";
+import { invalidateDashboardSummaryCache } from "./useDashboardSummary";
  
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,7 +35,6 @@ export function useCustomerProfile(customerId) {
   const [editRego, setEditRego] = useState("");
   const [editNextWofDate, setEditNextWofDate] = useState(""); // yyyy-MM-dd string
   const [editNextOilChangeDate, setEditNextOilChangeDate] = useState(""); // yyyy-MM-dd string
-  const [editNextServiceMileage, setEditNextServiceMileage] = useState(""); // number string or ""
   const [editError, setEditError] = useState("");
   const [editLoading, setEditLoading] = useState(false);
  
@@ -160,7 +161,6 @@ export function useCustomerProfile(customerId) {
     setEditRego(vehicle.rego);
     setEditNextWofDate(timestampToDateInput(vehicle.nextWofDate));
     setEditNextOilChangeDate(timestampToDateInput(vehicle.nextOilChangeDate));
-    setEditNextServiceMileage(vehicle.nextServiceMileage != null ? String(vehicle.nextServiceMileage) : "");
     setEditError("");
   }
  
@@ -176,7 +176,6 @@ export function useCustomerProfile(customerId) {
     try {
       const nextWofDate = editNextWofDate ? new Date(editNextWofDate) : null;
       const nextOilChangeDate = editNextOilChangeDate ? new Date(editNextOilChangeDate) : null;
-      const nextServiceMileage = editNextServiceMileage !== "" ? Number(editNextServiceMileage) : null;
 
       await updateVehicle(editingVehicle.id, {
         year: Number(editYear),
@@ -184,7 +183,6 @@ export function useCustomerProfile(customerId) {
         rego: editRego,
         nextWofDate,
         nextOilChangeDate,
-        nextServiceMileage,
       });
  
       await refreshVehicles();
@@ -243,6 +241,8 @@ export function useCustomerProfile(customerId) {
     try {
       await setCustomerActiveStatus(customerId, nextStatus);
       setCustomer((prev) => ({ ...prev, active: nextStatus }));
+      invalidateAdminCustomersCache();
+      invalidateDashboardSummaryCache();
       setShowStatusConfirm(false);
     } catch {
       setStatusError("Something went wrong while updating status.");
@@ -345,7 +345,6 @@ export function useCustomerProfile(customerId) {
       rego: editRego,
       nextWofDate: editNextWofDate,
       nextOilChangeDate: editNextOilChangeDate,
-      nextServiceMileage: editNextServiceMileage,
       error: editError,
       loading: editLoading,
       setYear: setEditYear,
@@ -353,7 +352,6 @@ export function useCustomerProfile(customerId) {
       setRego: setEditRego,
       setNextWofDate: setEditNextWofDate,
       setNextOilChangeDate: setEditNextOilChangeDate,
-      setNextServiceMileage: setEditNextServiceMileage,
       open: openEditPopup,
       close: closeEditPopup,
       onSave: handleEditSave,

@@ -7,7 +7,7 @@ import { usePagination } from "../hooks/usePagination";
 import Pagination from "../component/Pagination";
 import "./AdminJobsPage.css";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 function formatTime(value) {
   if (!value) return "—";
@@ -72,6 +72,14 @@ function AdminJobsPage() {
       )}
 
       {!loading && !error && jobs.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
+
+      {!loading && !error && jobs.length > 0 && (
         <div className="jobs-table-scroll">
           <TableCard>
           <table className="jobs-table">
@@ -121,14 +129,6 @@ function AdminJobsPage() {
           </table>
           </TableCard>
         </div>
-      )}
-
-      {!loading && !error && jobs.length > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
       )}
 
       {selectedJob && (

@@ -69,18 +69,18 @@ function AdminCustomerPage() {
         <input
           type="text"
           className="input-control"
-          placeholder="Search by name, phone, email, or rego"
+          placeholder="Search by: Name, Phone Number, Email address, or Vehicle Rego"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
-        <CustomerTable rows={pageItems} />
 
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setPage}
         />
+
+        <CustomerTable rows={pageItems} />
 
         <SignUpModal popup={signUpPopup} />
       </div>

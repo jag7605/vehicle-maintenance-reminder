@@ -3,6 +3,7 @@ import { precacheAndRoute } from "workbox-precaching";
 precacheAndRoute(self.__WB_MANIFEST);
 
 self.addEventListener("push", (event) => {
+  // eslint-disable-next-line no-useless-assignment
   let data = {};
 
   try {

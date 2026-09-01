@@ -1,7 +1,7 @@
 
 .summary-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
 }
@@ -25,6 +25,10 @@
 
 .summary-card-value.is-alert {
   color: var(--color-error);
+}
+
+.summary-card-value.is-upcoming {
+  color: var(--status-pending);
 }
 
 .summary-card-sub {

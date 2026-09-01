@@ -6,8 +6,10 @@ export function usePagination(items, pageSize = 10) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
-  }, [items]);
+  }, [items.length]);
+
   const safePage = Math.min(currentPage, totalPages);
 
   const start = (safePage - 1) * pageSize;

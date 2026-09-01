@@ -9,7 +9,6 @@ function EditVehicleModal({ popup }) {
     rego,
     nextWofDate,
     nextOilChangeDate,
-    nextServiceMileage,
     error,
     loading,
     setYear,
@@ -17,7 +16,6 @@ function EditVehicleModal({ popup }) {
     setRego,
     setNextWofDate,
     setNextOilChangeDate,
-    setNextServiceMileage,
     close,
     onSave,
   } = popup;
@@ -81,19 +79,6 @@ function EditVehicleModal({ popup }) {
               onChange={(e) => setNextOilChangeDate(e.target.value)}
             />
             <small className="modal-field-hint">Leave blank to clear the Oil Change due date.</small>
-          </div>
-
-          <div className="modal-field-group">
-            <label className="modal-field-label">Next Service Mileage (km)</label>
-            <input
-              className="modal-field-input"
-              type="number"
-              min="0"
-              value={nextServiceMileage}
-              onChange={(e) => setNextServiceMileage(e.target.value)}
-              placeholder="e.g. 150000"
-            />
-            <small className="modal-field-hint">Leave blank to clear the mileage target.</small>
           </div>
 
           {error && <p className="error-text">{error}</p>}

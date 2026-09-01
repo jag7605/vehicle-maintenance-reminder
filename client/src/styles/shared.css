@@ -174,11 +174,16 @@
     color: var(--color-text);
   }
   
-  /* ---------- Overdue / flagged date text ---------- */
-  .date-flag {
-    color: #d64545;
-    font-weight: 600;
-  }
+    /* ---------- Overdue / flagged date text ---------- */
+    .date-flag {
+      color: #d64545;
+      font-weight: 600;
+    }
+  
+    .date-flag-upcoming {
+      color: var(--status-pending);
+      font-weight: 600;
+    }
   
   /* ---------- List rows (dashboard-style summary lists) ---------- */
   .list-row {

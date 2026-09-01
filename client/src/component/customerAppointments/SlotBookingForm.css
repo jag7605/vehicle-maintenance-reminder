@@ -123,6 +123,8 @@
   font-size: 13px;
 
   outline: none;
+
+  box-sizing: border-box;
 }
 
 

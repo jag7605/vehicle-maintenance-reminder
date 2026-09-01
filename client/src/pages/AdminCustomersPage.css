@@ -4,3 +4,8 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
+/* Set bar length and padding below */
+.input-control {
+  width: 50%; 
+  margin-bottom: 16px;
+}

@@ -4,6 +4,36 @@ import DeliveryStatusBadges from "../DeliveryStatusBadges";
 import VehicleNotificationHistory from "../VehicleNotificationHistory";
 import "./VehicleTable.css";
 
+const DUE_SOON_WINDOW_DAYS = 30;
+
+// ---------------------------------------------------------------------------
+// Helper — returns { status, daysOut } for a given date value.
+// status is "overdue" | "upcoming" | "none". "upcoming" only applies within
+// the next DUE_SOON_WINDOW_DAYS days, so dates far in the future stay
+// unstyled rather than being flagged orange. daysOut is the absolute number
+// of days overdue/until due, or null if there's no date.
+// ---------------------------------------------------------------------------
+function getDateStatus(value) {
+  if (!value) return { status: "none", daysOut: null };
+
+  const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysOut = Math.round((startOfDay(date) - startOfDay(new Date())) / msPerDay);
+
+  if (isPastDate(value)) return { status: "overdue", daysOut: Math.abs(daysOut) };
+
+  return {
+    status: daysOut <= DUE_SOON_WINDOW_DAYS ? "upcoming" : "none",
+    daysOut,
+  };
+}
+
+function dateClassName(status) {
+  if (status === "overdue") return "date-flag";
+  if (status === "upcoming") return "date-flag-upcoming";
+  return undefined;
+}
 
 function VehicleTable({
   vehicles,
@@ -27,10 +57,9 @@ function VehicleTable({
           <th>Make</th>
           <th>Model</th>
           <th>Rego</th>
-          <th>Mileage</th>
+          <th>Mileage (KMS)</th>
           <th>Next WoF Date</th>
           <th>Next Oil Change Date</th>
-          <th>Next Service Mileage</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -40,6 +69,9 @@ function VehicleTable({
           const isLoadingReminder = reminderLoading[vehicle.id];
           const historyOpen = expandedHistory[vehicle.id];
 
+          const wofInfo = getDateStatus(vehicle.nextWofDate);
+          const oilInfo = getDateStatus(vehicle.nextOilChangeDate);
+
           return (
             <Fragment key={vehicle.id}>
               <tr>
@@ -48,18 +80,15 @@ function VehicleTable({
                 <td>{vehicle.model}</td>
                 <td>{vehicle.rego}</td>
                 <td>{vehicle.mileage}</td>
-                <td className={isPastDate(vehicle.nextWofDate) ? "date-flag" : undefined}>
+                <td className={dateClassName(wofInfo.status)}>
                   {formatDate(vehicle.nextWofDate)}
-                  {isPastDate(vehicle.nextWofDate) && " (Overdue)"}
+                  {wofInfo.status === "overdue" && ` (${wofInfo.daysOut} days Overdue)`}
+                  {wofInfo.status === "upcoming" && ` (Due in ${wofInfo.daysOut} days)`}
                 </td>
-                <td className={isPastDate(vehicle.nextOilChangeDate) ? "date-flag" : undefined}>
+                <td className={dateClassName(oilInfo.status)}>
                   {formatDate(vehicle.nextOilChangeDate)}
-                  {isPastDate(vehicle.nextOilChangeDate) && " (Overdue)"}
-                </td>
-                <td>
-                  {vehicle.nextServiceMileage != null
-                    ? `${vehicle.nextServiceMileage.toLocaleString()} km`
-                    : "—"}
+                  {oilInfo.status === "overdue" && ` (${oilInfo.daysOut} days overdue)`}
+                  {oilInfo.status === "upcoming" && ` (Due in ${oilInfo.daysOut} days)`}
                 </td>
                 <td style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                   <button className="btn btn-secondary btn-sm" onClick={() => onEdit(vehicle)}>Edit</button>
@@ -79,7 +108,7 @@ function VehicleTable({
 
               {result && (
                 <tr>
-                  <td colSpan="9">
+                  <td colSpan="8">
                     {result.success ? (
                       <span>
                         <strong>Notification sent.</strong>{" "}
@@ -96,7 +125,7 @@ function VehicleTable({
 
               {historyOpen && (
                 <tr>
-                  <td colSpan="9">
+                  <td colSpan="8">
                     <strong>Notification History</strong>
                     <VehicleNotificationHistory vehicleId={vehicle.id} />
                   </td>

@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, onSnapshot, doc, updateDoc, } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../component/Pagination";
 import "./CustomerNotificationPage.css";
+
+const PAGE_SIZE = 10;
 
 function CustomerNotificationPage() {
     const [notifications, setNotifications] = useState([]);
@@ -67,6 +71,11 @@ function CustomerNotificationPage() {
             }
         };
     }, []);
+
+    const { pageItems, currentPage, totalPages, setPage } = usePagination(
+        notifications,
+        PAGE_SIZE
+    );
 
     const markAsRead = async (notificationId, alreadyRead) => {
         if (alreadyRead) return;
@@ -143,6 +152,18 @@ function CustomerNotificationPage() {
             <div className="page-header">
                 <h1>Notifications</h1>
             </div>
+            <p className="page-intro-text">
+                All reminders and updates sent to you about your vehicles and bookings. Click on the notification to mark it as read.
+                (Unread notifications are highlighted with a blue dot.)
+            </p>
+
+            {notifications.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                />
+            )}
 
             <div className="card customer-notification-card">
 
@@ -151,7 +172,7 @@ function CustomerNotificationPage() {
                         No notifications yet.
                     </p>
                 ) : (
-                    notifications.map((notification) => (
+                    pageItems.map((notification) => (
                         <div
                             key={notification.id}
                             onClick={() =>

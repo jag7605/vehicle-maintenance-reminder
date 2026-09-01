@@ -25,24 +25,40 @@ function SignUpModal({ popup }) {
       <div className="modal-box">
         <h3>Sign Up New Customer</h3>
         <form onSubmit={onSubmit}>
-          <div>
-            <label>First Name</label><br />
-            <input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <div className="modal-field-group">
+            <label className="modal-field-label">First Name</label>
+            <input
+              className="modal-field-input"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
           </div>
 
-          <div>
-            <label>Last Name</label><br />
-            <input value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <div className="modal-field-group">
+            <label className="modal-field-label">Last Name</label>
+            <input
+              className="modal-field-input"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
           </div>
 
-          <div>
-            <label>Email</label><br />
-            <input value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className="modal-field-group">
+            <label className="modal-field-label">Email</label>
+            <input
+              className="modal-field-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
-          <div>
-            <label>Phone</label><br />
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <div className="modal-field-group">
+            <label className="modal-field-label">Phone</label>
+            <input
+              className="modal-field-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
 
           {error && <p className="error-text">{error}</p>}

@@ -51,8 +51,7 @@ export async function getAllVehicles() {
 
 export async function updateVehicle(vehicleId, updates) {
   // updates can include: year, mileage, rego, nextWofDate (JS Date or null),
-  // nextOilChangeDate (JS Date or null), nextServiceMileage (number or null)
-  // — make/model are not editable after creation
+  // nextOilChangeDate (JS Date or null) — make/model are not editable after creation
   const vehicleRef = doc(db, "vehicles", vehicleId);
 
   const firestoreUpdates = {
@@ -73,13 +72,6 @@ export async function updateVehicle(vehicleId, updates) {
     firestoreUpdates.nextOilChangeDate = Timestamp.fromDate(updates.nextOilChangeDate);
   } else if (updates.nextOilChangeDate === null) {
     firestoreUpdates.nextOilChangeDate = null;
-  }
-
-  // nextServiceMileage — store as number, or null to clear
-  if (typeof updates.nextServiceMileage === "number") {
-    firestoreUpdates.nextServiceMileage = updates.nextServiceMileage;
-  } else if (updates.nextServiceMileage === null) {
-    firestoreUpdates.nextServiceMileage = null;
   }
 
   // Pass firestoreUpdates (not the raw updates object)

@@ -341,7 +341,7 @@
 .badge-pending {
   background-color: #fff4e7;
 
-  color: #9c6a0c;
+  color: var(--status-pending);
 }
 
 
