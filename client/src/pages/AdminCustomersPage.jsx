@@ -7,7 +7,7 @@ import Pagination from "../component/Pagination";
 import "./AdminCustomersPage.css";
 import "../component/FormControls.css";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 // ---------------------------------------------------------------------------
 // Admin Customers page.
