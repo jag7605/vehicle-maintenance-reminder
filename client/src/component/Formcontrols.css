@@ -117,3 +117,34 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.link-button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  appearance: none;
+  font: inherit;
+  color: var(--color-blue);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.field-suggestion-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.field-suggestion-row .btn {
+  padding: 2px 10px;
+  font-size: 12px;
+}
+
+.field-choose-list-row {
+  margin-top: 8px;
+}

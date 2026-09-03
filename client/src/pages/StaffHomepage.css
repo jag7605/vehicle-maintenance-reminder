@@ -31,6 +31,10 @@
   color: var(--status-pending);
 }
 
+.summary-card-value.is-confirmed {
+  color: var(--status-confirmed);
+}
+
 .summary-card-sub {
   margin: 6px 0 0;
   font-size: 13px;
@@ -43,4 +47,21 @@
 
 .overdue-badge {
   background: var(--color-error);
+}
+
+.clickable-card {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.clickable-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.non-clickable-card {
+  cursor: not-allowed;
 }
