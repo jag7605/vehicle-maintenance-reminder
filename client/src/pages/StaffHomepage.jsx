@@ -7,7 +7,7 @@ import Pagination from "../component/Pagination";
 import "./StaffHomepage.css";
 
 const DUE_SOON_WINDOW_DAYS = 30;
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 5;
 
 // ---------------------------------------------------------------------------
 // Helper — format a Firestore Timestamp or JS Date for display
@@ -36,6 +36,8 @@ function StaffHomepage() {
     jobsTodayCount,
     upcoming,
     ownerName,
+    serviceStatusTab,
+    setServiceStatusTab,
   } = useDashboardSummary();
 
   const { pageItems, currentPage, totalPages, setPage } = usePagination(
@@ -126,9 +128,35 @@ function StaffHomepage() {
               their profile and send manual reminders if needed.
             </p>
 
+            <div className="status-tab-row">
+            <button
+                className={`btn btn-sm ${serviceStatusTab === "both" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setServiceStatusTab("both")}
+                disabled={serviceStatusTab === "both"}
+              >
+                Both
+              </button>
+              <button
+                className={`btn btn-sm ${serviceStatusTab === "overdue" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setServiceStatusTab("overdue")}
+                disabled={serviceStatusTab === "overdue"}
+              >
+                Overdue
+              </button>
+              <button
+                className={`btn btn-sm ${serviceStatusTab === "dueSoon" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setServiceStatusTab("dueSoon")}
+                disabled={serviceStatusTab === "dueSoon"}
+              >
+                Due Within 30 Days
+              </button>
+            </div>
+
             {upcoming.length === 0 ? (
               <div className="card">
-                You're all caught up — nothing due soon.
+                {serviceStatusTab === "both"
+                  ? "You're all caught up — nothing due soon."
+                  : `No vehicles match "${serviceStatusTab === "overdue" ? "Overdue" : "Due Within 30 Days"}" right now.`}
               </div>
             ) : (
               <>

@@ -69,6 +69,7 @@ export function useDashboardSummary() {
   const [appointments, setAppointments] = useState(() => (isCacheFresh() ? cache.appointments : []));
   const [loading, setLoading] = useState(!isCacheFresh());
   const [error, setError] = useState("");
+  const [serviceStatusTab, setServiceStatusTab] = useState("both"); // "overdue" | "dueSoon" | "both"
 
   const load = useCallback(async ({ force = false } = {}) => {
     if (!force && isCacheFresh()) {
@@ -123,11 +124,15 @@ export function useDashboardSummary() {
     (v) => v.daysOut >= 0 && v.daysOut <= DUE_SOON_WINDOW_DAYS
   ).length;
 
-  // Overdue first (most overdue first), then soonest-due — top 8 for the table
+  // Overdue first (most overdue first), then soonest-due.
   const upcoming = vehiclesWithService
     .filter((v) => v.daysOut <= DUE_SOON_WINDOW_DAYS)
-    .sort((a, b) => a.daysOut - b.daysOut)
-    .slice(0, 8);
+    .filter((v) => {
+      if (serviceStatusTab === "overdue") return v.daysOut < 0;
+      if (serviceStatusTab === "dueSoon") return v.daysOut >= 0;
+      return true; // "both"
+    })
+    .sort((a, b) => a.daysOut - b.daysOut);
 
   const pendingBookingsCount = appointments.filter((a) => a.status === "pending").length;
 
@@ -152,6 +157,8 @@ export function useDashboardSummary() {
     jobsTodayCount,
     upcoming,
     ownerName,
+    serviceStatusTab,
+    setServiceStatusTab,
     refresh,
   };
 }
