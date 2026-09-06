@@ -318,4 +318,4 @@ async function sendBookingNotification(appointment, vehicle, customer, status, n
   return deliveryStatus;
 }
 
-module.exports = { sendReminder, sendBookingNotification };
+module.exports = { sendReminder, sendBookingNotification, buildWofDueContent, buildOilChangeDueContent, buildCarReadyContent };
