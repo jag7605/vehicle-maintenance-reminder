@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import TableCard from "../TableCard";
 
 // ---------------------------------------------------------------------------
-// Renders the filtered customer+vehicle rows. Pure presentational.
+// Renders the filtered customer+vehicle rows. Pure presentational component.
 // ---------------------------------------------------------------------------
 function CustomerTable({ rows }) {
   if (rows.length === 0) {
