@@ -1,63 +1,63 @@
-import { useEffect, useState } from "react";
-import Sidebar from "./Sidebar";
-import "./StaffLayout.css";
-import { Outlet } from "react-router-dom";
-import { auth } from "../firebase/firebaseConfig";
-import { getCustomerById } from "../firebase/users";
+  import { useEffect, useState } from "react";
+  import Sidebar from "./Sidebar";
+  import "./CustomerLayoutShell.css";
+  import { Outlet } from "react-router-dom";
+  import { auth } from "../firebase/firebaseConfig";
+  import { getCustomerById } from "../firebase/users";
 
-const customerMenu = [
-  {
-    title: "Overview",
-    items: [
-      { label: "Dashboard", path: "/customer/home" },
-      { label: "Notifications", path: "/customer/notifications" }
-    ],
-  },
-  {
-    title: "Services",
-    items: [
-      { label: "Appointments", path: "/customer/appointments" },
-      { label: "My Vehicles", path: "/customer/vehicles" },
-      { label: "Service History", path: "/customer/history" },
-    ],
-  },
-  {
-    title: "Account",
-    items: [
-      { label: "Profile", path: "/customer/profile" },
-      { label: "Garage Info", path: "/customer/garage" },
-    ],
-  },
-];
+  const customerMenu = [
+    {
+      title: "Overview",
+      items: [
+        { label: "Dashboard", path: "/customer/home" },
+        { label: "Notifications", path: "/customer/notifications" }
+      ],
+    },
+    {
+      title: "Services",
+      items: [
+        { label: "Appointments", path: "/customer/appointments" },
+        { label: "My Vehicles", path: "/customer/vehicles" },
+        { label: "Service History", path: "/customer/history" },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        { label: "Profile", path: "/customer/profile" },
+        { label: "Garage Info", path: "/customer/garage" },
+      ],
+    },
+  ];
 
-function CustomerLayout() {
-  const [customerName, setCustomerName] = useState("");
+  function CustomerLayout() {
+    const [customerName, setCustomerName] = useState("");
 
-  useEffect(() => {
-    async function loadCustomerName() {
-      try {
-        const uid = auth.currentUser.uid;
-        const customer = await getCustomerById(uid);
-        setCustomerName(`${customer.firstName} ${customer.lastName}`);
-      } catch (err) {
-        console.error("Failed to load customer name:", err);
+    useEffect(() => {
+      async function loadCustomerName() {
+        try {
+          const uid = auth.currentUser.uid;
+          const customer = await getCustomerById(uid);
+          setCustomerName(`${customer.firstName} ${customer.lastName}`);
+        } catch (err) {
+          console.error("Failed to load customer name:", err);
+        }
       }
-    }
 
-    loadCustomerName();
-  }, []);
+      loadCustomerName();
+    }, []);
 
-  return (
-    <>
-      <div className="dashboard-layout">
-        <Sidebar menuItems={customerMenu} userName={customerName} userRole="Customer" />
+    return (
+      <>
+        <div className="dashboard-layout">
+          <Sidebar menuItems={customerMenu} userName={customerName} userRole="Customer" />
 
-        <main className="dashboard-content">
-          <Outlet />
-        </main>
-      </div>
-    </>
-  );
-}
+          <main className="dashboard-content">
+            <Outlet />
+          </main>
+        </div>
+      </>
+    );
+  }
 
-export default CustomerLayout;
+  export default CustomerLayout;

@@ -4,14 +4,15 @@
 .sidebar {
   width: 315px;
   min-width: 315px;
-  height: auto;
+  height: 100%;
+  overflow-y: auto;
   background: var(--color-sidebar-bg);
   color: white;
 
   display: flex;
   flex-basis: content;
   flex-direction: column;
-  gap: 5rem;
+  gap: 0;
 }
 
 
