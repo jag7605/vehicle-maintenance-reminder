@@ -45,7 +45,7 @@ function AdminBookingPage() {
       <div className="page-header">
         <h1>Bookings</h1>
         <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
-          + New Booking
+          New Booking
         </button>
       </div>
 

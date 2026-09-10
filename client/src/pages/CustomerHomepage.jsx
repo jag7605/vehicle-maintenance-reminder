@@ -502,7 +502,7 @@ function CustomerHomepage() {
               !error &&
               upcomingAppointments.length === 0 && (
                 <p className="customer-home-empty">
-                  You have no upcoming appointments.
+                  You have no upcoming appointments, click here to book a service.
                 </p>
               )}
 

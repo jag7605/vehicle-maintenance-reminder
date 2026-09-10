@@ -24,7 +24,8 @@ function ReminderLog({ notifications, loading, error, unreadCount }) {
                 <th className="col-status">Status</th>
                 <th className="col-sent">Sent</th>
                 <th>Message</th>
-                <th className="col-delivery">Delivery</th>
+                <th className="col-delivery">Email</th>
+                <th className="col-delivery">Browser</th>
               </tr>
             </thead>
             <tbody>
@@ -40,7 +41,10 @@ function ReminderLog({ notifications, loading, error, unreadCount }) {
                   <td className="sent-cell">{formatDateTime(n.sentAt)}</td>
                   <td className="message-cell">{n.message}</td>
                   <td>
-                    <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
+                    <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} channel="email" />
+                  </td>
+                  <td>
+                    <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} channel="browser" />
                   </td>
                 </tr>
               ))}

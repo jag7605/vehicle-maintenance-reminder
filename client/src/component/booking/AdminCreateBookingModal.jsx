@@ -332,7 +332,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
               disabled={!canAddMore}
               className={`btn btn-sm ${canAddMore ? "btn-secondary" : "btn-disabled"}`}
             >
-              Add additional service +
+              Add additional service
             </button>
           </div>
 

@@ -19,83 +19,91 @@
    modal files (Edit/Delete/StatusConfirm/this one). Definitely worth
    flagging to Person D now — clear shared.css candidate. */
 
-.modal-box h3 {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: var(--color-text);
-}
-
-.notif-option-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-/* Belt-and-braces: styles any button inside this specific wrapper
-   directly, so it still renders correctly even if the "btn btn-secondary
-   btn-full-width" classNames on the buttons themselves didn't make it
-   into the deployed JSX for some reason. Scoped to .notif-option-list
-   only (unique to this file, not shared) so it can't leak into any
-   other component's buttons. */
-.notif-option-list button {
-  width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  background: white;
-  color: var(--color-text);
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-
-.notif-option-list button:disabled {
-  background: #e4e7ec;
-  color: var(--color-muted);
-  cursor: not-allowed;
-}
-
-.notif-option-list .btn-secondary:hover:not(:disabled),
-.notif-option-list button:hover:not(:disabled) {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.btn-full-width {
-  width: 100%;
-}
-
-/* Guaranteed fallback for the Cancel button — fully self-contained,
-   doesn't depend on shared.css's .btn/.btn-secondary at all. Added
-   because the shared classes weren't taking effect on this specific
-   button despite matching the working Cancel buttons on
-   EditVehicleModal/DeleteVehicleModal exactly. Unique class name,
-   can't affect any other file. */
-.notif-cancel-btn {
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-card) !important;
-  padding: 10px 18px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  background: white !important;
-  color: var(--color-text) !important;
-  cursor: pointer !important;
-  font-family: var(--font-body) !important;
-}
-
-.notif-cancel-btn:hover:not(:disabled) {
-  border-color: var(--color-accent) !important;
-  color: var(--color-accent) !important;
-}
-
-.notif-cancel-btn:disabled {
-  background: #e4e7ec !important;
-  color: var(--color-muted) !important;
-  cursor: not-allowed !important;
-}
-
-.modal-error-spacing {
-  margin-top: 12px;
-}
+   .modal-box h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: var(--color-text);
+  }
+  
+  .notif-option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  /* Belt-and-braces: styles any button inside this specific wrapper
+     directly, so it still renders correctly even if the "btn btn-secondary
+     btn-full-width" classNames on the buttons themselves didn't make it
+     into the deployed JSX for some reason. Scoped to .notif-option-list
+     only (unique to this file, not shared) so it can't leak into any
+     other component's buttons. */
+  .notif-option-list button {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    background: white;
+    color: var(--color-text);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  
+  .notif-option-list button:disabled {
+    background: #e4e7ec;
+    color: var(--color-muted);
+    cursor: not-allowed;
+  }
+  
+  /* Filled background on hover instead of a light-teal text color — the
+     text color alone had poor contrast against white (light teal on
+     white is hard to read). Matches the same accent-fill treatment used
+     for selected slots elsewhere in the app (dark text on accent bg). */
+  .notif-option-list .btn-secondary:hover:not(:disabled),
+  .notif-option-list button:hover:not(:disabled) {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #212121;
+  }
+  
+  .btn-full-width {
+    width: 100%;
+  }
+  
+  /* Guaranteed fallback for the Cancel button — fully self-contained,
+     doesn't depend on shared.css's .btn/.btn-secondary at all. Added
+     because the shared classes weren't taking effect on this specific
+     button despite matching the working Cancel buttons on
+     EditVehicleModal/DeleteVehicleModal exactly. Unique class name,
+     can't affect any other file. */
+  .notif-cancel-btn {
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-card) !important;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    background: white !important;
+    color: var(--color-text) !important;
+    cursor: pointer !important;
+    font-family: var(--font-body) !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+  }
+  
+  .notif-cancel-btn:hover:not(:disabled) {
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #212121 !important;
+  }
+  
+  .notif-cancel-btn:disabled {
+    background: #e4e7ec !important;
+    color: var(--color-muted) !important;
+    cursor: not-allowed !important;
+  }
+  
+  .modal-error-spacing {
+    margin-top: 12px;
+  }

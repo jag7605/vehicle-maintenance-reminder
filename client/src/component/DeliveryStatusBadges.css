@@ -14,9 +14,9 @@
   }
   
   .channel-sent {
-    color: var(--status-completed);
+    color: var(--color-muted);
   }
   
   .channel-failed {
-    color: #d64545;
+    color: var(--color-muted);
   }

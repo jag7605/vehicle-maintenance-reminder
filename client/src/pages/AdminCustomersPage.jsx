@@ -42,6 +42,11 @@ function AdminCustomerPage() {
           </button>
         </div>
 
+        <p className="page-subtitle">
+          Click a row to open that customer's profile, view their vehicles,
+          and send manual reminders if needed.
+        </p>
+
         <div className="status-tab-row">
           <button
             className={`btn btn-sm ${statusTab === "active" ? "btn-primary" : "btn-secondary"}`}
@@ -73,14 +78,13 @@ function AdminCustomerPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <CustomerTable rows={pageItems} />
 
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setPage}
         />
-
-        <CustomerTable rows={pageItems} />
 
         <SignUpModal popup={signUpPopup} />
       </div>

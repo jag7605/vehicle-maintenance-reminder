@@ -31,7 +31,7 @@ const {
 
 const isDryRun = process.argv.includes("--dry-run");
 
-const NUM_CUSTOMERS = 30;
+const NUM_CUSTOMERS = 50;
 const MIN_VEHICLES = 1;
 const MAX_VEHICLES = 3;
 // Both scale with NUM_CUSTOMERS so the overdue/due-soon ratio stays consistent even if you change the customer count. 
@@ -200,7 +200,7 @@ async function run() {
       active: true,
       notificationPreferences: {
         email: true,
-        browser: Math.random() < 0.5,
+        browser: false,
         sms: false, // SMS disabled app-wide, matches reality
       },
       isMockData: true,

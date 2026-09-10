@@ -95,8 +95,8 @@
   }
   
   .btn-primary {
-    background: var(--color-blue);
-    color: white;
+    background: var(--color-accent);
+    color: rgb(0, 0, 0);
   }
   
   .btn-secondary {
@@ -107,8 +107,8 @@
   
   .btn-danger {
     background: white;
-    border: 1px solid #f0c4c4;
-    color: #d64545;
+    border: 1px solid var(--color-border);
+    /*color: #d64545;*/
   }
   
   .btn-sm {
@@ -184,6 +184,15 @@
       color: var(--status-pending);
       font-weight: 600;
     }
+
+  /* ---------- Clickable table rows (navigate to a detail page) ---------- */
+  .clickable-row {
+    cursor: pointer;
+  }
+
+  .clickable-row:hover {
+    background: var(--color-bg);
+  }
   
   /* ---------- List rows (dashboard-style summary lists) ---------- */
   .list-row {

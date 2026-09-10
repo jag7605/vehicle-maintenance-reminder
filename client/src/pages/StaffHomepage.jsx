@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StaffLayout from "../component/StaffLayout";
 import NotificationPopup from "../component/NotificationPopup";
 import { useDashboardSummary } from "../hooks/useDashboardSummary";
@@ -24,6 +24,8 @@ function formatDate(value) {
 }
 
 function StaffHomepage() {
+  const navigate = useNavigate();
+
   const {
     loading,
     error,
@@ -124,17 +126,17 @@ function StaffHomepage() {
             <h2>Upcoming & Overdue Services</h2>
             <p className="page-subtitle">
               Vehicles overdue or due for service within the next{" "}
-              {DUE_SOON_WINDOW_DAYS} days. Click on the customer's name to go to
-              their profile and send manual reminders if needed.
+              {DUE_SOON_WINDOW_DAYS} days. Click a row to open that customer's
+              profile and send a manual reminder if needed.
             </p>
 
             <div className="status-tab-row">
             <button
-                className={`btn btn-sm ${serviceStatusTab === "both" ? "btn-primary" : "btn-secondary"}`}
-                onClick={() => setServiceStatusTab("both")}
-                disabled={serviceStatusTab === "both"}
+                className={`btn btn-sm ${serviceStatusTab === "all" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => setServiceStatusTab("all")}
+                disabled={serviceStatusTab === "all"}
               >
-                Both
+                All
               </button>
               <button
                 className={`btn btn-sm ${serviceStatusTab === "overdue" ? "btn-primary" : "btn-secondary"}`}
@@ -154,17 +156,13 @@ function StaffHomepage() {
 
             {upcoming.length === 0 ? (
               <div className="card">
-                {serviceStatusTab === "both"
+                {serviceStatusTab === "all"
                   ? "You're all caught up — nothing due soon."
                   : `No vehicles match "${serviceStatusTab === "overdue" ? "Overdue" : "Due Within 30 Days"}" right now.`}
               </div>
             ) : (
               <>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setPage}
-                />
+                
 
                 <table>
                   <thead>
@@ -179,12 +177,12 @@ function StaffHomepage() {
                   </thead>
                   <tbody>
                     {pageItems.map((v) => (
-                      <tr key={v.id}>
-                        <td>
-                          <Link to={`/admin/customers/${v.ownerId}`}>
-                            {ownerName(v.ownerId)}
-                          </Link>
-                        </td>
+                      <tr
+                        key={v.id}
+                        className="clickable-row"
+                        onClick={() => navigate(`/admin/customers/${v.ownerId}`)}
+                      >
+                        <td>{ownerName(v.ownerId)}</td>
                         <td>
                           {v.year} {v.make} {v.model}
                         </td>
@@ -221,6 +219,11 @@ function StaffHomepage() {
               </>
             )}
           </div>
+          <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
         </>
       )}
     </StaffLayout>

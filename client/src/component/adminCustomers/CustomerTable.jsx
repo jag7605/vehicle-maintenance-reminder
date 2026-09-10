@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TableCard from "../TableCard";
 
 // ---------------------------------------------------------------------------
 // Renders the filtered customer+vehicle rows. Pure presentational component.
 // ---------------------------------------------------------------------------
 function CustomerTable({ rows }) {
+  const navigate = useNavigate();
+
   if (rows.length === 0) {
     return <p>No results found.</p>;
   }
@@ -26,12 +28,12 @@ function CustomerTable({ rows }) {
         </thead>
         <tbody>
           {rows.map(({ customer, vehicle }) => (
-            <tr key={vehicle ? vehicle.id : customer.id}>
-              <td>
-                <Link to={`/admin/customers/${customer.id}`}>
-                  {customer.firstName} {customer.lastName}
-                </Link>
-              </td>
+            <tr
+              key={vehicle ? vehicle.id : customer.id}
+              className="clickable-row"
+              onClick={() => navigate(`/admin/customers/${customer.id}`)}
+            >
+              <td>{customer.firstName} {customer.lastName}</td>
               <td>{customer.email}</td>
               <td>{customer.phone}</td>
               <td>{vehicle ? vehicle.year : "—"}</td>

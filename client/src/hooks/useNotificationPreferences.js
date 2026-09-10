@@ -35,6 +35,7 @@ export function useNotificationPreferences(defaultFields, lockedFields = [], pus
   const [currentUser, setCurrentUser] = useState(null);
   const [prefs, setPrefs] = useState(defaultFields);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -92,11 +93,12 @@ export function useNotificationPreferences(defaultFields, lockedFields = [], pus
         // with a real subscription, so don't leave the UI showing "on"
         // for something that isn't.
         setPrefs((prev) => ({ ...prev, [key]: false }));
-        setMessage(
-          value
-            ? "Couldn't enable browser notifications. Check that notifications are allowed for this site."
-            : ""
-        );
+        if (value) {
+          setIsError(true);
+          setMessage("Couldn't enable browser notifications. Check that notifications are allowed for this site.");
+        } else {
+          setMessage("");
+        }
         return;
       }
     }
@@ -116,8 +118,13 @@ export function useNotificationPreferences(defaultFields, lockedFields = [], pus
       { merge: true }
     );
 
+    setIsError(false);
     setMessage("Preferences saved.");
   }
 
-  return { prefs, setPref, save, message };
+  function clearMessage() {
+    setMessage("");
+  }
+
+  return { prefs, setPref, save, message, isError, clearMessage };
 }

@@ -47,6 +47,10 @@ function CustomerAppointmentsPage() {
         Appointments
       </h1>
 
+      <p className="page-intro-text">
+          Click on a date to view available slots and book an appointment. You can also view and manage your upcoming appointments below.
+      </p>
+
       <MessagePopup
         message={error}
         isError

@@ -157,14 +157,6 @@ function CustomerNotificationPage() {
                 (Unread notifications are highlighted with a blue dot.)
             </p>
 
-            {notifications.length > 0 && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setPage}
-                />
-            )}
-
             <div className="card customer-notification-card">
 
                 {notifications.length === 0 ? (
@@ -206,6 +198,13 @@ function CustomerNotificationPage() {
                 )}
 
             </div>
+            {notifications.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                />
+            )}
         </div>
     );
 }

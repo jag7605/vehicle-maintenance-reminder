@@ -6,3 +6,8 @@
    nothing here to import. If page-specific styling is needed later,
    add the rules here and add `import "./VehicleTable.css";` back into
    VehicleTable.jsx at that point. */
+
+   .date-flag-plain {
+      color: var(--color-text);
+      font-weight: 600;
+    }

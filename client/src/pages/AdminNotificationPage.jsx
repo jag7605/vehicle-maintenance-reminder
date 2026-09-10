@@ -67,20 +67,20 @@ function AdminNotificationPage() {
         </div>
       )}
 
-      {!loading && !error && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-      )}
-
       <ReminderLog
         notifications={pageItems}
         loading={loading}
         error={error}
         unreadCount={unreadCount}
       />
+
+{!loading && !error && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </StaffLayout>
   );
 }

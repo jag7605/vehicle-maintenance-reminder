@@ -4,7 +4,11 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { getAppointmentsByCustomer } from "../firebase/appointments";
 import { formatDate } from "../utils/formatters";
+import { usePagination } from "../hooks/usePagination";
+import Pagination from "../component/Pagination";
 import "./CustomerServiceHistoryPage.css";
+
+const PAGE_SIZE = 8;
 
 function getAppointmentDate(appt) {
   return appt.date?.toDate ? appt.date.toDate() : new Date(appt.date);
@@ -98,6 +102,11 @@ function CustomerServiceHistoryPage() {
     }
   );
 
+  const { pageItems, currentPage, totalPages, setPage } = usePagination(
+    filteredAppointments,
+    PAGE_SIZE
+  );
+
   if (status === "loading") {
     return <p>Loading service history...</p>;
   }
@@ -188,69 +197,77 @@ function CustomerServiceHistoryPage() {
               No services match the selected filters.
             </div>
           ) : (
-            <div className="customer-history-table-wrapper">
+            <>
 
-              <table className="customer-history-table">
+              <div className="customer-history-table-wrapper">
 
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Vehicle</th>
-                    <th>Rego</th>
-                    <th>Service Type</th>
-                    <th>Your Notes</th>
-                    <th>Service Notes</th>
-                  </tr>
-                </thead>
+                <table className="customer-history-table">
 
-                <tbody>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Vehicle</th>
+                      <th>Rego</th>
+                      <th>Service Type</th>
+                      <th>Your Notes</th>
+                      <th>Service Notes</th>
+                    </tr>
+                  </thead>
 
-                  {filteredAppointments.map(
-                    (appt) => (
-                      <tr key={appt.id}>
+                  <tbody>
 
-                        <td>
-                          {formatDate(appt.date)}
-                        </td>
+                    {pageItems.map(
+                      (appt) => (
+                        <tr key={appt.id}>
 
-                        <td>
-                          {appt.vehicle
-                            ? `${appt.vehicle.year} ${appt.vehicle.make} ${appt.vehicle.model}`
-                            : "—"}
-                        </td>
+                          <td>
+                            {formatDate(appt.date)}
+                          </td>
 
-                        <td>
-                          {appt.vehicle?.rego || "—"}
-                        </td>
+                          <td>
+                            {appt.vehicle
+                              ? `${appt.vehicle.year} ${appt.vehicle.make} ${appt.vehicle.model}`
+                              : "—"}
+                          </td>
 
-                        <td>
-                          {[
-                            appt.serviceType,
-                            ...(appt.additionalServiceTypes ||
-                              []),
-                          ]
-                            .filter(Boolean)
-                            .join(", ") || "—"}
-                        </td>
+                          <td>
+                            {appt.vehicle?.rego || "—"}
+                          </td>
 
-                        <td>
-                          {appt.notes || "—"}
-                        </td>
+                          <td>
+                            {[
+                              appt.serviceType,
+                              ...(appt.additionalServiceTypes ||
+                                []),
+                            ]
+                              .filter(Boolean)
+                              .join(", ") || "—"}
+                          </td>
 
-                        <td>
-                          {appt.postServiceNotes ||
-                            "—"}
-                        </td>
+                          <td>
+                            {appt.notes || "—"}
+                          </td>
 
-                      </tr>
-                    )
-                  )}
+                          <td>
+                            {appt.postServiceNotes ||
+                              "—"}
+                          </td>
 
-                </tbody>
+                        </tr>
+                      )
+                    )}
 
-              </table>
+                  </tbody>
 
-            </div>
+                </table>
+
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            </>
           )}
         </>
       )}

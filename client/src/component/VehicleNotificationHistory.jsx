@@ -39,7 +39,8 @@ function VehicleNotificationHistory({ vehicleId }) {
         <tr>
           <th>Sent</th>
           <th>Message</th>
-          <th>Delivery</th>
+          <th>Email</th>
+          <th>Browser</th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +49,10 @@ function VehicleNotificationHistory({ vehicleId }) {
             <td className="sent-cell">{formatDate(n.sentAt)}</td>
             <td>{n.message}</td>
             <td>
-              <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} />
+              <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} channel="email" />
+            </td>
+            <td>
+              <DeliveryStatusBadges deliveryStatus={n.deliveryStatus} channel="browser" />
             </td>
           </tr>
         ))}

@@ -29,9 +29,12 @@ function getDateStatus(value) {
   };
 }
 
+// Olivia suggested plain bold black text here instead of the shared
+// red/orange coloring — both overdue and upcoming use the same neutral
+// class in this table specifically (see VehicleTable.css).
 function dateClassName(status) {
-  if (status === "overdue") return "date-flag";
-  if (status === "upcoming") return "date-flag-upcoming";
+  if (status === "overdue") return "date-flag-plain";
+  if (status === "upcoming") return "date-flag-plain";
   return undefined;
 }
 
@@ -94,7 +97,7 @@ function VehicleTable({
                   <button className="btn btn-secondary btn-sm" onClick={() => onEdit(vehicle)}>Edit</button>
                   <button className="btn btn-danger btn-sm" onClick={() => onDelete(vehicle)}>Delete</button>
                   <button
-                    className={`btn btn-sm ${isLoadingReminder ? "btn-disabled" : "btn-primary"}`}
+                    className={`btn btn-sm ${isLoadingReminder ? "btn-disabled" : "btn-secondary"}`}
                     onClick={() => onOpenNotify(vehicle)}
                     disabled={isLoadingReminder}
                   >

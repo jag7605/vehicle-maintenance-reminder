@@ -14,7 +14,7 @@ function StatusConfirmModal({ popup, customer, isActive }) {
         </h3>
 
         <div className={`modal-status-banner ${isActive ? "warning" : "positive"}`}>
-          {isActive ? <MdWarningAmber size={20} /> : <MdCheckCircleOutline size={20} />}
+          {isActive ? <MdWarningAmber size={40} /> : <MdCheckCircleOutline size={40} />}
           <p>
             {isActive
               ? "They will not be able to log in until reactivated."

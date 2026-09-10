@@ -1,31 +1,33 @@
 import "./DeliveryStatusBadges.css";
 
-const CHANNEL_LABELS = { email: "Email", browser: "Browser", sms: "SMS" };
-const ALL_CHANNELS = ["email", "browser", "sms"];
+const CHANNEL_LABELS = { email: "Email", browser: "Browser" };
+const ALL_CHANNELS = ["email", "browser"];
 
-function DeliveryStatusBadges({ deliveryStatus }) {
+function DeliveryStatusBadges({ deliveryStatus, channel }) {
+  const channels = channel ? [channel] : ALL_CHANNELS;
+
   if (!deliveryStatus || Object.keys(deliveryStatus).length === 0) {
     return <span className="channel-disabled">No delivery data</span>;
   }
 
   return (
     <span>
-      {ALL_CHANNELS.map((channel) => {
-        if (!(channel in deliveryStatus)) {
+      {channels.map((ch) => {
+        if (!(ch in deliveryStatus)) {
           return (
-            <span key={channel} className="channel-item channel-disabled">
-              {CHANNEL_LABELS[channel]}: disabled
+            <span key={ch} className="channel-item channel-disabled">
+              {channel ? "Disabled" : `${CHANNEL_LABELS[ch]}: disabled`}
             </span>
           );
         }
 
-        const status = deliveryStatus[channel];
+        const status = deliveryStatus[ch];
         return (
           <span
-            key={channel}
+            key={ch}
             className={`channel-item ${status === "sent" ? "channel-sent" : "channel-failed"}`}
           >
-            {CHANNEL_LABELS[channel]}: {status}
+            {channel ? (status === "sent" ? "Sent" : "Failed") : `${CHANNEL_LABELS[ch]}: ${status}`}
           </span>
         );
       })}

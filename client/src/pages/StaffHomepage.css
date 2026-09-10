@@ -23,7 +23,7 @@
   line-height: 1;
 }
 
-.summary-card-value.is-alert {
+/*.summary-card-value.is-alert {
   color: var(--color-error);
 }
 
@@ -33,6 +33,12 @@
 
 .summary-card-value.is-confirmed {
   color: var(--status-confirmed);
+}*/
+
+.upcoming-section .date-flag,
+.upcoming-section .date-flag-upcoming {
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .summary-card-sub {

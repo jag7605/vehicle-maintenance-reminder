@@ -13,7 +13,7 @@ function MessagePopup({ message, onClose, isError = false }) {
         <p className="message-popup-text">{message}</p>
 
         <div className="modal-actions modal-actions-end">
-          <button type="button" onClick={onClose}>
+          <button type="button" className="btn btn-primary" onClick={onClose}>
             Close
           </button>
         </div>

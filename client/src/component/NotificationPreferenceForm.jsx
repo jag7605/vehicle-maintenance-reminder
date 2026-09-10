@@ -1,6 +1,6 @@
 import "./NotificationPreferenceForm.css";
 
-function NotificationPreferenceForm({ fields, prefs, setPref, onSave, message }) {
+function NotificationPreferenceForm({ fields, prefs, setPref, onSave }) {
   return (
     <div className="notification-preference-form">
 
@@ -71,12 +71,6 @@ function NotificationPreferenceForm({ fields, prefs, setPref, onSave, message })
         >
           Save Preferences
         </button>
-
-        {message && (
-          <p className="save-success-text">
-            {message}
-          </p>
-        )}
 
       </div>
 

@@ -174,7 +174,7 @@ function SlotBookingForm({
               onClick={handleAddAdditionalService}
               disabled={!canAddMore}
             >
-              Add additional service +
+              Add additional service
             </button>
 
             <label>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNotificationPreferences } from "../hooks/useNotificationPreferences";
 import NotificationPreferenceForm from "../component/NotificationPreferenceForm";
+import MessagePopup from "../component/MessagePopup";
 import { auth } from "../firebase/firebaseConfig";
 import { getCustomerById } from "../firebase/users";
 import "./CustomerProfilePage.css";
@@ -8,7 +9,6 @@ import "./CustomerProfilePage.css";
 const FIELDS = [
   { key: "browser", label: "Browser Notifications" },
   { key: "email", label: "Email Notifications" },
-  { key: "sms", label: "SMS Notifications", locked: true },
 ];
 
 const DEFAULTS = { browser: false, email: false, sms: true };
@@ -16,7 +16,7 @@ const LOCKED_FIELDS = ["sms"];
 const PUSH_MANAGED_FIELDS = ["browser"];
 
 function CustomerProfilePage() {
-  const { prefs, setPref, save, message } = useNotificationPreferences(
+  const { prefs, setPref, save, message, isError, clearMessage } = useNotificationPreferences(
     DEFAULTS,
     LOCKED_FIELDS,
     PUSH_MANAGED_FIELDS
@@ -110,10 +110,15 @@ function CustomerProfilePage() {
           prefs={prefs}
           setPref={setPref}
           onSave={save}
-          message={message}
         />
 
       </div>
+
+      <MessagePopup
+        message={message}
+        isError={isError}
+        onClose={clearMessage}
+      />
 
     </div>
   );
