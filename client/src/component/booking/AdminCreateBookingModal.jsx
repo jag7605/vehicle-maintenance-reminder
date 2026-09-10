@@ -275,7 +275,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
                         (disabled ? " slot-btn-unavailable" : "")
                       }
                     >
-                      {slot.time} {!slot.available ? "(Booked)" : past ? "(Past)" : ""}
+                      {slot.time} {past ? "(Past)" : !slot.available ? "(Booked)" : ""}
                     </button>
                   );
                 })}
@@ -318,7 +318,7 @@ function AdminCreateBookingModal({ onClose, onCreated }) {
               <button
                 type="button"
                 onClick={() => handleRemoveAdditionalService(index)}
-                className="btn btn-secondary btn-sm remove-service-btn"
+                className="btn btn-danger btn-sm remove-service-btn"
               >
                 Remove service
               </button>

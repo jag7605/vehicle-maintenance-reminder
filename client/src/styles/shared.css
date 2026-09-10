@@ -108,7 +108,7 @@
   .btn-danger {
     background: white;
     border: 1px solid var(--color-border);
-    /*color: #d64545;*/
+    color: #d64545;
   }
   
   .btn-sm {

@@ -20,6 +20,19 @@ function formatDisplayDate(date) {
   });
 }
 
+function slotLabel(slot) {
+  if (slot.available) return slot.time;
+  if (slot.reason === "past") return `${slot.time} (Past)`;
+  return `${slot.time} (Booked)`;
+}
+
+function slotClassName(slot, selectedSlot) {
+  if (selectedSlot === slot.time) return "slot-button selected-slot";
+  if (!slot.available && slot.reason === "past") return "slot-button past";
+  if (!slot.available) return "slot-button booked";
+  return "slot-button";
+}
+
 function SlotBookingForm({
   selectedDate,
   availability,
@@ -86,17 +99,11 @@ function SlotBookingForm({
               <button
                 key={slot.time}
                 type="button"
-                className={
-                  selectedSlot === slot.time
-                    ? "slot-button selected-slot"
-                    : slot.available
-                    ? "slot-button"
-                    : "slot-button booked"
-                }
+                className={slotClassName(slot, selectedSlot)}
                 disabled={!slot.available}
                 onClick={() => setSelectedSlot(slot.time)}
               >
-                {slot.time} {slot.available ? "" : "(Booked)"}
+                {slotLabel(slot)}
               </button>
             ))}
           </div>

@@ -29,12 +29,14 @@ router.get("/appointments/availability", async (req, res) => {
   const { date } = req.query;
 
   if (!date || !DATE_PARAM_REGEX.test(date)) {
-    return res.status(400).json({ error: "Query param 'date' is required in YYYY-MM-DD format." });
+    return res
+      .status(400)
+      .json({ error: "Query param 'date' is required in YYYY-MM-DD format." });
   }
 
-  // Parsed as server-local wall-clock time, same simplicity level as the
-  // existing en-NZ display formatting elsewhere in the codebase (no explicit
-  // timezone conversion library used).
+  // Parsed as server-local wall-clock time. With TZ=Pacific/Auckland set on
+  // Render (matching local dev machines), this is genuinely NZ time in both
+  // environments — no extra timezone conversion needed.
   const dayStart = new Date(`${date}T00:00:00`);
   if (isNaN(dayStart.getTime())) {
     return res.status(400).json({ error: `Invalid date: "${date}".` });
@@ -64,11 +66,30 @@ router.get("/appointments/availability", async (req, res) => {
       })
     );
 
+    // Block any slot whose start time has already passed, if the requested
+    // date is today. Dates in the future are never affected by this check.
+    const now = new Date();
+    const isToday =
+      dayStart.getFullYear() === now.getFullYear() &&
+      dayStart.getMonth() === now.getMonth() &&
+      dayStart.getDate() === now.getDate();
+    const currentHour = now.getHours();
+
     // Generate every slot between OPEN_HOUR and CLOSE_HOUR.
     const slots = [];
-    for (let hour = OPEN_HOUR; hour < CLOSE_HOUR; hour += SLOT_DURATION_MINUTES / 60) {
+    for (
+      let hour = OPEN_HOUR;
+      hour < CLOSE_HOUR;
+      hour += SLOT_DURATION_MINUTES / 60
+    ) {
       const label = `${String(hour).padStart(2, "0")}:00`;
-      slots.push({ time: label, available: !bookedHours.has(hour) });
+      const isPast = isToday && hour <= currentHour;
+      const isBooked = bookedHours.has(hour);
+      slots.push({
+        time: label,
+        available: !isBooked && !isPast,
+        reason: isPast ? "past" : isBooked ? "booked" : null,
+      });
     }
 
     return res.json({ date, closed: false, slots });
@@ -97,13 +118,18 @@ router.patch("/appointments/:appointmentId/status", async (req, res) => {
   // status to Firestore in the first place.
   if (!VALID_STATUSES.includes(status)) {
     return res.status(400).json({
-      error: `Invalid status: "${status}". Must be one of ${VALID_STATUSES.join(", ")}.`,
+      error: `Invalid status: "${status}". Must be one of ${VALID_STATUSES.join(
+        ", "
+      )}.`,
     });
   }
 
   try {
     // Step 1: Fetch the appointment document
-    const appointmentDoc = await db.collection("appointments").doc(appointmentId).get();
+    const appointmentDoc = await db
+      .collection("appointments")
+      .doc(appointmentId)
+      .get();
     if (!appointmentDoc.exists) {
       return res.status(404).json({ error: "Appointment not found." });
     }
@@ -111,14 +137,20 @@ router.patch("/appointments/:appointmentId/status", async (req, res) => {
 
     // Step 2: Fetch the vehicle document separately — vehicle is not embedded
     // on the appointment object (Sprint 4 decision #3)
-    const vehicleDoc = await db.collection("vehicles").doc(appointment.vehicleId).get();
+    const vehicleDoc = await db
+      .collection("vehicles")
+      .doc(appointment.vehicleId)
+      .get();
     if (!vehicleDoc.exists) {
       return res.status(404).json({ error: "Vehicle not found." });
     }
     const vehicle = { id: vehicleDoc.id, ...vehicleDoc.data() };
 
     // Step 3: Fetch the customer who booked this appointment
-    const customerDoc = await db.collection("users").doc(appointment.customerId).get();
+    const customerDoc = await db
+      .collection("users")
+      .doc(appointment.customerId)
+      .get();
     if (!customerDoc.exists) {
       return res.status(404).json({ error: "Customer not found." });
     }
@@ -128,7 +160,12 @@ router.patch("/appointments/:appointmentId/status", async (req, res) => {
     await db.collection("appointments").doc(appointmentId).update({ status });
 
     // Step 5: Send the booking notification for the new status
-    const deliveryStatus = await sendBookingNotification(appointment, vehicle, customer, status);
+    const deliveryStatus = await sendBookingNotification(
+      appointment,
+      vehicle,
+      customer,
+      status
+    );
 
     return res.json({ success: true, deliveryStatus });
   } catch (err) {
@@ -166,7 +203,9 @@ router.patch("/appointments/:appointmentId/complete", async (req, res) => {
   // postServiceNotes is optional but must be a string if provided, since it
   // gets written straight to Firestore.
   if (postServiceNotes !== undefined && typeof postServiceNotes !== "string") {
-    return res.status(400).json({ error: "postServiceNotes must be a string." });
+    return res
+      .status(400)
+      .json({ error: "postServiceNotes must be a string." });
   }
 
   try {
@@ -198,13 +237,16 @@ router.patch("/appointments/:appointmentId/complete", async (req, res) => {
       : new Date(appointment.date);
 
     if (isNaN(appointmentDate.getTime())) {
-      return res.status(400).json({ error: "Appointment has an invalid date." });
+      return res
+        .status(400)
+        .json({ error: "Appointment has an invalid date." });
     }
 
     const now = new Date();
     if (appointmentDate > now) {
       return res.status(400).json({
-        error: "This appointment's scheduled time has not passed yet and cannot be marked complete.",
+        error:
+          "This appointment's scheduled time has not passed yet and cannot be marked complete.",
       });
     }
 
@@ -224,13 +266,19 @@ router.patch("/appointments/:appointmentId/complete", async (req, res) => {
     // vehicle document, and send the customer completion notification.
     // completedServiceDate is the real moment this endpoint runs (now),
     // not appointment.date — per Person C's flagged requirement.
-    const vehicleDoc = await db.collection("vehicles").doc(appointment.vehicleId).get();
+    const vehicleDoc = await db
+      .collection("vehicles")
+      .doc(appointment.vehicleId)
+      .get();
     if (!vehicleDoc.exists) {
       return res.status(404).json({ error: "Vehicle not found." });
     }
     const vehicle = { id: vehicleDoc.id, ...vehicleDoc.data() };
 
-    const customerDoc = await db.collection("users").doc(appointment.customerId).get();
+    const customerDoc = await db
+      .collection("users")
+      .doc(appointment.customerId)
+      .get();
     if (!customerDoc.exists) {
       return res.status(404).json({ error: "Customer not found." });
     }
