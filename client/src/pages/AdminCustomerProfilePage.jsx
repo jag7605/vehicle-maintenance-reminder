@@ -97,7 +97,7 @@ function AdminCustomerProfilePage() {
           </div>
 
           <div className="admin-current-vehicles-content">
-            <TableCard>
+            {vehicles.length === 0 ? (
               <VehicleTable
                 vehicles={vehicles}
                 reminderLoading={reminderLoading}
@@ -108,7 +108,20 @@ function AdminCustomerProfilePage() {
                 onOpenNotify={notifyPopup.open}
                 onToggleHistory={toggleHistory}
               />
-            </TableCard>
+            ) : (
+              <TableCard>
+                <VehicleTable
+                  vehicles={vehicles}
+                  reminderLoading={reminderLoading}
+                  reminderResult={reminderResult}
+                  expandedHistory={expandedHistory}
+                  onEdit={editPopup.open}
+                  onDelete={deletePopup.open}
+                  onOpenNotify={notifyPopup.open}
+                  onToggleHistory={toggleHistory}
+                />
+              </TableCard>
+            )}
           </div>
         </div>
 

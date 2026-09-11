@@ -49,7 +49,7 @@ function VehicleTable({
   onToggleHistory,
 }) {
   if (vehicles.length === 0) {
-    return <p>No vehicles on file.</p>;
+    return <p className="vehicle-table-empty">No vehicles on file.</p>;
   }
 
   return (
