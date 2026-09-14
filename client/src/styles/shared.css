@@ -64,9 +64,25 @@
   
   .modal-box {
     background-color: var(--color-card);
-    padding: 20px;
+    padding: 20px 14px 20px 20px;
     min-width: 360px;
     border-radius: var(--radius-card);
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .modal-box::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .modal-box::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-box::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
   }
   
   .modal-actions {
